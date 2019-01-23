@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT		 += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -39,7 +40,10 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     newprojectdialog.ui
 
-RESOURCES += style.qrc
+RESOURCES += style.qrc \
+    filetemplates.qrc
 
 unix|win32: LIBS += -lqtermwidget5
+
+DISTFILES +=
 

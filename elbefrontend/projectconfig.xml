@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                             
+<projectDescription>                                                                                                                                                                                                               
+    
+    <name></name>
+    <elbe_id></elbe_id>  
+    <source_directory></source_directory>
+    <output_directory></output_directory>
+                                         
+    <output_files>
+        <file>source.xml</file> 
+    </output_files>
+                                                                                                                                                                                                                    
+</projectDescription>
+    
