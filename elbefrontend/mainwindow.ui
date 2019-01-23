@@ -85,6 +85,15 @@
              <height>20</height>
             </size>
            </property>
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
+           <property name="headerHidden">
+            <bool>true</bool>
+           </property>
+           <attribute name="headerVisible">
+            <bool>false</bool>
+           </attribute>
            <attribute name="headerStretchLastSection">
             <bool>true</bool>
            </attribute>
@@ -213,8 +222,13 @@
     <property name="title">
      <string>Edi&amp;t</string>
     </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
     <addaction name="actionCut"/>
     <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="separator"/>
     <addaction name="actionDelete"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -312,6 +326,21 @@
   <action name="action_ChangeView">
    <property name="text">
     <string>&amp;ChangeView</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
    </property>
   </action>
  </widget>

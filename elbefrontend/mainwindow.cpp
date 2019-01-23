@@ -4,9 +4,12 @@
 #include <QWidget>
 #include <QPlainTextEdit>
 #include <QColor>
+#include <QDebug>
+#include <QFileSystemModel>
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
 #include "newprojectdialog.h"
+#include "helpers.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -30,6 +33,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 
 
+	/*----------------------------- add some dummy objects to tree view -------------------------------*/
+
+	QFileSystemModel *model = new QFileSystemModel;
+	model->setRootPath("/home/hico/elbefrontFilehandlingTestFolder");
+	ui->ProjektStructur->setModel(model);
+
+	for (int i = 1; i < model->columnCount(); ++i) {
+		ui->ProjektStructur->hideColumn(i);
+	}
+
+	ui->ProjektStructur->setRootIndex(model->index("/home/hico/elbefrontFilehandlingTestFolder"));
+
 }
 
 MainWindow::~MainWindow()
@@ -45,3 +60,19 @@ void MainWindow::on_actionNew_triggered()
     NewProjectDialog *dialog = new NewProjectDialog();
     dialog->show();
 }
+
+
+
+void MainWindow::on_ProjektStructur_customContextMenuRequested(const QPoint &pos)
+{
+	QMenu *menu = new QMenu;
+	QModelIndex index = ui->ProjektStructur->currentIndex();
+//	QString itemToDelete = QFileSystemModel().filePath(index);
+//	qDebug() << "Delete: "+itemToDelete;
+
+//	menu->addAction(QString("Delete"), this, SLOT(helpers::deleteFile(itemToDelete)));
+	menu->exec(QCursor::pos());
+}
+
+
+

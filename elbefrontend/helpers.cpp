@@ -5,6 +5,7 @@
 #include <QtXml/QDomElement>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNodeList>
+#include <QDir>
 #include <QFile>
 #include <QDebug>
 
@@ -69,7 +70,9 @@ namespace helpers {
 
 		/*-------------------------------- Save changes ------------------------------------*/
 
-		if (!file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
+		QFileDevice::Permissions p = file.permissions();
+		file.setPermissions(QFileDevice::WriteUser | p);
+		if ( !file.open(QIODevice::Truncate | QIODevice::WriteOnly) ) {
 			qDebug() << "Cannot open file";
 			return false;
 		}
@@ -84,5 +87,9 @@ namespace helpers {
 
 		return true;
 	}
+
+
+//	void deleteFile(QString path){}
 }
+
 

@@ -6,6 +6,7 @@
 namespace helpers {
     QString getHomeDirectoryFromSystem();
 	bool setProjectMetadata(QString projectName, QString projectPath);
+//	void deleteFile(QString path);
 }
 
 #endif // HELPERS_H

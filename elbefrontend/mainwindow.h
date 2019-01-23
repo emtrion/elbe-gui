@@ -19,7 +19,9 @@ public:
 private slots:
     void on_actionNew_triggered();
 
-private:
+	void on_ProjektStructur_customContextMenuRequested(const QPoint &pos);
+
+	private:
     Ui::MainWindow *ui;
 };
 
