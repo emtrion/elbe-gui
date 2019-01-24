@@ -29,16 +29,19 @@ SOURCES += main.cpp\
     codeeditor.cpp \
     newprojectdialog.cpp \
     userdata.cpp \
-    helpers.cpp
+    helpers.cpp \
+    newprojectwizard.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
 	newprojectdialog.h \
     userdata.h \
-    helpers.h
+    helpers.h \
+    newprojectwizard.h
 
 FORMS    += mainwindow.ui \
-    newprojectdialog.ui
+    newprojectdialog.ui \
+    newprojectwizard.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc
