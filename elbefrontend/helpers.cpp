@@ -11,6 +11,9 @@
 
 #include "helpers.h"
 
+
+
+
 namespace helpers {
 	QString getHomeDirectoryFromSystem()
 	{//get the homedirectory
@@ -30,7 +33,7 @@ namespace helpers {
 		QDomDocument doc("configFile");
 		QFile file(projectPath+"/.project");
 		if (!file.open(QIODevice::ReadOnly)) {// Open file
-			qDebug() << "Cannot open the file";
+			qDebug() << "Cannot open file";
 			return false;
 		}
 
@@ -45,6 +48,7 @@ namespace helpers {
 
 		QDomElement root = doc.firstChildElement("projectDescription"); //get root element
 
+
 //		qDebug() << "root node: "+root.toElement().tagName();
 
 		QDomNodeList children = root.childNodes(); //get list of all children
@@ -54,9 +58,8 @@ namespace helpers {
 		}
 
 		QDomNode childNode = root.firstChild();
-		while ( !childNode.isNull() ) { //iterate over all child elements
+		while (!childNode.isNull()) { //iterate over all child elements
 			QDomElement childElement = childNode.toElement();
-
 			//look for nodes which have to be modified
 			if ( childElement.tagName().compare("name") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectName));
@@ -70,8 +73,8 @@ namespace helpers {
 
 		/*-------------------------------- Save changes ------------------------------------*/
 
-		QFileDevice::Permissions p = file.permissions();
-		file.setPermissions(QFileDevice::WriteUser | p);
+		QFileDevice::Permissions p = file.permissions(); //get permissions
+		file.setPermissions(QFileDevice::WriteUser | p); //add permission to write
 		if ( !file.open(QIODevice::Truncate | QIODevice::WriteOnly) ) {
 			qDebug() << "Cannot open file";
 			return false;
