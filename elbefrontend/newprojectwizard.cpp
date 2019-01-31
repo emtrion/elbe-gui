@@ -27,9 +27,11 @@ ui(new Ui::NewProjectWizard)
 	ui->ErrorIcon->show();
 
 	/*pass the ui to wizardpages where the userinput can be validated*/
+
 	/*first page*/
 	ui->newProjectFirstPage->setFirstPageUiPointer(ui);
 	ui->newProjectFirstPage->connectSignals();
+
 	/*second page*/
 
 	ui->newProjectSecondPage->setDefaultPageUiPointer(ui);
@@ -130,7 +132,6 @@ void NewProjectWizard::on_NewProjectWizard_accepted()
 	newProjectSettings.path = ui->pathEntry->text();
 	newProjectSettings.proto = ui->protoEntry->text();
 
-	qDebug() << "about to create project";
 	createProject();
 }
 
@@ -166,8 +167,6 @@ bool NewProjectWizard::createProject()
 		return false;
 	}
 
-	//TODO: solution to get data from ui default page and save it to generate xml
-
 	return true;
 }
 
@@ -187,10 +186,6 @@ void NewProjectWizard::on_ProjectPathEntry_textChanged(const QString &arg1)
 void NewProjectWizard::on_DefaultSetButton_1_toggled(bool checked)
 {
 	if (checked) {
-//		for (int i = 0; i < ui->newProjectSecondPage->projectSettingInputFields.size(); ++i) {
-//			ui->newProjectSecondPage->projectSettingInputFields.at(i)->setEnabled(false);
-//			ui->newProjectSecondPage->projectSettingInputFields.at(i)->setText(ui->newProjectSecondPage->defaultSettings.at(i));
-//		}
 		ui->newProjectSecondPage->displayDefaultSettings();
 		ui->buildtypeDropDown->setEnabled(false);
 		ui->suiteDropDown->setEnabled(false);
@@ -208,10 +203,6 @@ void NewProjectWizard::on_DefaultSetButton_2_toggled(bool checked)
 {
 	if (checked) {
 		ui->newProjectThirdPage->displayDefaultSettings();
-//		for (int i = 0; i < ui->newProjectThirdPage->projectSettingInputFields.size(); ++i) {
-//			ui->newProjectThirdPage->projectSettingInputFields.at(i)->setEnabled(false);
-//			ui->newProjectThirdPage->projectSettingInputFields.at(i)->setText(ui->newProjectThirdPage->defaultSettings.at(i));
-//		}
 	} else {
 		foreach (QLineEdit* le, ui->newProjectThirdPage->projectSettingInputFields) {
 			le->setEnabled(true);
@@ -222,7 +213,7 @@ void NewProjectWizard::on_DefaultSetButton_2_toggled(bool checked)
 
 
 void NewProjectWizard::initSecondPageDefault()
-{
+{//initialize default entries for second page
 	QList<QString> tmp = ui->newProjectSecondPage->defaultSettings;
 	tmp.clear();
 	tmp.append(ui->newProjectFirstPage->getNewProjectName());
@@ -234,7 +225,7 @@ void NewProjectWizard::initSecondPageDefault()
 }
 
 void NewProjectWizard::initThirdPageDefault()
-{
+{//initialize default entries for third page
 	QList<QString> tmp = ui->newProjectThirdPage->defaultSettings;
 	tmp.clear();
 	tmp.append("ftp.de.debian.org");
@@ -245,8 +236,8 @@ void NewProjectWizard::initThirdPageDefault()
 }
 
 void NewProjectWizard::on_NewProjectWizard_currentIdChanged(int id)
-{
-	qDebug() << "PageID: "<<id;
+{//invoked when the page in the wizard changes
+//	qDebug() << "PageID: "<<id;
 
 	if (id == 1) {
 		ui->DefaultSetButton_1->setChecked(true);
@@ -261,12 +252,12 @@ void NewProjectWizard::on_NewProjectWizard_currentIdChanged(int id)
 }
 
 void NewProjectWizard::on_buildtypeDropDown_currentIndexChanged(const QString &arg1)
-{
+{//invoked when the selection in the dropdown is changed
 	this->newProjectSettings.buildtype = arg1;
 }
 
 
 void NewProjectWizard::on_suiteDropDown_currentIndexChanged(const QString &arg1)
-{
+{//invoked when the selection in the dropdown is changed
 	this->newProjectSettings.suite = arg1;
 }

@@ -18,14 +18,13 @@ NewProjectWizardDefaultpage::~NewProjectWizardDefaultpage(){}
 
 
 void NewProjectWizardDefaultpage::setDefaultPageUiPointer(Ui::NewProjectWizard *ui_pointer)
-{
+{//set the dafault
 	this->ui_pointer = ui_pointer;
 }
 
 
-
 void NewProjectWizardDefaultpage::initializePage(int PageId)
-{
+{//check which page is shown and put the relevant QLineEdits in list
 	if ( PageId == 1) {
 		projectSettingInputFields = ui_pointer->MainWidget_2->findChildren<QLineEdit*>();
 	}

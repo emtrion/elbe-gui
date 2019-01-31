@@ -49,19 +49,9 @@ namespace helpers {
 
 		QDomElement root = doc.firstChildElement("projectDescription"); //get root element
 
-
-//		qDebug() << "root node: "+root.toElement().tagName();
-
-		QDomNodeList children = root.childNodes(); //get list of all children
-		if (children.size() < 1) {
-			qDebug() << "Cannot find children";
-			return false;
-		}
-
-
 		QDomNode projectSettingParentNode;
 		QDomNode childNode = root.firstChild();
-		while (!childNode.isNull()) { //iterate over all child elements
+		while (!childNode.isNull()) { //iterate over all child nodes
 			QDomElement childElement = childNode.toElement();
 			//look for nodes which have to be modified
 			if ( childElement.tagName().compare("projectname") == 0 ) {
@@ -71,18 +61,17 @@ namespace helpers {
 			} else if ( childElement.tagName().compare("output_directory") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectPath+"/out/"));
 			} else if (childElement.tagName().compare("project") == 0) {
-				projectSettingParentNode = childNode;
+				projectSettingParentNode = childNode; //assign "project" to another node to access children
 			}
-			childNode = childNode.nextSibling(); //go to next child element
+			childNode = childNode.nextSibling();
 		}
 
 		QDomNode mirrorSettingParentNode;
 		QDomNode projectSettingNode = projectSettingParentNode.firstChild();
 
 
-		while (!projectSettingNode.isNull()) {
+		while (!projectSettingNode.isNull()) {//iterate over "project" children nodes
 			QDomElement projectSettingElement = projectSettingNode.toElement();
-			qDebug() << projectSettingElement.tagName();
 			if (projectSettingElement.tagName().compare("name") == 0) {
 				projectSettingNode.appendChild(doc.createTextNode(settings.name));
 			} else if (projectSettingElement.tagName().compare("version") == 0) {
@@ -94,7 +83,7 @@ namespace helpers {
 			} else if (projectSettingElement.tagName().compare("suite") == 0) {
 				projectSettingNode.appendChild(doc.createTextNode(settings.suite));
 			} else if (projectSettingElement.tagName().compare("mirror") == 0) {
-				mirrorSettingParentNode = projectSettingNode;
+				mirrorSettingParentNode = projectSettingNode; //assign "mirror" to a node to access children
 			}
 			projectSettingNode = projectSettingNode.nextSibling();
 		}
@@ -102,7 +91,7 @@ namespace helpers {
 
 
 		QDomNode mirrorSettingNode = mirrorSettingParentNode.firstChild();
-		while (!mirrorSettingNode.isNull()) {
+		while (!mirrorSettingNode.isNull()) { //iterate over all children
 			QDomElement mirrorSettingElement = mirrorSettingNode.toElement();
 			if (mirrorSettingElement.tagName().compare("primary_host") == 0) {
 				mirrorSettingNode.appendChild(doc.createTextNode(settings.host));
