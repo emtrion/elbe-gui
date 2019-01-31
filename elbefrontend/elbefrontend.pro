@@ -27,20 +27,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     codeeditor.cpp \
-    newprojectdialog.cpp \
     userdata.cpp \
     helpers.cpp \
-    newprojectwizard.cpp
+    newprojectwizard.cpp \
+    newprojectwizardfirstpage.cpp \
+    newprojectwizarddefaultpage.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
-	newprojectdialog.h \
     userdata.h \
     helpers.h \
-    newprojectwizard.h
+    newprojectwizard.h \
+    newprojectwizardfirstpage.h \
+    newprojectwizarddefaultpage.h
 
 FORMS    += mainwindow.ui \
-    newprojectdialog.ui \
     newprojectwizard.ui
 
 RESOURCES += style.qrc \

@@ -11,8 +11,9 @@
 
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
-#include "newprojectdialog.h"
+
 #include "helpers.h"
+#include "newprojectwizard.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -70,8 +71,11 @@ MainWindow::~MainWindow()
 void MainWindow::on_actionNew_triggered()
 {
     //openDialog
-    NewProjectDialog *dialog = new NewProjectDialog();
-    dialog->show();
+//    NewProjectDialog *dialog = new NewProjectDialog();
+//    dialog->show();
+
+	NewProjectWizard *wiz = new NewProjectWizard();
+	wiz->show();
 }
 
 

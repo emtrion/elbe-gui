@@ -6,165 +6,582 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>553</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Wizard</string>
   </property>
-  <widget class="QWizardPage" name="wizardPage1">
-   <widget class="QFrame" name="MainFrame">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>382</width>
-      <height>239</height>
-     </rect>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="NewProjectWizardFirstPage" name="newProjectFirstPage">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+    <property name="spacing">
+     <number>6</number>
     </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
     </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+    <property name="leftMargin">
+     <number>0</number>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <property name="spacing">
-      <number>10</number>
-     </property>
-     <property name="leftMargin">
-      <number>3</number>
-     </property>
-     <property name="topMargin">
-      <number>3</number>
-     </property>
-     <property name="rightMargin">
-      <number>3</number>
-     </property>
-     <property name="bottomMargin">
-      <number>3</number>
-     </property>
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Create Project at selected Path</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QWidget" name="widget_2" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLabel" name="ErrorIcon">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="Information">
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="ProjectName">
-       <item>
-        <widget class="QLabel" name="ProjectNameLabel">
-         <property name="text">
-          <string>Project name</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="ProjectNameEntry"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QWidget" name="widget" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QCheckBox" name="DefaultPathButton">
-          <property name="text">
-           <string>&amp;Use default location</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-          <property name="autoExclusive">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="ProjectPath">
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="MainWidget" native="true">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0,0,0">
        <property name="spacing">
         <number>10</number>
        </property>
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
+        <number>3</number>
+       </property>
        <item>
-        <widget class="QLabel" name="ProjectPathLabel">
+        <widget class="QLabel" name="Headline">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
-          <string>Path</string>
+          <string>Choose Name and Directory</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="ProjectPathEntry">
-         <property name="enabled">
-          <bool>false</bool>
+        <widget class="QWidget" name="ChangingInformationSection" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="ErrorIcon">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
+            </property>
+            <property name="scaledContents">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="Information">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="ProjectName">
+         <item>
+          <widget class="QLabel" name="ProjectNameLabel">
+           <property name="text">
+            <string>Project name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ProjectNameEntry"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="CheckboxSection_1" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QCheckBox" name="DefaultPathButton">
+            <property name="text">
+             <string>&amp;Use default location</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="ProjectPath">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="ProjectPathLabel">
+           <property name="text">
+            <string>Path</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="ProjectPathEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ProjectPathBrowsButton">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="text">
+            <string>Browse...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="NewProjectWizardDefaultpage" name="newProjectSecondPage">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="MainWidget_2" native="true">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLabel" name="Headline_2">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
-          <string/>
+          <string>Select Settings</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="ProjectPathBrowsButton">
-         <property name="enabled">
-          <bool>true</bool>
+        <widget class="QWidget" name="ChangingInformationSection_2" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="Information_2">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string> Change defaults if needed</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="name">
+         <item>
+          <widget class="QLabel" name="nameLabel">
+           <property name="text">
+            <string>name</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="nameEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="version">
+         <item>
+          <widget class="QLabel" name="versionLabel">
+           <property name="text">
+            <string>version</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="versionEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>1.0</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="description">
+         <property name="spacing">
+          <number>10</number>
          </property>
-         <property name="text">
-          <string>Browse...</string>
-         </property>
+         <item>
+          <widget class="QLabel" name="descriptionLabel">
+           <property name="text">
+            <string>description</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="descriptionEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="buildtype">
+         <item>
+          <widget class="QLabel" name="buildtypeLabel">
+           <property name="text">
+            <string>buildtype</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="buildtypeDropDown">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string notr="true">armhf</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">armel</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">amd64</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">i386</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="suite">
+         <item>
+          <widget class="QLabel" name="suiteLabel">
+           <property name="text">
+            <string>suite</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="suiteDropDown">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <item>
+            <property name="text">
+             <string notr="true">Jessi</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">Stretch</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">Buster</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">Sid</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="CheckboxSection_2" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QCheckBox" name="DefaultSetButton_1">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>&amp;Use default settings</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <widget class="QWidget" name="Spacing" native="true"/>
-     </item>
-    </layout>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QWizardPage" name="wizardPage2"/>
+  <widget class="NewProjectWizardDefaultpage" name="newProjectThirdPage">
+   <layout class="QVBoxLayout" name="verticalLayout_6">
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QWidget" name="MainWidget_3" native="true">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="Headline_3">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Select Settings (Mirror)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QWidget" name="ChangingInformationSection_3" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QLabel" name="Information_3">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string> Change defaults if needed</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="host">
+         <item>
+          <widget class="QLabel" name="hostLabel">
+           <property name="text">
+            <string>primary_host</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="hostEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>fgh</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="path">
+         <item>
+          <widget class="QLabel" name="pathLabel">
+           <property name="text">
+            <string>primary_path</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="pathEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>fgh</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="proto">
+         <property name="spacing">
+          <number>10</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="protoLabel">
+           <property name="text">
+            <string>primary_proto</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="protoEntry">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>fgh</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="CheckboxSection_3" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QCheckBox" name="DefaultSetButton_2">
+            <property name="text">
+             <string>&amp;Use default settings</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="autoExclusive">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NewProjectWizardFirstPage</class>
+   <extends>QWizardPage</extends>
+   <header>newprojectwizardfirstpage.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>NewProjectWizardDefaultpage</class>
+   <extends>QWizardPage</extends>
+   <header>newprojectwizarddefaultpage.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="style.qrc"/>
  </resources>
