@@ -8,6 +8,7 @@
 #include <QDir>
 #include <QFile>
 #include <QDebug>
+#include "newprojectwizard.h"
 
 #include "helpers.h"
 
@@ -25,7 +26,7 @@ namespace helpers {
     }
 
 
-	bool setProjectMetadata(QString projectName, QString projectPath)
+	bool setProjectMetadata(QString projectName, QString projectPath, NewProjectWizard::projectSettings settings)
 	{//adds metadata to the config file
 
 		/*----------------------------- create DOM from XML --------------------------*/
@@ -57,19 +58,63 @@ namespace helpers {
 			return false;
 		}
 
+
+		QDomNode projectSettingParentNode;
 		QDomNode childNode = root.firstChild();
 		while (!childNode.isNull()) { //iterate over all child elements
 			QDomElement childElement = childNode.toElement();
 			//look for nodes which have to be modified
-			if ( childElement.tagName().compare("name") == 0 ) {
+			if ( childElement.tagName().compare("projectname") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectName));
 			} else if ( childElement.tagName().compare("source_directory") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectPath+"/src/"));
 			} else if ( childElement.tagName().compare("output_directory") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectPath+"/out/"));
-			} else {}
+			} else if (childElement.tagName().compare("project") == 0) {
+				projectSettingParentNode = childNode;
+			}
 			childNode = childNode.nextSibling(); //go to next child element
 		}
+
+		QDomNode mirrorSettingParentNode;
+		QDomNode projectSettingNode = projectSettingParentNode.firstChild();
+
+
+		while (!projectSettingNode.isNull()) {
+			QDomElement projectSettingElement = projectSettingNode.toElement();
+			qDebug() << projectSettingElement.tagName();
+			if (projectSettingElement.tagName().compare("name") == 0) {
+				projectSettingNode.appendChild(doc.createTextNode(settings.name));
+			} else if (projectSettingElement.tagName().compare("version") == 0) {
+				projectSettingNode.appendChild(doc.createTextNode(settings.version));
+			} else if (projectSettingElement.tagName().compare("description") == 0) {
+				projectSettingNode.appendChild(doc.createTextNode(settings.description));
+			} else if (projectSettingElement.tagName().compare("buildtype") == 0) {
+				projectSettingNode.appendChild(doc.createTextNode(settings.buildtype));
+			} else if (projectSettingElement.tagName().compare("suite") == 0) {
+				projectSettingNode.appendChild(doc.createTextNode(settings.suite));
+			} else if (projectSettingElement.tagName().compare("mirror") == 0) {
+				mirrorSettingParentNode = projectSettingNode;
+			}
+			projectSettingNode = projectSettingNode.nextSibling();
+		}
+
+
+
+		QDomNode mirrorSettingNode = mirrorSettingParentNode.firstChild();
+		while (!mirrorSettingNode.isNull()) {
+			QDomElement mirrorSettingElement = mirrorSettingNode.toElement();
+			if (mirrorSettingElement.tagName().compare("primary_host") == 0) {
+				mirrorSettingNode.appendChild(doc.createTextNode(settings.host));
+			} else if (mirrorSettingElement.tagName().compare("primary_path") == 0) {
+				mirrorSettingNode.appendChild(doc.createTextNode(settings.path));
+			} else if (mirrorSettingElement.tagName().compare("primary_proto") == 0) {
+				mirrorSettingNode.appendChild(doc.createTextNode(settings.proto));
+			}
+			mirrorSettingNode = mirrorSettingNode.nextSibling();
+		}
+
+
 
 		/*-------------------------------- Save changes ------------------------------------*/
 
@@ -87,7 +132,6 @@ namespace helpers {
 			return false;
 		}
 		file.close();
-
 		return true;
 	}
 
