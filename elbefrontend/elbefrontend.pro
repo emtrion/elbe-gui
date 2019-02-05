@@ -31,7 +31,11 @@ SOURCES += main.cpp\
     helpers.cpp \
     newprojectwizard.cpp \
     newprojectwizardfirstpage.cpp \
-    newprojectwizarddefaultpage.cpp
+    newprojectwizarddefaultpage.cpp \
+    newxmldialog.cpp \
+    xmlfilehandler.cpp \
+    projectmanager.cpp \
+    projecthandler.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -39,10 +43,15 @@ HEADERS  += mainwindow.h \
     helpers.h \
     newprojectwizard.h \
     newprojectwizardfirstpage.h \
-    newprojectwizarddefaultpage.h
+    newprojectwizarddefaultpage.h \
+    newxmldialog.h \
+    xmlfilehandler.h \
+    projectmanager.h \
+    projecthandler.h
 
 FORMS    += mainwindow.ui \
-    newprojectwizard.ui
+    newprojectwizard.ui \
+    newxmldialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc

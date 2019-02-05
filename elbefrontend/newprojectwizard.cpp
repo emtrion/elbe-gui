@@ -9,6 +9,8 @@
 #include <QFileDialog>
 #include <QDebug>
 #include "newprojectwizardfirstpage.h"
+#include "projectmanager.h"
+#include "projecthandler.h"
 
 NewProjectWizard::NewProjectWizard(QWidget *parent) :
 QWizard(parent),
@@ -123,52 +125,25 @@ void NewProjectWizard::on_ProjectPathBrowsButton_clicked()
 
 void NewProjectWizard::on_NewProjectWizard_accepted()
 {
-	newProjectSettings.name = ui->nameEntry->text();
-	newProjectSettings.version = ui->versionEntry->text();
-	newProjectSettings.description = ui->descriptionEntry->text();
-	newProjectSettings.buildtype = ui->buildtypeDropDown->currentText();
-	newProjectSettings.suite = ui->suiteDropDown->currentText();
-	newProjectSettings.host = ui->hostEntry->text();
-	newProjectSettings.path = ui->pathEntry->text();
-	newProjectSettings.proto = ui->protoEntry->text();
+	ProjectHandler handler(ui->newProjectFirstPage->getNewProjectPath(), ui->newProjectFirstPage->getNewProjectName());
 
-	createProject();
+	ProjectManager *projectmanager = handler.getProjectmanager();
+	ProjectManager::projectSettings set;
+	set.name = ui->nameEntry->text();
+	set.version = ui->versionEntry->text();
+	set.description = ui->descriptionEntry->text();
+	set.buildtype = ui->buildtypeDropDown->currentText();
+	set.suite = ui->suiteDropDown->currentText();
+	set.host = ui->hostEntry->text();
+	set.path = ui->pathEntry->text();
+	set.proto = ui->protoEntry->text();
+
+	projectmanager->setNewProjectSettings(set);
+
+	handler.createProject();
 }
 
 
-
-bool NewProjectWizard::createProject()
-{ //creates the directory
-	QString newProjectPath = ui->newProjectFirstPage->getNewProjectPath();
-	QString newProjectName = ui->newProjectFirstPage->getNewProjectName();
-
-	if ( QDir().exists(newProjectPath) ) {
-		//no need to create an existing project
-	} else {
-		if ( !QDir().mkpath(newProjectPath) ) {//create directory and all parentdirectories necessary
-			//returns false when it couldn't create the directory
-			qDebug() << "problem while creating project directory";
-			return false;
-		}
-	}
-
-	QFile::copy(":/projectconfig.xml", newProjectPath+"/.project"); //copy conf-file template to directory
-	QFile confFile(newProjectPath+"/.project");
-	if ( !helpers::setProjectMetadata(newProjectName, newProjectPath, newProjectSettings) ) {//add project specific data to
-		confFile.remove(); //if an error occurs while creating ".project", it will be removed from the directory
-		qDebug() << "problem while creating config file";
-		return false;
-	}
-
-	if ( !QDir().mkpath(newProjectPath+"/src/") || !QDir().mkpath(newProjectPath+"/out/") ) {
-		//create directory for the elbe-XML file and the output from elbe
-		confFile.remove();//if an error occurs while creating "src" and "out", ".project" has to be removed
-		qDebug() << "problem while creating source and output directories";
-		return false;
-	}
-
-	return true;
-}
 
 void NewProjectWizard::on_ProjectPathEntry_textChanged(const QString &arg1)
 {
@@ -251,13 +226,13 @@ void NewProjectWizard::on_NewProjectWizard_currentIdChanged(int id)
 	}
 }
 
-void NewProjectWizard::on_buildtypeDropDown_currentIndexChanged(const QString &arg1)
-{//invoked when the selection in the dropdown is changed
-	this->newProjectSettings.buildtype = arg1;
-}
+//void NewProjectWizard::on_buildtypeDropDown_currentIndexChanged(const QString &arg1)
+//{//invoked when the selection in the dropdown is changed
+//	this->newProjectSettings.buildtype = arg1;
+//}
 
 
-void NewProjectWizard::on_suiteDropDown_currentIndexChanged(const QString &arg1)
-{//invoked when the selection in the dropdown is changed
-	this->newProjectSettings.suite = arg1;
-}
+//void NewProjectWizard::on_suiteDropDown_currentIndexChanged(const QString &arg1)
+//{//invoked when the selection in the dropdown is changed
+//	this->newProjectSettings.suite = arg1;
+//}

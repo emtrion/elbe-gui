@@ -6,6 +6,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QProcessEnvironment>
+#include <QRect>
+#include <QScreen>
 
 
 int main(int argc, char *argv[])
@@ -27,6 +29,8 @@ int main(int argc, char *argv[])
 
 
 
+	QRect screenrect = a.primaryScreen()->geometry();
+	w.move(screenrect.left(), screenrect.top());
     w.show();
 
     return a.exec();

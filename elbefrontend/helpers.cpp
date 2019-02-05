@@ -2,16 +2,21 @@
 #include <QString>
 #include <QProcessEnvironment>
 
+#include <QWidget>
+#include <QObject>
 #include <QtXml/QDomElement>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNodeList>
 #include <QDir>
 #include <QFile>
+#include <QApplication>
+#include <QMainWindow>
 #include <QDebug>
 #include "newprojectwizard.h"
 
 #include "helpers.h"
-
+#include "projectmanager.h"
+#include "mainwindow.h"
 
 
 
@@ -26,24 +31,29 @@ namespace helpers {
     }
 
 
-	bool setProjectMetadata(QString projectName, QString projectPath, NewProjectWizard::projectSettings settings)
+	QDomDocument parseXMLFile(QFile *file)
+	{
+		QDomDocument doc("configFile");
+
+		if (!file->open(QIODevice::ReadOnly)) {// Open file
+			qDebug() << "ERROR from "<<__func__<<" Cannot open file";
+		}
+
+		if (!doc.setContent(file)) {// Parse file
+			qDebug() << "ERROR from "<<__func__<<" Cannot parse the content";
+			file->close();
+		}
+		file->close();
+		return doc;
+	}
+
+	bool setProjectMetadata(QString projectName, QString projectPath)
 	{//adds metadata to the config file
 
 		/*----------------------------- create DOM from XML --------------------------*/
 
-		QDomDocument doc("configFile");
 		QFile file(projectPath+"/.project");
-		if (!file.open(QIODevice::ReadOnly)) {// Open file
-			qDebug() << "Cannot open file";
-			return false;
-		}
-
-		if (!doc.setContent(&file)) {// Parse file
-			qDebug() << "Cannot parse the content";
-			file.close();
-			return false;
-		}
-		file.close();
+		QDomDocument doc = helpers::parseXMLFile(&file);
 
 		/*------------------------------- Modify DOM ---------------------------------*/
 
@@ -57,14 +67,18 @@ namespace helpers {
 			if ( childElement.tagName().compare("projectname") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectName));
 			} else if ( childElement.tagName().compare("source_directory") == 0 ) {
-				childNode.appendChild(doc.createTextNode(projectPath+"/src/"));
+				childNode.appendChild(doc.createTextNode(projectPath+"src/"));
 			} else if ( childElement.tagName().compare("output_directory") == 0 ) {
-				childNode.appendChild(doc.createTextNode(projectPath+"/out/"));
+				childNode.appendChild(doc.createTextNode(projectPath+"out/"));
 			} else if (childElement.tagName().compare("project") == 0) {
 				projectSettingParentNode = childNode; //assign "project" to another node to access children
 			}
 			childNode = childNode.nextSibling();
 		}
+
+
+		ProjectManager *projectmanager = ProjectManager::getInstance();
+		ProjectManager::projectSettings settings = projectmanager->getNewProjectSettings();
 
 		QDomNode mirrorSettingParentNode;
 		QDomNode projectSettingNode = projectSettingParentNode.firstChild();
@@ -107,25 +121,41 @@ namespace helpers {
 
 		/*-------------------------------- Save changes ------------------------------------*/
 
-		QFileDevice::Permissions p = file.permissions(); //get permissions
-		file.setPermissions(QFileDevice::WriteUser | p); //add permission to write
-		if ( !file.open(QIODevice::Truncate | QIODevice::WriteOnly) ) {
-			qDebug() << "Cannot open file";
-			return false;
-		}
-		QByteArray xml = doc.toByteArray(); /*converts the DOM to its textual representation.
+		QByteArray xml = doc.toByteArray(4); /*converts the DOM to its textual representation.
 												Returns a QByteArray containing UTF-8-encoded data.
 												QByteArray always contains a zero-terminated string*/
-		if ( file.write(xml) < 0 ) {//check if write was successful
-			qDebug() << "Cannot write to file";
+		return saveXMLChanges(&file, xml);
+	}
+
+	bool saveXMLChanges(QFile *file, QByteArray byteArray)
+	{
+		QFileDevice::Permissions p = file->permissions(); //get permissions
+		file->setPermissions(QFileDevice::WriteUser | p); //add permission to write
+		if ( !file->open(QIODevice::Truncate | QIODevice::WriteOnly) ) {
+			qDebug() << "ERROR from "<<__func__<<" Cannot open file: "<<file->fileName();
 			return false;
 		}
-		file.close();
+
+		if ( file->write(byteArray) < 0 ) {//check if write was successful
+			qDebug() << "ERROR from "<<__func__<<" Cannot write to file";
+			return false;
+		}
+		file->close();
 		return true;
 	}
 
+	MainWindow* getMainWindow()
+	{
+		foreach( QWidget *widget, qApp->topLevelWidgets()){
+			if ( MainWindow *mainWindow = qobject_cast<MainWindow*>(widget)){
+				return mainWindow;
+			}
+		}
+		return NULL;
+	}
 
 //	void deleteFile(QString path){}
+
 }
 
 

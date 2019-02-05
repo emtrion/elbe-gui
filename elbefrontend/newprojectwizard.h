@@ -16,21 +16,10 @@ class NewProjectWizard : public QWizard
 		explicit NewProjectWizard(QWidget *parent = 0);
 		~NewProjectWizard();
 		void displayDefaultPath();
-		bool createProject();
 		bool validation();
 		void initSecondPageDefault();
 		void initThirdPageDefault();
-		struct projectSettings{
-				QString name;
-				QString version;
-				QString description;
-				QString buildtype;
-				QString host;
-				QString path;
-				QString proto;
-				QString suite;
-		};
-		projectSettings newProjectSettings;
+
 
 	private slots:
 		void on_DefaultPathButton_toggled(bool checked);
@@ -51,9 +40,9 @@ class NewProjectWizard : public QWizard
 
 		void on_NewProjectWizard_currentIdChanged(int id);
 
-		void on_buildtypeDropDown_currentIndexChanged(const QString &arg1);
+//		void on_buildtypeDropDown_currentIndexChanged(const QString &arg1);
 
-		void on_suiteDropDown_currentIndexChanged(const QString &arg1);
+//		void on_suiteDropDown_currentIndexChanged(const QString &arg1);
 
 	private:
 		Ui::NewProjectWizard *ui;

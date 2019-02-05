@@ -11,9 +11,10 @@
 
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
-
+#include "newxmldialog.h"
 #include "helpers.h"
 #include "newprojectwizard.h"
+
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -26,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->Terminal_Tab->layout()->addWidget(console);
 
     //add custom code editor to window
-    CodeEditor *editor = new CodeEditor();
+	editor = new CodeEditor();
     ui->Editor->layout()->addWidget(editor);
 
     //set starting size for upperSection
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	/*For testing and further implemtentations of other features related to the project structure.
 	 * The Structure represents the current default directory for testing: "/home/hico/elbefrontFilehandlingTestFolder"
 	 * It's going to be a project representation only in the future.
-	 * Something like this:  #projectname
+	 * Something like this:  #projectname   TODO
 	 *							#src
 	 *								<xml>
 	 *							#out
@@ -70,12 +71,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
-    //openDialog
-//    NewProjectDialog *dialog = new NewProjectDialog();
-//    dialog->show();
 
-	NewProjectWizard *wiz = new NewProjectWizard();
-	wiz->show();
 }
 
 
@@ -93,3 +89,23 @@ void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &po
 
 
 
+
+void MainWindow::on_actionNew_Project_triggered()
+{
+	NewProjectWizard *wiz = new NewProjectWizard();
+	wiz->show();
+}
+
+void MainWindow::on_actionNew_XML_triggered()
+{
+	NewXMLDialog *xml = new NewXMLDialog();
+	xml->show();
+}
+
+void MainWindow::displayFileInEditor(QString content)
+{
+	editor->setPlainText(content);
+}
+
+void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
+{}

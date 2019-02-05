@@ -1,0 +1,25 @@
+<ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					created="2009-05-20T08:50:56" revision="6"
+					xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
+	<project>
+		<name></name>
+		<version></version>
+		<description></description>
+		<buildtype></buildtype>
+		<mirror>
+			   <primary_host></primary_host>
+			   <primary_path></primary_path>
+			   <primary_proto></primary_proto>
+		</mirror>
+		<suite></suite>
+	</project>
+	<target>
+		<hostname></hostname>
+		<passwd></passwd>
+		<console></console>
+		<package></package>
+		<finetuning></finetuning>
+		<pkg-list></pkg-list>
+	</target>
+</ns0:RootFileSystem>
+
