@@ -74,7 +74,7 @@
         <widget class="QWidget" name="ChangingInformationSection" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QLabel" name="ErrorIcon">
+           <widget class="QLabel" name="Icon">
             <property name="enabled">
              <bool>true</bool>
             </property>

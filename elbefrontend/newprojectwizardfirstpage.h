@@ -3,6 +3,7 @@
 
 #include <QWizardPage>
 #include <QString>
+#include <QPixmap>
 #include "newprojectwizard.h"
 
 
@@ -36,6 +37,8 @@ class NewProjectWizardFirstPage : public QWizardPage
 		 Ui::NewProjectWizard *ui_pointer;
 		 QString newProjectPath;
 		 QString newProjectName;
+		 QPixmap yesIcon;
+		 QPixmap errorIcon;
 
 };
 

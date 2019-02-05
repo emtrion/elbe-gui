@@ -6,6 +6,9 @@
 
 NewProjectWizardFirstPage::NewProjectWizardFirstPage(){
 	this->ui_pointer = NULL;
+
+	yesIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
+	errorIcon = QPixmap(":/qss_icons/rc/ErrorIcon.png");
 }
 
 
@@ -34,20 +37,20 @@ bool NewProjectWizardFirstPage::isComplete() const
 
 	if ( name.isEmpty() ) {//check if projectname was sepcified
 		ui_pointer->Information->setText("Projectname must be specified.");
-		ui_pointer->ErrorIcon->show();
+		ui_pointer->Icon->setPixmap(errorIcon);
 		return false;
 	} else if ( path.isEmpty() ) {
 		ui_pointer->Information->setText("Path must be specified");
-		ui_pointer->ErrorIcon->show();
+		ui_pointer->Icon->setPixmap(errorIcon);
 		return false;
 	} else if ( QFile().exists(path+"/src") || QFile().exists(path+"/out") || QFile().exists(path+"/.project") ) {
 		//check if theres already an existing project in the directory
 		ui_pointer->Information->setText("There is already a project in this directory.");
-		ui_pointer->ErrorIcon->show();
+		ui_pointer->Icon->setPixmap(errorIcon);
 		return false;
 	} else {//if nothing of the above occured we are good to go
 		ui_pointer->Information->setText("Create project at selected directory");
-		ui_pointer->ErrorIcon->hide();
+		ui_pointer->Icon->setPixmap(yesIcon);
 	}
 
 	/*the only time these should be changed*/

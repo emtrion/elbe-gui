@@ -23,10 +23,10 @@ ui(new Ui::NewProjectWizard)
 	ui->Information->setText("Projectname must be specified");
 
 	//since it's not an option in Qt Designer, the "retainSize"-option must be set here
-	QSizePolicy sp = ui->ErrorIcon->sizePolicy();
+	QSizePolicy sp = ui->Icon->sizePolicy();
 	sp.setRetainSizeWhenHidden(true);
-	ui->ErrorIcon->setSizePolicy(sp);
-	ui->ErrorIcon->show();
+	ui->Icon->setSizePolicy(sp);
+	ui->Icon->show();
 
 	/*pass the ui to wizardpages where the userinput can be validated*/
 
