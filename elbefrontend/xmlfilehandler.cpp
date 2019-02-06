@@ -10,14 +10,21 @@
 
 XmlFileHandler::XmlFileHandler(QString path, QString name)
 {
-	QDir dir(path);
-	if ( dir.exists() ) {
+	if ( QDir(path).exists() ) {
 		filePath = path+"/"+name+".xml";
 	} else {
 		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
 	}
 }
 
+XmlFileHandler::XmlFileHandler(QString file)
+{//alternative Constructor with complete file path as parameter
+	if ( QFile(file).exists() ) {
+		this->filePath = file;
+	} else {
+		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
+	}
+}
 
 void XmlFileHandler::createFile()
 {
@@ -42,9 +49,11 @@ QString XmlFileHandler::openFile()
 	if ( file.exists() ) {
 		if ( !file.open(QIODevice::ReadWrite) ) {
 			qDebug() << "ERROR from "<<__func__<<" Could not open file";
+			return NULL;
 		}
 	} else {
 		qDebug() << "ERROR from "<<__func__<<" File does not exist";
+		return NULL;
 	}
 
 	content = QString::fromUtf8(file.readAll());
@@ -65,32 +74,44 @@ void XmlFileHandler::XMLautoGenerate()
 //	qDebug() << root.tagName();
 
 	QDomNode projectNode;
+	QDomNode targetNode;
 	QDomNode rootChildNode = root.firstChild();
 	while (!rootChildNode.isNull()) {
 		QDomElement childElement = rootChildNode.toElement();
-		qDebug() << childElement.tagName();
+//		qDebug() << childElement.tagName();
 		if ( childElement.tagName().compare("project") == 0 ) {
 			projectNode = rootChildNode;
+		} else if (childElement.tagName().compare("target") == 0) {
+			targetNode = rootChildNode;
 		}
 		rootChildNode = rootChildNode.nextSibling();
 	}
+
+//	qDebug() << set.name;
+//	qDebug() << set.version;
+//	qDebug() << set.description;
+//	qDebug() << set.buildtype;
+//	qDebug() << set.suite;
+//	qDebug() << set.host;
+//	qDebug() << set.path;
+//	qDebug() << set.proto;
 
 	QDomNode mirrorNode;
 	QDomNode projectChildNode = projectNode.firstChild();
 	while( !projectChildNode.isNull() ) {
 		QDomElement projectChildElement = projectChildNode.toElement();
 //		qDebug() << projectChildElement.tagName();
-		if (projectChildElement.tagName().compare("name")) {
+		if (projectChildElement.tagName().compare("name") == 0) {
 			projectChildNode.appendChild(doc.createTextNode(set.name));
-		} else if(projectChildElement.tagName().compare("version")){
+		} else if(projectChildElement.tagName().compare("version") == 0){
 			projectChildNode.appendChild(doc.createTextNode(set.version));
-		} else if(projectChildElement.tagName().compare("description")){
+		} else if(projectChildElement.tagName().compare("description") == 0){
 			projectChildNode.appendChild(doc.createTextNode(set.description));
-		} else if(projectChildElement.tagName().compare("buildtype")){
+		} else if(projectChildElement.tagName().compare("buildtype") == 0){
 			projectChildNode.appendChild(doc.createTextNode(set.buildtype));
-		} else if(projectChildElement.tagName().compare("suite")){
+		} else if(projectChildElement.tagName().compare("suite") == 0){
 			projectChildNode.appendChild(doc.createTextNode(set.suite));
-		} else if(projectChildElement.tagName().compare("mirror")){
+		} else if(projectChildElement.tagName().compare("mirror") == 0){
 			mirrorNode = projectChildNode;
 		}
 
@@ -101,17 +122,23 @@ void XmlFileHandler::XMLautoGenerate()
 	while ( !mirrorChildNode.isNull() ) {
 		QDomElement mirrorChildElement = mirrorChildNode.toElement();
 //		qDebug() << mirrorChildElement.tagName();
-		if(mirrorChildElement.tagName().compare("primary_host")){
+		if(mirrorChildElement.tagName().compare("primary_host") == 0){
 			mirrorChildNode.appendChild(doc.createTextNode(set.host));
-		} else if(mirrorChildElement.tagName().compare("primary_path")){
+		} else if(mirrorChildElement.tagName().compare("primary_path") == 0 ){
 			mirrorChildNode.appendChild(doc.createTextNode(set.path));
-		} else if(mirrorChildElement.tagName().compare("primary_proto")){
+		} else if(mirrorChildElement.tagName().compare("primary_proto") == 0){
 			mirrorChildNode.appendChild(doc.createTextNode(set.proto));
 		}
 
 		mirrorChildNode = mirrorChildNode.nextSibling();
 	}
 
+	/* Append empty values to nodes to avoid them being self-closing*/
+	QDomNode targetChildNode = targetNode.firstChild();
+	while (!targetChildNode.isNull()) {
+		targetChildNode.appendChild(doc.createTextNode(""));
+		targetChildNode = targetChildNode.nextSibling();
+	}
 
 
 	QByteArray xml = doc.toByteArray(4);
@@ -131,3 +158,4 @@ void XmlFileHandler::closeFile()
 {
 
 }
+

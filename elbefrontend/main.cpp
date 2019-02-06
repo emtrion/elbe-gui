@@ -8,6 +8,7 @@
 #include <QProcessEnvironment>
 #include <QRect>
 #include <QScreen>
+#include "projectmanager.h"
 
 
 int main(int argc, char *argv[])
@@ -27,10 +28,12 @@ int main(int argc, char *argv[])
         qApp->setStyleSheet(ts.readAll());
     }
 
-
-
 	QRect screenrect = a.primaryScreen()->geometry();
 	w.move(screenrect.left(), screenrect.top());
+
+	ProjectManager *pm = ProjectManager::getInstance();
+	pm->setProjectOpened(false);
+
     w.show();
 
     return a.exec();

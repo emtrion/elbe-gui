@@ -140,6 +140,15 @@ void NewProjectWizard::on_NewProjectWizard_accepted()
 
 	projectmanager->setNewProjectSettings(set);
 
+//	qDebug() << set.name;
+//	qDebug() << set.version;
+//	qDebug() << set.description;
+//	qDebug() << set.buildtype;
+//	qDebug() << set.suite;
+//	qDebug() << set.host;
+//	qDebug() << set.path;
+//	qDebug() << set.proto;
+
 	handler.createProject();
 }
 

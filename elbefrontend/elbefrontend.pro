@@ -35,7 +35,9 @@ SOURCES += main.cpp\
     newxmldialog.cpp \
     xmlfilehandler.cpp \
     projectmanager.cpp \
-    projecthandler.cpp
+    projecthandler.cpp \
+    openprojectdialog.cpp \
+    importfiledialog.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -47,11 +49,15 @@ HEADERS  += mainwindow.h \
     newxmldialog.h \
     xmlfilehandler.h \
     projectmanager.h \
-    projecthandler.h
+    projecthandler.h \
+    openprojectdialog.h \
+    importfiledialog.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
-    newxmldialog.ui
+    newxmldialog.ui \
+    openprojectdialog.ui \
+    importfiledialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc

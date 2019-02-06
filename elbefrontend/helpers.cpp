@@ -1,3 +1,5 @@
+
+
 #include <iostream>
 #include <QString>
 #include <QProcessEnvironment>
@@ -14,13 +16,15 @@
 #include <QDebug>
 #include "newprojectwizard.h"
 
-#include "helpers.h"
 #include "projectmanager.h"
 #include "mainwindow.h"
+
+#include "helpers.h"
 
 
 
 namespace helpers {
+
 	QString getHomeDirectoryFromSystem()
 	{//get the homedirectory
         QProcessEnvironment proEnv = QProcessEnvironment::systemEnvironment();

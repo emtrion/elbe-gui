@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>NewXMLDialog</class>
- <widget class="QDialog" name="NewXMLDialog">
+ <class>ImportFileDialog</class>
+ <widget class="QDialog" name="ImportFileDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New XML file</string>
+   <string>Dialog</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -22,7 +22,7 @@
      <property name="enabled">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <widget class="QLabel" name="Headline">
         <property name="font">
@@ -32,7 +32,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Choose Name and Directory</string>
+         <string>Import XML file</string>
         </property>
        </widget>
       </item>
@@ -69,11 +69,11 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="InputSection">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <layout class="QVBoxLayout" name="Labels">
           <item>
-           <widget class="QLabel" name="SourceFolderLabel">
+           <widget class="QLabel" name="ProjectLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -94,7 +94,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>File name:</string>
+             <string>File:</string>
             </property>
            </widget>
           </item>
@@ -128,6 +128,27 @@
             </property>
             <property name="text">
              <string/>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="Buttons">
+          <item>
+           <widget class="QPushButton" name="SpacingButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Space</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BrowseButton">
+            <property name="text">
+             <string>Browse...</string>
             </property>
            </widget>
           </item>
@@ -170,12 +191,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>NewXMLDialog</receiver>
+   <receiver>ImportFileDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>279</y>
+     <x>248</x>
+     <y>254</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -186,12 +207,12 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>NewXMLDialog</receiver>
+   <receiver>ImportFileDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>295</x>
-     <y>285</y>
+     <x>316</x>
+     <y>260</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

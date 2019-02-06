@@ -268,7 +268,6 @@
    </attribute>
    <addaction name="separator"/>
    <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="action_ChangeView"/>
   </widget>
@@ -279,11 +278,6 @@
    </property>
    <property name="shortcut">
     <string>Alt+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>&amp;Open</string>
    </property>
   </action>
   <action name="actionSave">
@@ -363,12 +357,22 @@
   </action>
   <action name="actionNew_Project">
    <property name="text">
-    <string>New Project</string>
+    <string>&amp;New Project</string>
    </property>
   </action>
   <action name="actionNew_XML">
    <property name="text">
-    <string>New XML</string>
+    <string>New &amp;XML</string>
+   </property>
+  </action>
+  <action name="actionOpen_Project">
+   <property name="text">
+    <string>Open Project</string>
+   </property>
+  </action>
+  <action name="actionOpen">
+   <property name="text">
+    <string>Open</string>
    </property>
   </action>
  </widget>

@@ -26,7 +26,9 @@ class ProjectManager
    QString projectPath; //path config file where all important data is saved
    QString srcPath;
    QString outPath;
+   QString projectName;
    projectSettings newProjectSettings;
+   bool projectOpened;
 
    /* Private constructor to prevent instancing. */
    ProjectManager();
@@ -44,6 +46,9 @@ class ProjectManager
 
    QString getSrcPath() const;
    QString getOutPath() const;
+   QString getProjectName() const;
+   bool getProjectOpened() const;
+   void setProjectOpened(bool value);
 };
 
 

@@ -17,8 +17,6 @@ class NewXMLDialog : public QDialog
 		~NewXMLDialog();
 		bool isValid();
 		void updateUI(bool valid);
-		QPixmap yesIcon;
-		QPixmap errorIcon;
 	private slots:
 //		void on_ProjectBrowseButton_clicked();
 
@@ -30,6 +28,8 @@ class NewXMLDialog : public QDialog
 		Ui::NewXMLDialog *ui;
 		QString fileName;
 		QString projectPath;
+		QPixmap yesIcon;
+		QPixmap errorIcon;
 };
 
 #endif // NEWXMLDIALOG_H

@@ -29,6 +29,10 @@ private slots:
 
 	void on_ProjektStructure_doubleClicked(const QModelIndex &index);
 
+	void on_actionOpen_triggered();
+
+	void on_actionImport_triggered();
+
 	private:
     Ui::MainWindow *ui;
 	CodeEditor *editor;

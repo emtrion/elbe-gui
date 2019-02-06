@@ -35,8 +35,7 @@ ui(new Ui::NewXMLDialog)
 
 //	qDebug() << projectPath;
 //	qDebug() << pm->getProjectPath();
-	ui->ProjectEntry->setText(pm->getProjectPath());
-	ui->ProjectEntry->setEnabled(true);
+	ui->ProjectEntry->setText(pm->getProjectName());
 
 	updateUI(isValid());
 }

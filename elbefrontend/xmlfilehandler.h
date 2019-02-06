@@ -8,6 +8,7 @@ class XmlFileHandler
 {
 	public:
 		XmlFileHandler(QString path, QString name);
+		XmlFileHandler(QString file);
 		QString openFile();
 		void createFile();
 		void XMLautoGenerate();

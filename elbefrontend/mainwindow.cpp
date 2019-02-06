@@ -8,12 +8,16 @@
 #include <QFileSystemModel>
 #include <QStandardItemModel>
 #include <QTreeWidgetItem>
+#include <QMessageBox>
+#include <QErrorMessage>
 
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
 #include "newxmldialog.h"
 #include "helpers.h"
 #include "newprojectwizard.h"
+#include "importfiledialog.h"
+#include "projectmanager.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -71,7 +75,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_actionNew_triggered()
 {
+	/*for testing will be removed later*/
 
+	ProjectManager *pm = ProjectManager::getInstance();
+	pm->update("/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project");
+	pm->setProjectOpened(true);
 }
 
 
@@ -98,8 +106,15 @@ void MainWindow::on_actionNew_Project_triggered()
 
 void MainWindow::on_actionNew_XML_triggered()
 {
-	NewXMLDialog *xml = new NewXMLDialog();
-	xml->show();
+	ProjectManager *pm = ProjectManager::getInstance();
+	if (pm->getProjectOpened()) {
+		NewXMLDialog *xml = new NewXMLDialog();
+		xml->show();
+	} else {
+		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
+		//show error message TODO
+	}
+
 }
 
 void MainWindow::displayFileInEditor(QString content)
@@ -109,3 +124,20 @@ void MainWindow::displayFileInEditor(QString content)
 
 void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
 {}
+
+void MainWindow::on_actionOpen_triggered()
+{
+
+}
+
+void MainWindow::on_actionImport_triggered()
+{
+	ProjectManager *pm = ProjectManager::getInstance();
+	if (pm->getProjectOpened()) {
+		ImportFileDialog *dialog = new ImportFileDialog();
+		dialog->show();
+	} else {
+		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
+		//show error message TODO
+	}
+}

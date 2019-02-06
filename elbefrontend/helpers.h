@@ -7,6 +7,7 @@
 #include <QDomDocument>
 #include <QFile>
 #include <QByteArray>
+#include <QPixmap>
 
 namespace helpers {
     QString getHomeDirectoryFromSystem();
@@ -15,6 +16,7 @@ namespace helpers {
 	MainWindow* getMainWindow();
 	QDomDocument parseXMLFile(QFile *file);
 	bool saveXMLChanges(QFile *file, QByteArray byteArray);
+	void setPixmaps();
 }
 
 #endif // HELPERS_H

@@ -51,6 +51,7 @@ void ProjectHandler::openProject(QString path)
 	path = "/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project";
 	/*-------------------------------------------------------------------------*/
 //	projectmanager->setProjectPath(path);
+	projectmanager->setProjectOpened(true);
 	projectmanager->update(path);
 }
 

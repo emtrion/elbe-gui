@@ -3,10 +3,10 @@
 #include "newprojectwizard.h"
 #include "newprojectwizardfirstpage.h"
 #include "ui_newprojectwizard.h"
+#include "helpers.h"
 
 NewProjectWizardFirstPage::NewProjectWizardFirstPage(){
 	this->ui_pointer = NULL;
-
 	yesIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
 	errorIcon = QPixmap(":/qss_icons/rc/ErrorIcon.png");
 }
