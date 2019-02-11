@@ -45,29 +45,23 @@
        <bool>false</bool>
       </property>
       <widget class="QWidget" name="UpperSection" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_5">
-        <property name="spacing">
-         <number>1</number>
-        </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="leftMargin">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="topMargin">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>1</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>1</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QSplitter" name="UpperSection_Splitter">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="handleWidth">
-           <number>2</number>
           </property>
           <widget class="QTreeView" name="ProjektStructure">
            <property name="enabled">
@@ -98,24 +92,18 @@
             <bool>true</bool>
            </attribute>
           </widget>
-          <widget class="QWidget" name="Editor" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_6">
-            <property name="spacing">
-             <number>1</number>
-            </property>
-            <property name="leftMargin">
-             <number>1</number>
-            </property>
-            <property name="topMargin">
-             <number>1</number>
-            </property>
-            <property name="rightMargin">
-             <number>1</number>
-            </property>
-            <property name="bottomMargin">
-             <number>1</number>
-            </property>
-           </layout>
+          <widget class="CodeEditor" name="Editor">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="lineWrapMode">
+            <enum>QPlainTextEdit::NoWrap</enum>
+           </property>
+           <property name="centerOnScroll">
+            <bool>true</bool>
+           </property>
           </widget>
           <widget class="QTreeView" name="FileStructure"/>
          </widget>
@@ -168,15 +156,18 @@
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
-             <widget class="QPlainTextEdit" name="MessageLog">
+             <widget class="QTextEdit" name="MessageLog">
+              <property name="font">
+               <font>
+                <family>Courier</family>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
               <property name="frameShape">
                <enum>QFrame::NoFrame</enum>
               </property>
               <property name="frameShadow">
                <enum>QFrame::Plain</enum>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -223,6 +214,8 @@
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="actionImport"/>
+    <addaction name="separator"/>
+    <addaction name="actionValidate"/>
     <addaction name="separator"/>
     <addaction name="actionExit_2"/>
    </widget>
@@ -372,11 +365,23 @@
   </action>
   <action name="actionOpen">
    <property name="text">
-    <string>Open</string>
+    <string>&amp;Open</string>
+   </property>
+  </action>
+  <action name="actionValidate">
+   <property name="text">
+    <string>&amp;Validate</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CodeEditor</class>
+   <extends>QPlainTextEdit</extends>
+   <header>codeeditor.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>ProjektStructure</tabstop>
   <tabstop>FileStructure</tabstop>

@@ -6,6 +6,7 @@
 
 QT       += core gui
 QT		 += xml
+QT		 += xmlpatterns
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -37,7 +38,10 @@ SOURCES += main.cpp\
     projectmanager.cpp \
     projecthandler.cpp \
     openprojectdialog.cpp \
-    importfiledialog.cpp
+    importfiledialog.cpp \
+    schemavalidation.cpp \
+    messagehandler.cpp \
+    highlighter.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -51,7 +55,10 @@ HEADERS  += mainwindow.h \
     projectmanager.h \
     projecthandler.h \
     openprojectdialog.h \
-    importfiledialog.h
+    importfiledialog.h \
+    schemavalidation.h \
+    messagehandler.h \
+    highlighter.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \

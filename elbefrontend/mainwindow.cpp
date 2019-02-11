@@ -18,6 +18,7 @@
 #include "newprojectwizard.h"
 #include "importfiledialog.h"
 #include "projectmanager.h"
+#include "schemavalidation.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -31,12 +32,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->Terminal_Tab->layout()->addWidget(console);
 
     //add custom code editor to window
-	editor = new CodeEditor();
-    ui->Editor->layout()->addWidget(editor);
+//	editor = new CodeEditor();
+//    ui->Editor->layout()->addWidget(editor);
 
     //set starting size for upperSection
-    ui->central_Splitter->setSizes(QList<int>()<<300<<50);
-    ui->UpperSection_Splitter->setSizes(QList<int>()<<50<<200<<40);
+
+//	ui->Editor->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	ui->Editor->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
+	ui->UpperSection_Splitter->setSizes(QList<int>()<<120<<500<<1);
 
 
 
@@ -119,7 +124,7 @@ void MainWindow::on_actionNew_XML_triggered()
 
 void MainWindow::displayFileInEditor(QString content)
 {
-	editor->setPlainText(content);
+	ui->Editor->setPlainText(content);
 }
 
 void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
@@ -140,4 +145,28 @@ void MainWindow::on_actionImport_triggered()
 		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
 		//show error message TODO
 	}
+}
+
+void MainWindow::on_actionValidate_triggered()
+{
+	SchemaValidation *sv = new SchemaValidation(ui->Editor->toPlainText());
+	sv->validate();
+}
+
+
+
+CodeEditor *MainWindow::getEditor() const
+{
+	return ui->Editor;
+}
+
+QTextEdit *MainWindow::getMessageLog() const
+{
+	return ui->MessageLog;
+}
+
+
+void MainWindow::on_Editor_textChanged()
+{
+	ui->Editor->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 }

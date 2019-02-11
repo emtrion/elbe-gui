@@ -18,8 +18,11 @@ public:
     ~MainWindow();
 	void displayFileInEditor(QString content);
 
-private slots:
-    void on_actionNew_triggered();
+	CodeEditor *getEditor() const;
+	QTextEdit *getMessageLog() const;
+
+	private slots:
+	void on_actionNew_triggered();
 
 	void on_ProjektStructure_customContextMenuRequested(const QPoint &pos);
 
@@ -33,9 +36,13 @@ private slots:
 
 	void on_actionImport_triggered();
 
+	void on_actionValidate_triggered();
+
+	void on_Editor_textChanged();
+
 	private:
     Ui::MainWindow *ui;
-	CodeEditor *editor;
+//	CodeEditor *editor;
 };
 
 #endif // MAINWINDOW_H

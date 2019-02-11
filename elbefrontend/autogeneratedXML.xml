@@ -15,6 +15,7 @@
 	</project>
 	<target>
 		<hostname></hostname>
+		<domain></domain>
 		<passwd></passwd>
 		<console></console>
 		<package></package>

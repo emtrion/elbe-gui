@@ -1,11 +1,16 @@
 
 #include <QtWidgets>
 #include "codeeditor.h"
+#include <QFontMetrics>
 
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
+
+	const int tabStop = 4;
+	QFontMetrics metrics(this->font());
+	this->setTabStopDistance(tabStop * metrics.width(' '));
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
@@ -124,3 +129,5 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 
     }
 }
+
+
