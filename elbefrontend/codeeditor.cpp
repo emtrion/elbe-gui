@@ -3,21 +3,26 @@
 #include "codeeditor.h"
 #include <QFontMetrics>
 
+#include "highlighter.h"
+
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 {
     lineNumberArea = new LineNumberArea(this);
 
+//	this->font.setFixedPitch(true);
 	const int tabStop = 4;
 	QFontMetrics metrics(this->font());
 	this->setTabStopDistance(tabStop * metrics.width(' '));
 
+	highlighter = new Highlighter(this->document());
+
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
     connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumberArea(QRect,int)));
-    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
+//    connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
     updateLineNumberAreaWidth(0);
-    highlightCurrentLine();
+//    highlightCurrentLine();
 }
 
 
@@ -94,7 +99,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     QPainter painter(lineNumberArea);
 
     QColor color;
-    color.setNamedColor("#19232D");
+	color.setNamedColor("#404244");
     painter.fillRect(event->rect(), QColor(color));
 
     QTextBlock block = firstVisibleBlock();

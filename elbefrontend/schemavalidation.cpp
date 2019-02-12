@@ -72,11 +72,17 @@ void SchemaValidation::validate()
 
 void SchemaValidation::displayValidationMessage(bool errorOccured)
 {
+	QColor color;
 	QTextEdit *messageLog = mainwindow->getMessageLog();
 	if ( errorOccured ){
+		color.setNamedColor("#d30102");
+		messageLog->setTextColor(color);
 		messageLog->setText(messageHandler.statusMessage());
 	} else {
-		messageLog->setText("validation successful");
+
+		color.setNamedColor("#5f8700");
+		messageLog->setTextColor(color);
+		messageLog->setPlainText("validation successful");
 	}
 }
 

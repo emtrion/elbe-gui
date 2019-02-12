@@ -3,6 +3,7 @@
 
 #include <QPlainTextEdit>
 #include <QObject>
+#include "highlighter.h"
 
 class QPaintEvent;
 class QResizeEvent;
@@ -33,6 +34,7 @@ private slots:
 
 private:
     QWidget *lineNumberArea;
+	Highlighter *highlighter;
 };
 
 

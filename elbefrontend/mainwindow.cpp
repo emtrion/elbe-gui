@@ -37,9 +37,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     //set starting size for upperSection
 
-//	ui->Editor->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	ui->Editor->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
 	ui->UpperSection_Splitter->setSizes(QList<int>()<<120<<500<<1);
 

@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>elbeFrontend</string>
   </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <property name="spacing">
@@ -39,7 +42,7 @@
        <enum>Qt::Vertical</enum>
       </property>
       <property name="handleWidth">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="childrenCollapsible">
        <bool>false</bool>
@@ -62,6 +65,9 @@
          <widget class="QSplitter" name="UpperSection_Splitter">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="handleWidth">
+           <number>0</number>
           </property>
           <widget class="QTreeView" name="ProjektStructure">
            <property name="enabled">
@@ -93,10 +99,10 @@
            </attribute>
           </widget>
           <widget class="CodeEditor" name="Editor">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
+           <property name="styleSheet">
+            <string notr="true">CodeEditor{
+	color:  #d6cf9a;
+}</string>
            </property>
            <property name="lineWrapMode">
             <enum>QPlainTextEdit::NoWrap</enum>
@@ -144,9 +150,6 @@
           <property name="currentIndex">
            <number>0</number>
           </property>
-          <property name="elideMode">
-           <enum>Qt::ElideLeft</enum>
-          </property>
           <property name="usesScrollButtons">
            <bool>false</bool>
           </property>
@@ -159,8 +162,11 @@
              <widget class="QTextEdit" name="MessageLog">
               <property name="font">
                <font>
-                <family>Courier</family>
+                <family>Noto Sans</family>
                 <pointsize>10</pointsize>
+                <weight>50</weight>
+                <italic>false</italic>
+                <bold>false</bold>
                </font>
               </property>
               <property name="frameShape">
@@ -168,6 +174,12 @@
               </property>
               <property name="frameShadow">
                <enum>QFrame::Plain</enum>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>false</bool>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
