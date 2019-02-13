@@ -24,7 +24,7 @@ QString ProjectManager::getProjectName() const
 	return projectName;
 }
 
-bool ProjectManager::getProjectOpened() const
+bool ProjectManager::isProjectOpened() const
 {
 	return projectOpened;
 }
@@ -32,6 +32,16 @@ bool ProjectManager::getProjectOpened() const
 void ProjectManager::setProjectOpened(bool value)
 {
 	projectOpened = value;
+}
+
+QString ProjectManager::getProjectDirectory() const
+{
+	return projectDirectory;
+}
+
+void ProjectManager::setProjectDirectory(const QString &value)
+{
+	projectDirectory = value;
 }
 
 ProjectManager::ProjectManager()
@@ -59,7 +69,18 @@ void ProjectManager::setProjectPath(const QString &value)
 
 void ProjectManager::update(QString path /*should only get path which directs to .project file*/)
 {
+	if ( path.isNull() ) {
+		projectPath = QString();
+		srcPath = QString();
+		outPath = QString();
+		projectName = QString();
+		newProjectSettings = ProjectManager::emptyStruct;
+		return;
+	}
+
 	this->projectPath = path;
+	this->projectDirectory = path.section("/", 0, -2);
+
 	QFile file(path);
 	QDomDocument doc = helpers::parseXMLFile(&file);
 	QDomNode root = doc.firstChildElement("projectDescription");

@@ -8,8 +8,10 @@
 class ProjectHandler
 {
 	public:
+		ProjectHandler();
 		ProjectHandler(QString path, QString name);
 		void createProject();
+		void closeProject();
 		void openProject(QString path);
 
 		ProjectManager *getProjectmanager() const;

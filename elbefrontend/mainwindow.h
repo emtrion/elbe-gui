@@ -20,6 +20,7 @@ public:
 
 	CodeEditor *getEditor() const;
 	QTextEdit *getMessageLog() const;
+	void updateProjectStructure();
 
 	private slots:
 	void on_actionNew_triggered();
@@ -39,6 +40,8 @@ public:
 	void on_actionValidate_triggered();
 
 	void on_Editor_textChanged();
+
+	void on_actionClose_triggered();
 
 	private:
     Ui::MainWindow *ui;

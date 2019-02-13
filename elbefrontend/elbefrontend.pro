@@ -37,7 +37,6 @@ SOURCES += main.cpp\
     xmlfilehandler.cpp \
     projectmanager.cpp \
     projecthandler.cpp \
-    openprojectdialog.cpp \
     importfiledialog.cpp \
     schemavalidation.cpp \
     messagehandler.cpp \
@@ -54,7 +53,6 @@ HEADERS  += mainwindow.h \
     xmlfilehandler.h \
     projectmanager.h \
     projecthandler.h \
-    openprojectdialog.h \
     importfiledialog.h \
     schemavalidation.h \
     messagehandler.h \
@@ -63,7 +61,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
     newxmldialog.ui \
-    openprojectdialog.ui \
     importfiledialog.ui
 
 RESOURCES += style.qrc \

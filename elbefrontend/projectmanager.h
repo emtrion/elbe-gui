@@ -23,6 +23,7 @@ class ProjectManager
 	private:
    /* Here will be the instance stored. */
    static ProjectManager* instance;
+   QString projectDirectory;
    QString projectPath; //path config file where all important data is saved
    QString srcPath;
    QString outPath;
@@ -30,6 +31,7 @@ class ProjectManager
    projectSettings newProjectSettings;
    bool projectOpened;
 
+   projectSettings emptyStruct;
    /* Private constructor to prevent instancing. */
    ProjectManager();
 
@@ -47,8 +49,10 @@ class ProjectManager
    QString getSrcPath() const;
    QString getOutPath() const;
    QString getProjectName() const;
-   bool getProjectOpened() const;
+   bool isProjectOpened() const;
    void setProjectOpened(bool value);
+   QString getProjectDirectory() const;
+   void setProjectDirectory(const QString &value);
 };
 
 

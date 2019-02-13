@@ -28,7 +28,7 @@ ui(new Ui::NewXMLDialog)
 	ProjectManager *pm = ProjectManager::getInstance();
 
 	/*for testing only. Shall be removed later*/
-	pm->update("/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project");
+//	pm->update("/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project");
 
 	projectPath = pm->getSrcPath();
 

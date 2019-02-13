@@ -6,6 +6,12 @@
 
 #include "helpers.h"
 
+
+ProjectHandler::ProjectHandler()
+{
+	this->projectmanager = ProjectManager::getInstance();
+}
+
 ProjectHandler::ProjectHandler(QString path, QString name)
 {
 	this->newProjectPath = path;
@@ -41,6 +47,7 @@ void ProjectHandler::createProject()
 		qDebug() << "ERROR from "<<__func__<<" problem while creating source and output directories";
 		return;
 	}
+
 	QFileInfo fi(confFile);
 	openProject(fi.absoluteFilePath());
 }
@@ -48,11 +55,24 @@ void ProjectHandler::createProject()
 void ProjectHandler::openProject(QString path)
 {
 	/*--------- Hard coded path. Should be current project later TODO ---------*/
-	path = "/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project";
+//	path = "/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project";
 	/*-------------------------------------------------------------------------*/
 //	projectmanager->setProjectPath(path);
+
 	projectmanager->setProjectOpened(true);
 	projectmanager->update(path);
+
+	MainWindow *mw = helpers::getMainWindow();
+	mw->updateProjectStructure();
+
+	qDebug() << "ProjectOpened: " << path;
+}
+
+
+void ProjectHandler::closeProject()
+{
+	projectmanager->update(QString()); //call update() with a null-string -> all properties of ProjectManager are reset
+	projectmanager->setProjectOpened(false);
 }
 
 ProjectManager *ProjectHandler::getProjectmanager() const

@@ -50,7 +50,7 @@ const QRegExp &regex, const QString &text)
 
 void Highlighter::setRegexes()
 {
-	m_xmlElementRegex.setPattern("<[\\s]*[/]?[\\s]*([^\\n]\\w*)(?=[\\s/>])");
+	m_xmlElementRegex.setPattern("<[\\s]*[/]?[\\s]*([^\\n][\\w\:\-]*)(?=[\\s/>])");
 	m_xmlAttributeRegex.setPattern("\\w+(?=\\=)");
 	m_xmlValueRegex.setPattern("\"[^\\n\"]+\"(?=[\\s/>])");
 	m_xmlCommentRegex.setPattern("<!--[^\\n]*-->");
