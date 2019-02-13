@@ -21,6 +21,7 @@
 #include "projectmanager.h"
 #include "schemavalidation.h"
 #include "projecthandler.h"
+#include "xmlfilehandler.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -89,14 +90,19 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
 {
 	QMenu *menu = new QMenu;
-	QModelIndex index = ui->ProjektStructure->currentIndex();
-//	QString itemToDelete = QFileSystemModel().filePath(index);
-//	qDebug() << "Delete: "+itemToDelete;
+	closeAction = new QAction("&Close", menu);
+	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
 
-//	menu->addAction(QString("Delete"), this, SLOT(helpers::deleteFile(itemToDelete)));
+	closeAction->setEnabled(false);
+	menu->addAction(closeAction);
 	menu->exec(QCursor::pos());
 }
 
+
+void MainWindow::on_ProjektStructure_ContextMenu_closeAction_triggered()
+{
+	qDebug() << "closed";
+}
 
 
 
@@ -125,7 +131,18 @@ void MainWindow::displayFileInEditor(QString content)
 }
 
 void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
-{}
+{
+	QString path = model->getItemPath(index);
+	QFileInfo item(path);
+	if ( item.isFile() ) {
+		XmlFileHandler *handler = new XmlFileHandler(model->getItemPath(index));
+		handler->openFile();
+	} else {
+		return;
+	}
+
+}
+
 
 void MainWindow::on_actionOpen_triggered()
 {
@@ -174,6 +191,12 @@ QTextEdit *MainWindow::getMessageLog() const
 	return ui->MessageLog;
 }
 
+QAction *MainWindow::getActionClose() const
+{
+	return ui->actionClose;
+}
+
+
 
 void MainWindow::on_Editor_textChanged()
 {
@@ -188,36 +211,15 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::updateProjectStructure()
 {
-	ProjectManager *mg = ProjectManager::getInstance();
-	if ( !mg->isProjectOpened() ) {
-//		ui->ProjektStructure->clear();
-	}
-
-	QFileSystemModel *model = new QFileSystemModel;
-	model->setRootPath(mg->getProjectDirectory());
+	model = new ProjectItemModel();
+	ProjectManager *pm = ProjectManager::getInstance();
+	if ( pm->isProjectOpened() ) {
+	model->clear();
+	ui->ProjektStructure->setModel(model);
+} else {
+	model->setProjectDetails(pm->getProjectDirectory(), pm->getProjectName());
 
 	ui->ProjektStructure->setModel(model);
-
-	for (int i = 1; i < model->columnCount(); ++i) {
-		ui->ProjektStructure->hideColumn(i);
-	}
-
-	ui->ProjektStructure->setRootIndex(model->index(model->rootPath()));
-
-
-
-//	QTreeWidgetItem *item = new QTreeWidgetItem(ui->ProjektStructure);
-//	item->setText(0, mg->getProjectName());
-
-//	QTreeWidgetItem *child = new QTreeWidgetItem(item);
-//	child->setText(0, "src");
-//	item->addChild(child);
-
-//	ui->ProjektStructure->setColumnCount(1);
-//	ui->ProjektStructure->addTopLevelItem(item);
-//	QList<QTreeWidgetItem *> items;
-//	for (int i = 0; i < 10; ++i)
-//	items.append(new QTreeWidgetItem((QTreeWidget*)0, QStringList(QString("item: %1").arg(i))));
-//	ui->ProjektStructure->addTopLevelItems(items);
-
+	ui->ProjektStructure->header()->hide();
+}
 }

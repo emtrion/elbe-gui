@@ -19,11 +19,18 @@ XmlFileHandler::XmlFileHandler(QString path, QString name)
 
 XmlFileHandler::XmlFileHandler(QString file)
 {//alternative Constructor with complete file path as parameter
-	if ( QFile(file).exists() ) {
-		this->filePath = file;
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
+	if ( !file.isNull() ) {
+		if ( QFile(file).exists() ) {
+			this->filePath = file;
+		} else {
+			qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
+		}
 	}
+}
+
+XmlFileHandler::~XmlFileHandler()
+{
+
 }
 
 void XmlFileHandler::createFile()
@@ -42,23 +49,27 @@ void XmlFileHandler::createFile()
 	file.close();
 }
 
-QString XmlFileHandler::openFile()
+void XmlFileHandler::openFile()
 {
 	QFile file(filePath);
 	QString content;
 	if ( file.exists() ) {
 		if ( !file.open(QIODevice::ReadWrite) ) {
 			qDebug() << "ERROR from "<<__func__<<" Could not open file";
-			return NULL;
+			return;
 		}
 	} else {
 		qDebug() << "ERROR from "<<__func__<<" File does not exist";
-		return NULL;
+		return;
 	}
 
 	content = QString::fromUtf8(file.readAll());
 	file.close();
-	return content;
+
+	MainWindow *mw = helpers::getMainWindow();
+	mw->getEditor()->setPlainText(content);
+
+	return;
 }
 
 void XmlFileHandler::XMLautoGenerate()

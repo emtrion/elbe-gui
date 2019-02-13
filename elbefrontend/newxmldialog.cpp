@@ -109,15 +109,10 @@ void NewXMLDialog::on_FileNameEntry_textChanged(const QString &arg1)
 
 void NewXMLDialog::on_buttonBox_accepted()
 {
-	QString content;
-
 	XmlFileHandler *fh = new XmlFileHandler(projectPath, fileName);
 	fh->createFile();
 	fh->XMLautoGenerate();
-	content = fh->openFile();
-
-	MainWindow *mw = helpers::getMainWindow();
-	mw->displayFileInEditor(content);
+	fh->openFile();
 }
 
 

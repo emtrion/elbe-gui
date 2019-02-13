@@ -78,10 +78,7 @@ void ImportFileDialog::on_buttonBox_accepted()
 	}
 //	qDebug() << "Name: "<<fileName << "Path: "<<filePath << "Target: " << target;
 	XmlFileHandler *handler = new XmlFileHandler(target);
-	QString content = handler->openFile();
-
-	MainWindow *mw = helpers::getMainWindow();
-	mw->displayFileInEditor(content);
+	handler->openFile();
 }
 
 void ImportFileDialog::chopNameFromPath()

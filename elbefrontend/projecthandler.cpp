@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QString>
 #include <QDebug>
+#include <QAction>
 
 #include "helpers.h"
 
@@ -54,25 +55,33 @@ void ProjectHandler::createProject()
 
 void ProjectHandler::openProject(QString path)
 {
-	/*--------- Hard coded path. Should be current project later TODO ---------*/
-//	path = "/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project";
-	/*-------------------------------------------------------------------------*/
-//	projectmanager->setProjectPath(path);
+	if ( projectmanager->isProjectOpened() ) {
+		//close open project before opening a new one
+		closeProject();
+	}
 
-	projectmanager->setProjectOpened(true);
 	projectmanager->update(path);
-
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
+	projectmanager->setProjectOpened(true);
+	mw->getActionClose()->setEnabled(true);
 
-	qDebug() << "ProjectOpened: " << path;
+//	qDebug() << "ProjectOpened: " << path;
 }
 
 
 void ProjectHandler::closeProject()
 {
+	if ( !projectmanager->isProjectOpened() ) {
+		//no project to close...
+		return;
+	}
 	projectmanager->update(QString()); //call update() with a null-string -> all properties of ProjectManager are reset
+	MainWindow *mw = helpers::getMainWindow();
+	mw->updateProjectStructure();
+	mw->getEditor()->clear();
 	projectmanager->setProjectOpened(false);
+	mw->getActionClose()->setEnabled(false);
 }
 
 ProjectManager *ProjectHandler::getProjectmanager() const

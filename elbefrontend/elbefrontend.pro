@@ -40,7 +40,8 @@ SOURCES += main.cpp\
     importfiledialog.cpp \
     schemavalidation.cpp \
     messagehandler.cpp \
-    highlighter.cpp
+    highlighter.cpp \
+    projectitemmodel.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -56,7 +57,8 @@ HEADERS  += mainwindow.h \
     importfiledialog.h \
     schemavalidation.h \
     messagehandler.h \
-    highlighter.h
+    highlighter.h \
+    projectitemmodel.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \

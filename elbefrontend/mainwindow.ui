@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>962</width>
-    <height>644</height>
+    <width>1019</width>
+    <height>669</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,12 +17,21 @@
    <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <property name="spacing">
      <number>0</number>
     </property>
     <property name="sizeConstraint">
      <enum>QLayout::SetNoConstraint</enum>
+    </property>
+    <property name="leftMargin">
+     <number>0</number>
     </property>
     <property name="topMargin">
      <number>0</number>
@@ -198,7 +207,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>962</width>
+     <width>1019</width>
      <height>23</height>
     </rect>
    </property>
@@ -372,6 +381,9 @@
    </property>
   </action>
   <action name="actionOpen">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>&amp;Open</string>
    </property>
@@ -382,8 +394,11 @@
    </property>
   </action>
   <action name="actionClose">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>Close</string>
+    <string>&amp;Close</string>
    </property>
   </action>
  </widget>

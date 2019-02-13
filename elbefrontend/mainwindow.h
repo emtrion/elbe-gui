@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include "codeeditor.h"
+#include "projectitemmodel.h"
+#include <QAction>
 
 
 namespace Ui {
@@ -20,7 +22,9 @@ public:
 
 	CodeEditor *getEditor() const;
 	QTextEdit *getMessageLog() const;
+	QAction *getActionClose() const;
 	void updateProjectStructure();
+	QAction *closeAction;
 
 	private slots:
 	void on_actionNew_triggered();
@@ -43,9 +47,12 @@ public:
 
 	void on_actionClose_triggered();
 
+	void on_ProjektStructure_ContextMenu_closeAction_triggered();
+
 	private:
     Ui::MainWindow *ui;
 //	CodeEditor *editor;
+	ProjectItemModel *model;
 };
 
 #endif // MAINWINDOW_H

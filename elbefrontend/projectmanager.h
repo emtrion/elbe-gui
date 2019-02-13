@@ -29,7 +29,7 @@ class ProjectManager
    QString outPath;
    QString projectName;
    projectSettings newProjectSettings;
-   bool projectOpened;
+   bool projectOpened = false;
 
    projectSettings emptyStruct;
    /* Private constructor to prevent instancing. */
