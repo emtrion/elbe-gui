@@ -10,18 +10,21 @@
 
 XmlFileHandler::XmlFileHandler()
 {
-
+	this->filemanager = XmlFileManager::getInstance();
 }
 
 XmlFileHandler::XmlFileHandler(QString path, QString name)
 {
 	if ( QDir(path).exists() ) {
-		filePath = path+"/"+name+".xml";
+		filePath = path+name+".xml";
 	} else {
 		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
 	}
 
-	this->fileName = name;
+	this->fileName = name+".xml";
+	this->filemanager = XmlFileManager::getInstance();
+
+	qDebug() << fileName << filePath;
 }
 
 XmlFileHandler::XmlFileHandler(QString file)
@@ -35,6 +38,7 @@ XmlFileHandler::XmlFileHandler(QString file)
 	}
 
 	this->fileName = file.section("/", -1);
+	this->filemanager = XmlFileManager::getInstance();
 }
 
 XmlFileHandler::~XmlFileHandler()
@@ -56,6 +60,9 @@ void XmlFileHandler::createFile()
 	}
 
 	file.close();
+
+	XMLautoGenerate();
+	openFile();
 }
 
 void XmlFileHandler::openFile()
@@ -81,6 +88,8 @@ void XmlFileHandler::openFile()
 	mw->getEditor()->setLineNumberAreaVisible(true);
 	mw->setEditorTabVisible(true);
 	mw->setOpenFileNameLabelText(fileName);
+
+	filemanager->setCurrentFilePath(filePath);
 
 	return;
 }
@@ -177,8 +186,25 @@ void XmlFileHandler::saveFile()
 	MainWindow *mw = helpers::getMainWindow();
 
 	QByteArray content = mw->getEditor()->toPlainText().toUtf8();
-	QFile file;
+	QFile file(filemanager->getCurrentFilePath());
+
+	QFileInfo info(file);
+	qDebug() << info.filePath();
+
+	if ( file.open(QIODevice::ReadWrite | QIODevice::Truncate) ) {
+		if ( file.write(content) < 0 ) {//check if write was successful
+			qDebug() << "ERROR from "<<__func__<<" Cannot write to file";
+		}
+	} else {
+		qDebug() << "ERROR from "<<__func__<<" Cannot open file";
+		return;
+	}
+	file.close();
+
+	filemanager->setIsSaved(true);
 }
+
+
 
 
 void XmlFileHandler::closeFile()

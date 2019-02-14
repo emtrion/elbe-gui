@@ -3,6 +3,7 @@
 
 #include <QString>
 
+#include "xmlfilemanager.h"
 
 class XmlFileHandler
 {
@@ -20,5 +21,7 @@ class XmlFileHandler
 	private:
 		QString filePath;
 		QString fileName;
+
+		XmlFileManager *filemanager;
 };
 #endif // XMLFILEHANDLER_H

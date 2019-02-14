@@ -104,7 +104,7 @@
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="QWidget" name="">
+          <widget class="QWidget" name="layoutWidget">
            <layout class="QVBoxLayout" name="EditorArea">
             <property name="spacing">
              <number>0</number>
@@ -164,17 +164,20 @@
       </widget>
       <widget class="QWidget" name="LowerSection" native="true">
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
         <property name="leftMargin">
          <number>0</number>
         </property>
         <property name="topMargin">
-         <number>9</number>
+         <number>0</number>
         </property>
         <property name="rightMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="bottomMargin">
-         <number>2</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QTabWidget" name="DisplaView">
@@ -317,7 +320,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="actionNew"/>
    <addaction name="actionSave"/>
@@ -337,6 +340,9 @@
   <action name="actionSave">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string notr="true">Ctrl+S</string>
    </property>
   </action>
   <action name="actionSave_As">

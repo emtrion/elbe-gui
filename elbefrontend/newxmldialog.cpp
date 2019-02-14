@@ -111,8 +111,8 @@ void NewXMLDialog::on_buttonBox_accepted()
 {
 	XmlFileHandler *fh = new XmlFileHandler(projectPath, fileName);
 	fh->createFile();
-	fh->XMLautoGenerate();
-	fh->openFile();
+//	fh->XMLautoGenerate();
+//	fh->openFile();
 }
 
 

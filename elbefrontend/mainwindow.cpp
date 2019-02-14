@@ -233,3 +233,10 @@ void MainWindow::on_EditorClosButton_clicked()
 	XmlFileHandler *handler = new XmlFileHandler();
 	handler->closeFile();
 }
+
+void MainWindow::on_actionSave_triggered()
+{
+	qDebug() << __func__;
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->saveFile();
+}

@@ -54,6 +54,8 @@ public:
 
 	void on_EditorClosButton_clicked();
 
+	void on_actionSave_triggered();
+
 	private:
     Ui::MainWindow *ui;
 //	CodeEditor *editor;
