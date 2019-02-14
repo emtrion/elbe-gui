@@ -23,6 +23,7 @@ public:
 
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+	void setLineNumberAreaVisible(bool visible);
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

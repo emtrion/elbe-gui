@@ -8,6 +8,11 @@
 #include "helpers.h"
 #include "projectmanager.h"
 
+XmlFileHandler::XmlFileHandler()
+{
+
+}
+
 XmlFileHandler::XmlFileHandler(QString path, QString name)
 {
 	if ( QDir(path).exists() ) {
@@ -15,6 +20,8 @@ XmlFileHandler::XmlFileHandler(QString path, QString name)
 	} else {
 		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
 	}
+
+	this->fileName = name;
 }
 
 XmlFileHandler::XmlFileHandler(QString file)
@@ -26,6 +33,8 @@ XmlFileHandler::XmlFileHandler(QString file)
 			qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
 		}
 	}
+
+	this->fileName = file.section("/", -1);
 }
 
 XmlFileHandler::~XmlFileHandler()
@@ -68,6 +77,10 @@ void XmlFileHandler::openFile()
 
 	MainWindow *mw = helpers::getMainWindow();
 	mw->getEditor()->setPlainText(content);
+	mw->getEditor()->setEnabled(true);
+	mw->getEditor()->setLineNumberAreaVisible(true);
+	mw->setEditorTabVisible(true);
+	mw->setOpenFileNameLabelText(fileName);
 
 	return;
 }
@@ -161,12 +174,22 @@ void XmlFileHandler::XMLautoGenerate()
 
 void XmlFileHandler::saveFile()
 {
+	MainWindow *mw = helpers::getMainWindow();
 
+	QByteArray content = mw->getEditor()->toPlainText().toUtf8();
+	QFile file;
 }
 
 
 void XmlFileHandler::closeFile()
 {
-
+	//if saved:
+	MainWindow *mw = helpers::getMainWindow();
+	mw->getEditor()->clear();
+	mw->getEditor()->setEnabled(false);
+	mw->getEditor()->setLineNumberAreaVisible(false);
+	mw->setEditorTabVisible(false);
+	//if not show dialog to save
+	return;
 }
 

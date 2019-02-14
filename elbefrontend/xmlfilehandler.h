@@ -7,6 +7,7 @@
 class XmlFileHandler
 {
 	public:
+		XmlFileHandler();
 		XmlFileHandler(QString path, QString name);
 		XmlFileHandler(QString file);
 		~XmlFileHandler();
@@ -18,5 +19,6 @@ class XmlFileHandler
 
 	private:
 		QString filePath;
+		QString fileName;
 };
 #endif // XMLFILEHANDLER_H

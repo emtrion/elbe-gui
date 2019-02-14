@@ -23,6 +23,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 
     updateLineNumberAreaWidth(0);
 //    highlightCurrentLine();
+
 }
 
 
@@ -117,7 +118,8 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
            //lineNumberHighlighting
            int selectedBlock = cursor.blockNumber();
            if(selectedBlock == blockNumber){
-               painter.setPen(Qt::red);
+			   color.setNamedColor("#C3B541"); //yellowish
+			   painter.setPen(color);
            } else {
                painter.setPen(Qt::gray);
            }
@@ -134,5 +136,16 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
 
     }
 }
+
+
+void CodeEditor::setLineNumberAreaVisible(bool visible)
+{
+	if ( visible ) {
+		lineNumberArea->show();
+	} else {
+		lineNumberArea->hide();
+	}
+}
+
 
 

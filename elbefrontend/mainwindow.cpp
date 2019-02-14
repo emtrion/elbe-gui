@@ -34,38 +34,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     console->setContentsMargins(0, 0, 0, 0);
     ui->Terminal_Tab->layout()->addWidget(console);
 
-    //add custom code editor to window
-//	editor = new CodeEditor();
-//    ui->Editor->layout()->addWidget(editor);
+
 
     //set starting size for upperSection
-
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
 	ui->UpperSection_Splitter->setSizes(QList<int>()<<120<<500<<1);
 
-
-
-
-
-	/*----------------------------- add some dummy objects to project structure -------------------------------*/
-	/*For testing and further implemtentations of other features related to the project structure.
-	 * The Structure represents the current default directory for testing: "/home/hico/elbefrontFilehandlingTestFolder"
-	 * It's going to be a project representation only in the future.
-	 * Something like this:  #projectname   TODO
-	 *							#src
-	 *								<xml>
-	 *							#out
-	 */
-
-//	QFileSystemModel *model = new QFileSystemModel;
-//	model->setRootPath("/home/hico/elbefrontFilehandlingTestFolder");
-
-//	ui->ProjektStructure->setModel(model);
-
-
-
-
-//	ui->ProjektStructure->setRootIndex(model->index("/home/hico/elbefrontFilehandlingTestFolder"));
+	ui->Editor->setLineNumberAreaVisible(false);
+	setEditorTabVisible(false);
 
 }
 
@@ -75,33 +51,44 @@ MainWindow::~MainWindow()
 }
 
 
-
 void MainWindow::on_actionNew_triggered()
 {
 	/*for testing will be removed later*/
 
-//	ProjectManager *pm = ProjectManager::getInstance();
-//	pm->update("/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project");
-//	pm->setProjectOpened(true);
+//
+//	 projectmanager->update("/home/hico/elbefrontFilehandlingTestFolder/bsp1/.project");
+//	 projectmanager->setProjectOpened(true);
 }
 
 
 
 void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
 {
-	QMenu *menu = new QMenu;
-	closeAction = new QAction("&Close", menu);
-	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
+//	QMenu *menu = new QMenu;
+//	closeAction = new QAction("&Close", menu);
+//	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
 
-	closeAction->setEnabled(false);
-	menu->addAction(closeAction);
-	menu->exec(QCursor::pos());
+
+//	closeAction->setEnabled(false);
+
+
+//	menu->addAction(closeAction);
+//	menu->exec(QCursor::pos());
 }
 
 
 void MainWindow::on_ProjektStructure_ContextMenu_closeAction_triggered()
 {
-	qDebug() << "closed";
+//	QModelIndex index = ui->ProjektStructure->currentIndex();
+//	QString itemPath = model->getItemPath(index);
+//	QFileInfo item(itemPath);
+//	if (item.isFile()) {
+//		XmlFileHandler *handler = new XmlFileHandler(itemPath);
+//		handler->closeFile();
+//	} else {
+//		return;
+//	}
+
 }
 
 
@@ -114,8 +101,8 @@ void MainWindow::on_actionNew_Project_triggered()
 
 void MainWindow::on_actionNew_XML_triggered()
 {
-	ProjectManager *pm = ProjectManager::getInstance();
-	if (pm->isProjectOpened()) {
+
+	if ( projectmanager->isProjectOpened()) {
 		NewXMLDialog *xml = new NewXMLDialog();
 		xml->show();
 	} else {
@@ -163,8 +150,8 @@ void MainWindow::on_actionOpen_triggered()
 
 void MainWindow::on_actionImport_triggered()
 {
-	ProjectManager *pm = ProjectManager::getInstance();
-	if (pm->isProjectOpened()) {
+
+	if ( projectmanager->isProjectOpened()) {
 		ImportFileDialog *dialog = new ImportFileDialog();
 		dialog->show();
 	} else {
@@ -212,14 +199,37 @@ void MainWindow::on_actionClose_triggered()
 void MainWindow::updateProjectStructure()
 {
 	model = new ProjectItemModel();
-	ProjectManager *pm = ProjectManager::getInstance();
-	if ( pm->isProjectOpened() ) {
-	model->clear();
-	ui->ProjektStructure->setModel(model);
-} else {
-	model->setProjectDetails(pm->getProjectDirectory(), pm->getProjectName());
 
-	ui->ProjektStructure->setModel(model);
-	ui->ProjektStructure->header()->hide();
+	if (  projectmanager->isProjectOpened() ) {
+		model->clear();
+		ui->ProjektStructure->setModel(model);
+	} else {
+		model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
+
+		ui->ProjektStructure->setModel(model);
+		ui->ProjektStructure->header()->hide();
+	}
 }
+
+void MainWindow::setEditorTabVisible(bool visible)
+{
+	if ( visible) {
+		ui->OpenFileNameLabel->show();
+		ui->EditorClosButton->show();
+	} else {
+		ui->OpenFileNameLabel->hide();
+		ui->EditorClosButton->hide();
+	}
+}
+
+
+void MainWindow::setOpenFileNameLabelText(QString text)
+{
+	ui->OpenFileNameLabel->setText(text);
+}
+
+void MainWindow::on_EditorClosButton_clicked()
+{
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->closeFile();
 }

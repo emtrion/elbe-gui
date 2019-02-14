@@ -57,7 +57,7 @@
        <bool>false</bool>
       </property>
       <widget class="QWidget" name="UpperSection" native="true">
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <property name="leftMargin">
          <number>0</number>
         </property>
@@ -97,22 +97,65 @@
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
+           <property name="selectionBehavior">
+            <enum>QAbstractItemView::SelectItems</enum>
+           </property>
            <property name="headerHidden">
             <bool>true</bool>
            </property>
           </widget>
-          <widget class="CodeEditor" name="Editor">
-           <property name="styleSheet">
-            <string notr="true">CodeEditor{
+          <widget class="QWidget" name="">
+           <layout class="QVBoxLayout" name="EditorArea">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="EditorTab">
+              <item>
+               <widget class="QLabel" name="OpenFileNameLabel">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="EditorClosButton">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="style.qrc">
+                  <normaloff>:/qss_icons/rc/close-pressed.png</normaloff>:/qss_icons/rc/close-pressed.png</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="CodeEditor" name="Editor">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">CodeEditor{
 	color:  #d6cf9a;
 }</string>
-           </property>
-           <property name="lineWrapMode">
-            <enum>QPlainTextEdit::NoWrap</enum>
-           </property>
-           <property name="centerOnScroll">
-            <bool>true</bool>
-           </property>
+              </property>
+              <property name="lineWrapMode">
+               <enum>QPlainTextEdit::NoWrap</enum>
+              </property>
+              <property name="centerOnScroll">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
           <widget class="QTreeView" name="FileStructure"/>
          </widget>
@@ -274,12 +317,13 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>false</bool>
+    <bool>true</bool>
    </attribute>
-   <addaction name="separator"/>
    <addaction name="actionNew"/>
    <addaction name="actionSave"/>
    <addaction name="action_ChangeView"/>
+   <addaction name="separator"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
@@ -416,6 +460,8 @@
   <tabstop>DisplaView</tabstop>
   <tabstop>MessageLog</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="style.qrc"/>
+ </resources>
  <connections/>
 </ui>

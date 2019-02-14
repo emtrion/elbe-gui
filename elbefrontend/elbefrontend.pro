@@ -41,7 +41,8 @@ SOURCES += main.cpp\
     schemavalidation.cpp \
     messagehandler.cpp \
     highlighter.cpp \
-    projectitemmodel.cpp
+    projectitemmodel.cpp \
+    xmlfilemanager.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -58,7 +59,8 @@ HEADERS  += mainwindow.h \
     schemavalidation.h \
     messagehandler.h \
     highlighter.h \
-    projectitemmodel.h
+    projectitemmodel.h \
+    xmlfilemanager.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
