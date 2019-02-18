@@ -102,6 +102,7 @@ bool NewXMLDialog::isValid()
 
 void NewXMLDialog::on_FileNameEntry_textChanged(const QString &arg1)
 {
+	Q_UNUSED(arg1)
 	updateUI(isValid());
 }
 

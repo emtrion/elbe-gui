@@ -40,6 +40,7 @@ ImportFileDialog::~ImportFileDialog()
 
 void ImportFileDialog::on_FileNameEntry_textChanged(const QString &arg1)
 {
+	Q_UNUSED(arg1)
 	updateUI(isValid());
 }
 

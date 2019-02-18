@@ -156,6 +156,7 @@ void NewProjectWizard::on_NewProjectWizard_accepted()
 
 void NewProjectWizard::on_ProjectPathEntry_textChanged(const QString &arg1)
 {
+	Q_UNUSED(arg1)
 
 	QString path = ui->ProjectPathEntry->text();
 

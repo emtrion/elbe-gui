@@ -22,6 +22,7 @@
 #include "schemavalidation.h"
 #include "projecthandler.h"
 #include "xmlfilehandler.h"
+#include "openprojectfiledialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -64,6 +65,7 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
 {
+	Q_UNUSED(pos)
 //	QMenu *menu = new QMenu;
 //	closeAction = new QAction("&Close", menu);
 //	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
@@ -136,16 +138,26 @@ void MainWindow::on_actionOpen_triggered()
 //	QString startURL = "/home/hico/";
 
 	QFileDialog *fileChooser = new QFileDialog();
+//	OpenProjectFileDialog *fileChooser = new OpenProjectFileDialog(this, "/home/hico");
 //	fileChooser->setOption(QFileDialog::ShowDirsOnly, true);
 
 	fileChooser->setDirectory("/home/hico");
 	fileChooser->setFilter(QDir::Dirs);
 
 //	QList<QUrl> urls = fileChooser->getOpenFileUrls(this, "Open Project", startURL);
+
+
+//	fileChooser->exec();
+
+
+
 	QString url = fileChooser->getExistingDirectory();
-	ProjectHandler *handler = new ProjectHandler();
+
 	QString path = url+"/.project";
-	handler->openProject(path);
+	if ( QFile(path).exists() ) {
+		ProjectHandler *handler = new ProjectHandler();
+		handler->openProject(path);
+	}
 }
 
 void MainWindow::on_actionImport_triggered()

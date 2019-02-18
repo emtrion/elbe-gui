@@ -15,8 +15,8 @@ class MessageHandler : public QAbstractMessageHandler
 		virtual void handleMessage(QtMsgType type, const QString &description, const QUrl &identifier, const QSourceLocation &sourceLocation);
 
 	private:
-		QString m_description;
-		QSourceLocation m_sourceLocation;
+		QString description;
+		QSourceLocation sourceLocation;
 };
 
 #endif // MESSAGEHANDLER_H

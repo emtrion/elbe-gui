@@ -9,17 +9,17 @@ MessageHandler::MessageHandler() : QAbstractMessageHandler(0)
 
 QString MessageHandler::statusMessage() const
 {
-	return m_description;
+	return description;
 }
 
 int MessageHandler::line() const
 {
-	return m_sourceLocation.line();
+	return sourceLocation.line();
 }
 
 int MessageHandler::column() const
 {
-	return m_sourceLocation.column();
+	return sourceLocation.column();
 }
 
 void MessageHandler::handleMessage(QtMsgType type, const QString &description, const QUrl &identifier, const QSourceLocation &sourceLocation)
@@ -27,6 +27,6 @@ void MessageHandler::handleMessage(QtMsgType type, const QString &description, c
 	Q_UNUSED(type);
 	Q_UNUSED(identifier);
 
-	m_description = description;
-	m_sourceLocation = sourceLocation;
+	this->description = description;
+	this->sourceLocation = sourceLocation;
 }

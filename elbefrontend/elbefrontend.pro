@@ -42,7 +42,8 @@ SOURCES += main.cpp\
     messagehandler.cpp \
     highlighter.cpp \
     projectitemmodel.cpp \
-    xmlfilemanager.cpp
+    xmlfilemanager.cpp \
+    openprojectfiledialog.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -60,7 +61,8 @@ HEADERS  += mainwindow.h \
     messagehandler.h \
     highlighter.h \
     projectitemmodel.h \
-    xmlfilemanager.h
+    xmlfilemanager.h \
+    openprojectfiledialog.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
