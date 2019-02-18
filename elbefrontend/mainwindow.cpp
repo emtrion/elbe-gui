@@ -135,28 +135,12 @@ void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_actionOpen_triggered()
 {
-//	QString startURL = "/home/hico/";
-
-	QFileDialog *fileChooser = new QFileDialog();
-//	OpenProjectFileDialog *fileChooser = new OpenProjectFileDialog(this, "/home/hico");
-//	fileChooser->setOption(QFileDialog::ShowDirsOnly, true);
-
-	fileChooser->setDirectory("/home/hico");
-	fileChooser->setFilter(QDir::Dirs);
-
-//	QList<QUrl> urls = fileChooser->getOpenFileUrls(this, "Open Project", startURL);
-
-
-//	fileChooser->exec();
-
-
-
-	QString url = fileChooser->getExistingDirectory();
-
-	QString path = url+"/.project";
-	if ( QFile(path).exists() ) {
+	OpenProjectFileDialog *fileChooser = new OpenProjectFileDialog(this, "/home/hico");
+	if ( fileChooser->exec() == QDialog::Accepted ) {
 		ProjectHandler *handler = new ProjectHandler();
-		handler->openProject(path);
+		handler->openProject(fileChooser->selectedUrls().value(0).toLocalFile()+"/.project");
+
+//		qDebug() << fileChooser->selectedUrls().value(0).toLocalFile()+"/.project";
 	}
 }
 

@@ -4,6 +4,7 @@
 
 
 #include <QFileDialog>
+#include <QToolButton>
 
 class OpenProjectFileDialog : public QFileDialog
 {
@@ -15,14 +16,21 @@ class OpenProjectFileDialog : public QFileDialog
 		virtual ~OpenProjectFileDialog(){}
 
 	protected slots:
-//		void fileSelectionChanged(const QString &file);
+		void fileSelectionChanged(const QString &file);
+		void backOrForClicked();
 
 	protected:
 		bool checkIfProject(const QString &file);
+		bool eventFilter(QObject *obj, QEvent *event) override;
 
 
 	private:
 		QPushButton *myOpenButton;
+		QToolButton *backButton;
+		QToolButton *forwardButton;
+		void updateCurrentSelection(QString file);
+		QFileInfo currentSelection;
+		bool isSelectionValid();
 
 };
 
