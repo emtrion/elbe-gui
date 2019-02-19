@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDebug>
 #include <QAction>
+#include <ui_mainwindow.h>
 
 #include "helpers.h"
 
@@ -64,7 +65,8 @@ void ProjectHandler::openProject(QString path)
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
 	projectmanager->setProjectOpened(true);
-	mw->getActionClose()->setEnabled(true);
+
+	mw->enableActionsOnProjectOpen(true);
 
 //	qDebug() << "ProjectOpened: " << path;
 }
@@ -76,12 +78,13 @@ void ProjectHandler::closeProject()
 		//no project to close...
 		return;
 	}
+
 	projectmanager->update(QString()); //call update() with a null-string -> all properties of ProjectManager are reset
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
 	mw->getEditor()->clear();
 	projectmanager->setProjectOpened(false);
-	mw->getActionClose()->setEnabled(false);
+	mw->enableActionsOnProjectOpen(false);
 }
 
 ProjectManager *ProjectHandler::getProjectmanager() const

@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QErrorMessage>
 #include <QFileDialog>
+#include <QCheckBox>
 
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
@@ -43,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	ui->Editor->setLineNumberAreaVisible(false);
 	setEditorTabVisible(false);
+
+
 
 }
 
@@ -110,6 +113,10 @@ void MainWindow::on_actionNew_XML_triggered()
 	} else {
 		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
 		//show error message TODO
+		QMessageBox *msgBox = new QMessageBox(this);
+		msgBox->setIcon(QMessageBox::Critical);
+		msgBox->setText("A project has to be opened!");
+		msgBox->exec();
 	}
 
 }
@@ -152,7 +159,10 @@ void MainWindow::on_actionImport_triggered()
 		dialog->show();
 	} else {
 		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
-		//show error message TODO
+		QMessageBox *msgBox = new QMessageBox(this);
+		msgBox->setIcon(QMessageBox::Critical);
+		msgBox->setText("A project has to be opened!");
+		msgBox->exec();
 	}
 }
 
@@ -183,6 +193,8 @@ QAction *MainWindow::getActionClose() const
 
 void MainWindow::on_Editor_textChanged()
 {
+	XmlFileManager *filemanager = XmlFileManager::getInstance();
+	filemanager->setIsSaved(false);
 	ui->Editor->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 }
 
@@ -223,6 +235,22 @@ void MainWindow::setOpenFileNameLabelText(QString text)
 {
 	ui->OpenFileNameLabel->setText(text);
 }
+
+void MainWindow::enableActionsOnProjectOpen(bool isOpen)
+{
+	ui->actionClose->setEnabled(isOpen);
+	ui->actionImport->setEnabled(isOpen);
+	ui->actionNew_XML->setEnabled(isOpen);
+}
+
+void MainWindow::enableActionsOnXMLOpen(bool isOpen)
+{
+	ui->actionSave->setEnabled(isOpen);
+	ui->actionSave_As->setEnabled(isOpen);
+	ui->actionValidate->setEnabled(isOpen);
+}
+
+
 
 void MainWindow::on_EditorClosButton_clicked()
 {

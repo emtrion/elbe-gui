@@ -24,7 +24,7 @@ OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) 
 	backButton = findChild<QToolButton*>("backButton");
 	forwardButton = findChild<QToolButton*>("forwardButton");
 
-	myOpenButton->setText("&Open");
+
 
 
 	this->setOption(QFileDialog::ShowDirsOnly, true);
@@ -79,7 +79,6 @@ void OpenProjectFileDialog::fileSelectionChanged(const QString &file)
 	} else {
 //		qDebug() << "file is empty";
 	}
-	myOpenButton->setText("&Open");
 }
 
 bool OpenProjectFileDialog::checkIfProject(const QString &file)

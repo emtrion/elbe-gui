@@ -899,7 +899,7 @@ QProgressBar::chunk:disabled {
 
 QPushButton {
 	background-color: #2b2b2b ;
-	border: 1px solid #272727;
+	border: 1px solid #272727;l
 	outline: 1px solid #464646;
 	color: #F0F0F0;
 	border-radius: 4px;
@@ -908,7 +908,7 @@ QPushButton {
 }
 
 QPushButton:disabled {
-	background-color: #303030 ;
+	background-color: #777777;
 	border: 1px solid #272727;
 	outline: 1px solid #464646;
 	color: #F0F0F0;

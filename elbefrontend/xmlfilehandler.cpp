@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QDomDocument>
+#include <QMessageBox>
 #include "helpers.h"
 #include "projectmanager.h"
 
@@ -90,6 +91,8 @@ void XmlFileHandler::openFile()
 	mw->setOpenFileNameLabelText(fileName);
 
 	filemanager->setCurrentFilePath(filePath);
+
+	mw->enableActionsOnXMLOpen(true);
 
 	return;
 }
@@ -209,13 +212,38 @@ void XmlFileHandler::saveFile()
 
 void XmlFileHandler::closeFile()
 {
-	//if saved:
 	MainWindow *mw = helpers::getMainWindow();
-	mw->getEditor()->clear();
-	mw->getEditor()->setEnabled(false);
-	mw->getEditor()->setLineNumberAreaVisible(false);
-	mw->setEditorTabVisible(false);
-	//if not show dialog to save
+	if ( filemanager->getIsSaved() ) {
+		mw->getEditor()->clear();
+		mw->getEditor()->setEnabled(false);
+		mw->getEditor()->setLineNumberAreaVisible(false);
+		mw->setEditorTabVisible(false);
+	} else {
+		QMessageBox msgBox;
+		msgBox.setText("The file has been modified.");
+		msgBox.setInformativeText("Do you want to save your changes?");
+		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Save);
+		int ret = msgBox.exec();
+
+		switch (ret) {
+			case QMessageBox::Save:
+			this->saveFile();
+			this->closeFile();
+				break;
+			case QMessageBox::Discard:
+			filemanager->setIsSaved(true); //on discard we pretend to save the file
+				this->closeFile();
+				break;
+			case QMessageBox::Cancel:
+			msgBox.close();
+				break;
+			default:
+			// should never be reached
+				break;
+		}
+	}
+	mw->enableActionsOnXMLOpen(false);
 	return;
 }
 

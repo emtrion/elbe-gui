@@ -28,6 +28,8 @@ public:
 	QAction *closeAction;
 	void setEditorTabVisible(bool visible);
 	void setOpenFileNameLabelText(QString text);
+	void enableActionsOnProjectOpen(bool isOpen);
+	void enableActionsOnXMLOpen(bool isOpen);
 
 	private slots:
 	void on_actionNew_triggered();
