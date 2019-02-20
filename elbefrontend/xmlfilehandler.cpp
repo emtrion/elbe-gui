@@ -47,6 +47,8 @@ XmlFileHandler::~XmlFileHandler()
 
 }
 
+
+
 void XmlFileHandler::createFile()
 {
 
@@ -91,9 +93,44 @@ void XmlFileHandler::openFile()
 	mw->setOpenFileNameLabelText(fileName);
 
 	filemanager->setCurrentFilePath(filePath);
-
 	mw->enableActionsOnXMLOpen(true);
 
+	helpers::watcherAddPath(filemanager->getCurrentFilePath());
+
+	filemanager->setIsSaved(true);
+	return;
+}
+
+void XmlFileHandler::openFile(QString filePath)
+{
+	QFile file(filePath);
+	QString content;
+	if ( file.exists() ) {
+		if ( !file.open(QIODevice::ReadWrite) ) {
+			qDebug() << "ERROR from "<<__func__<<" Could not open file";
+			return;
+		}
+	} else {
+		qDebug() << "ERROR from "<<__func__<<" File does not exist";
+		return;
+	}
+
+	content = QString::fromUtf8(file.readAll());
+	file.close();
+
+	MainWindow *mw = helpers::getMainWindow();
+	mw->getEditor()->setPlainText(content);
+	mw->getEditor()->setEnabled(true);
+	mw->getEditor()->setLineNumberAreaVisible(true);
+	mw->setEditorTabVisible(true);
+	mw->setOpenFileNameLabelText(fileName);
+
+	filemanager->setCurrentFilePath(filePath);
+	mw->enableActionsOnXMLOpen(true);
+
+	helpers::watcherAddPath(filemanager->getCurrentFilePath());
+	qDebug() << "behind addpath";
+	filemanager->setIsSaved(true);
 	return;
 }
 
@@ -186,6 +223,7 @@ void XmlFileHandler::XMLautoGenerate()
 
 void XmlFileHandler::saveFile()
 {
+	filemanager->setSaving(true);
 	MainWindow *mw = helpers::getMainWindow();
 
 	QByteArray content = mw->getEditor()->toPlainText().toUtf8();
@@ -204,6 +242,7 @@ void XmlFileHandler::saveFile()
 	}
 	file.close();
 
+
 	filemanager->setIsSaved(true);
 }
 
@@ -212,6 +251,7 @@ void XmlFileHandler::saveFile()
 
 void XmlFileHandler::closeFile()
 {
+	helpers::watcherRemovePath(filemanager->getCurrentFilePath());
 	MainWindow *mw = helpers::getMainWindow();
 	if ( filemanager->getIsSaved() ) {
 		mw->getEditor()->clear();
@@ -220,7 +260,7 @@ void XmlFileHandler::closeFile()
 		mw->setEditorTabVisible(false);
 	} else {
 		QMessageBox msgBox;
-		msgBox.setText("The file has been modified.");
+		msgBox.setText(filemanager->getCurrentFileName()+" has been modified.");
 		msgBox.setInformativeText("Do you want to save your changes?");
 		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Save);
@@ -243,7 +283,41 @@ void XmlFileHandler::closeFile()
 				break;
 		}
 	}
+	filemanager->setToDefault();
 	mw->enableActionsOnXMLOpen(false);
 	return;
+}
+
+void XmlFileHandler::handleFileModification(QString file)
+{
+
+	if ( file.compare(filemanager->getCurrentFilePath()) == 0 ) {
+		if ( !filemanager->getSaving() ) {
+			QMessageBox msgBox;
+			msgBox.setText(filemanager->getCurrentFileName()+" has been modified outside elbeFrontend");
+			msgBox.setInformativeText("Do you want to reload it?");
+			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+			msgBox.setDefaultButton(QMessageBox::Yes);
+			int ret = msgBox.exec();
+
+			switch (ret) {
+				case QMessageBox::Yes:
+				this->closeFile();
+				this->openFile(file);
+					break;
+				case QMessageBox::No:
+				filemanager->setIsSaved(false);
+					break;
+				case QMessageBox::Cancel:
+				msgBox.close();
+					break;
+				default:
+				//should not be reached
+					break;
+
+			}
+		}
+	}
+	filemanager->setSaving(false);
 }
 

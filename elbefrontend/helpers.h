@@ -17,6 +17,9 @@ namespace helpers {
 	QDomDocument parseXMLFile(QFile *file);
 	bool saveXMLChanges(QFile *file, QByteArray byteArray);
 	void setPixmaps();
+	void initSystemWatcher();
+	void watcherAddPath(QString path);
+	void watcherRemovePath(QString path);
 }
 
 #endif // HELPERS_H

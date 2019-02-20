@@ -1,11 +1,17 @@
 #include "projectitemmodel.h"
 
+#include "xmlfilemanager.h"
+
 #include <QApplication>
+#include <QWidget>
 #include <QStyle>
 #include <QDir>
 #include <QDebug>
 #include <QDirIterator>
 #include <QFileIconProvider>
+#include <QFileSystemWatcher>
+#include "mainwindow.h"
+#include "helpers.h"
 
 ProjectItemModel::ProjectItemModel(QObject *parent) : QStandardItemModel(parent)
 {
@@ -14,6 +20,8 @@ ProjectItemModel::ProjectItemModel(QObject *parent) : QStandardItemModel(parent)
 //	fileIcon = QApplication::style()->standardIcon(QStyle::SP_FileIcon);
 
 	this->setColumnCount(1);
+
+
 }
 
 ProjectItemModel::~ProjectItemModel()
@@ -62,5 +70,8 @@ QString ProjectItemModel::getItemPath(QModelIndex index)
 	QStandardItem *item = this->itemFromIndex(index);
 	return item->accessibleDescription();
 }
+
+
+
 
 

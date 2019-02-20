@@ -4,9 +4,9 @@
 #include <QString>
 #include <QDebug>
 #include <QAction>
-#include <ui_mainwindow.h>
 
 #include "helpers.h"
+#include "xmlfilehandler.h"
 
 
 ProjectHandler::ProjectHandler()
@@ -67,6 +67,7 @@ void ProjectHandler::openProject(QString path)
 	projectmanager->setProjectOpened(true);
 
 	mw->enableActionsOnProjectOpen(true);
+	helpers::watcherAddPath(projectmanager->getSrcPath());
 
 //	qDebug() << "ProjectOpened: " << path;
 }
@@ -79,10 +80,15 @@ void ProjectHandler::closeProject()
 		return;
 	}
 
+	helpers::watcherRemovePath(projectmanager->getSrcPath());
+
 	projectmanager->update(QString()); //call update() with a null-string -> all properties of ProjectManager are reset
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
-	mw->getEditor()->clear();
+
+	XmlFileHandler *filehandler = new XmlFileHandler();
+	filehandler->closeFile();
+
 	projectmanager->setProjectOpened(false);
 	mw->enableActionsOnProjectOpen(false);
 }

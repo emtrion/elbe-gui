@@ -1,6 +1,5 @@
-#include <iostream>
-#include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "mainwindow.h"
 #include <QWidget>
 #include <QPlainTextEdit>
 #include <QColor>
@@ -36,8 +35,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     console->setContentsMargins(0, 0, 0, 0);
     ui->Terminal_Tab->layout()->addWidget(console);
 
-
-
     //set starting size for upperSection
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
 	ui->UpperSection_Splitter->setSizes(QList<int>()<<120<<500<<1);
@@ -45,8 +42,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->Editor->setLineNumberAreaVisible(false);
 	setEditorTabVisible(false);
 
-
-
+	helpers::initSystemWatcher();
 }
 
 MainWindow::~MainWindow()
@@ -81,20 +77,6 @@ void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &po
 //	menu->exec(QCursor::pos());
 }
 
-
-void MainWindow::on_ProjektStructure_ContextMenu_closeAction_triggered()
-{
-//	QModelIndex index = ui->ProjektStructure->currentIndex();
-//	QString itemPath = model->getItemPath(index);
-//	QFileInfo item(itemPath);
-//	if (item.isFile()) {
-//		XmlFileHandler *handler = new XmlFileHandler(itemPath);
-//		handler->closeFile();
-//	} else {
-//		return;
-//	}
-
-}
 
 
 
@@ -193,7 +175,6 @@ QAction *MainWindow::getActionClose() const
 
 void MainWindow::on_Editor_textChanged()
 {
-	XmlFileManager *filemanager = XmlFileManager::getInstance();
 	filemanager->setIsSaved(false);
 	ui->Editor->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 }
@@ -204,24 +185,34 @@ void MainWindow::on_actionClose_triggered()
 	handler->closeProject();
 }
 
-void MainWindow::updateProjectStructure()
+void MainWindow::clearProjectStructure()
 {
 	model = new ProjectItemModel();
+	model->clear();
+	ui->ProjektStructure->setModel(model);
 
-	if (  projectmanager->isProjectOpened() ) {
-		model->clear();
-		ui->ProjektStructure->setModel(model);
+}
+
+void MainWindow::renewProjectStructure()
+{
+	model = new ProjectItemModel();
+	model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
+	ui->ProjektStructure->setModel(model);
+	ui->ProjektStructure->header()->hide();
+}
+
+void MainWindow::updateProjectStructure()
+{
+	if ( projectmanager->isProjectOpened() ) {
+		clearProjectStructure();
 	} else {
-		model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
-
-		ui->ProjektStructure->setModel(model);
-		ui->ProjektStructure->header()->hide();
+		renewProjectStructure();
 	}
 }
 
 void MainWindow::setEditorTabVisible(bool visible)
 {
-	if ( visible) {
+	if ( visible ) {
 		ui->OpenFileNameLabel->show();
 		ui->EditorClosButton->show();
 	} else {
@@ -230,6 +221,14 @@ void MainWindow::setEditorTabVisible(bool visible)
 	}
 }
 
+void MainWindow::updateEditorTabSaveStatus(bool saved)
+{
+	if ( saved ) {
+		ui->OpenFileNameLabel->setText(filemanager->getCurrentFileName());
+	} else {
+		ui->OpenFileNameLabel->setText(filemanager->getCurrentFileName()+"*");
+	}
+}
 
 void MainWindow::setOpenFileNameLabelText(QString text)
 {
@@ -263,4 +262,23 @@ void MainWindow::on_actionSave_triggered()
 	qDebug() << __func__;
 	XmlFileHandler *handler = new XmlFileHandler();
 	handler->saveFile();
+}
+
+void MainWindow::updateItemModel(QString dir)
+{
+	Q_UNUSED(dir);
+	qDebug() << "signal received in "<<__func__;
+
+	ProjectManager *pm = ProjectManager::getInstance();
+	pm->setProjectModified(true); //tell the projectmanager that current project has been modified
+
+	MainWindow *mw = helpers::getMainWindow();
+	mw->renewProjectStructure();
+}
+
+void MainWindow::updateCurrentFile(QString path)
+{
+	qDebug() << "signal received in "<<__func__;
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->handleFileModification(path);
 }

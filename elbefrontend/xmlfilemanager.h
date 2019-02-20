@@ -1,6 +1,7 @@
 #ifndef XMLFILEMANAGER_H
 #define XMLFILEMANAGER_H
 
+
 #include <QString>
 
 class XmlFileManager
@@ -10,7 +11,12 @@ class XmlFileManager
 		static XmlFileManager *instance;
 
 		QString currentFilePath;
+		QString currentFileName;
 		bool isSaved;
+
+		bool saving;
+
+		void saveStatusChanged(bool saveStatus);
 
 	public:
 		/* Static access method. */
@@ -20,6 +26,10 @@ class XmlFileManager
 		void setCurrentFilePath(const QString &value);
 		bool getIsSaved() const;
 		void setIsSaved(bool value);
+		QString getCurrentFileName() const;
+		void setToDefault();
+		bool getSaving() const;
+		void setSaving(bool value);
 };
 
 #endif // XMLFILEMANAGER_H

@@ -6,7 +6,7 @@
 #include "projectitemmodel.h"
 #include "projectmanager.h"
 #include <QAction>
-
+#include "xmlfilemanager.h"
 
 namespace Ui {
 	class MainWindow;
@@ -30,7 +30,13 @@ public:
 	void setOpenFileNameLabelText(QString text);
 	void enableActionsOnProjectOpen(bool isOpen);
 	void enableActionsOnXMLOpen(bool isOpen);
+	void updateEditorTabSaveStatus(bool saved);
 
+	void clearProjectStructure();
+	void renewProjectStructure();
+	public slots:
+	void updateCurrentFile(QString path);
+	void updateItemModel(QString dir);
 	private slots:
 	void on_actionNew_triggered();
 
@@ -52,8 +58,6 @@ public:
 
 	void on_actionClose_triggered();
 
-	void on_ProjektStructure_ContextMenu_closeAction_triggered();
-
 	void on_EditorClosButton_clicked();
 
 	void on_actionSave_triggered();
@@ -63,6 +67,7 @@ public:
 //	CodeEditor *editor;
 	ProjectItemModel *model;
 	ProjectManager *projectmanager = ProjectManager::getInstance();
+	XmlFileManager *filemanager = XmlFileManager::getInstance();
 };
 
 #endif // MAINWINDOW_H

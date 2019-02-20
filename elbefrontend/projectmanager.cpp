@@ -44,6 +44,16 @@ void ProjectManager::setProjectDirectory(const QString &value)
 	projectDirectory = value;
 }
 
+bool ProjectManager::isProjectModified() const
+{
+	return projectModified;
+}
+
+void ProjectManager::setProjectModified(bool value)
+{
+	projectModified = value;
+}
+
 ProjectManager::ProjectManager()
 {}
 

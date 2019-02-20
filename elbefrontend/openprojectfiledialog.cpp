@@ -24,21 +24,15 @@ OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) 
 	backButton = findChild<QToolButton*>("backButton");
 	forwardButton = findChild<QToolButton*>("forwardButton");
 
-
-
-
 	this->setOption(QFileDialog::ShowDirsOnly, true);
 
 	myOpenButton->setEnabled(false);
 
-//	connect(this, SIGNAL(directoryEntered(QString)), this, SLOT(fileSelectionChanged(const QString&)));
 	connect(this, SIGNAL(currentChanged(QString)), this, SLOT(fileSelectionChanged(const QString&)));
 	connect(backButton, SIGNAL(clicked()), this, SLOT(backOrForClicked()));
 	connect(forwardButton, SIGNAL(clicked()), this, SLOT(backOrForClicked()));
 
 	myOpenButton->installEventFilter(this);
-
-
 }
 
 

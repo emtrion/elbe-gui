@@ -160,6 +160,36 @@ namespace helpers {
 
 //	void deleteFile(QString path){}
 
+
+	void initSystemWatcher()
+	{
+		ProjectManager *projectmanager = ProjectManager::getInstance();
+		projectmanager->watcher = new QFileSystemWatcher();
+		MainWindow *mw = helpers::getMainWindow();
+		QObject::connect(projectmanager->watcher, SIGNAL(directoryChanged(QString)), mw, SLOT(updateItemModel(QString)));
+		QObject::connect(projectmanager->watcher, SIGNAL(fileChanged(QString)), mw, SLOT(updateCurrentFile(QString)));
+	}
+
+	void watcherAddPath(QString path)
+	{
+		ProjectManager *projectmanager = ProjectManager::getInstance();
+		if ( !projectmanager->watcher->addPath(path) ) {
+			qDebug() << "path could not be added in"<<__func__;
+		} else {
+			qDebug() << __func__<<" done";
+		}
+
+	}
+
+	void watcherRemovePath(QString path)
+	{
+		ProjectManager *projectmanager = ProjectManager::getInstance();
+		if ( !projectmanager->watcher->addPath(path) ) {
+			qDebug() << "path could not be removed in"<<__func__;
+		} else {
+			qDebug() << __func__<<" done";
+		}
+	}
 }
 
 

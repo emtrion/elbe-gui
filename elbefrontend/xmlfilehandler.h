@@ -18,10 +18,12 @@ class XmlFileHandler
 		void saveFile();
 		void closeFile();
 
+		void handleFileModification(QString file);
+
+		void openFile(QString filePath);
 	private:
 		QString filePath;
 		QString fileName;
-
 		XmlFileManager *filemanager;
 };
 #endif // XMLFILEHANDLER_H
