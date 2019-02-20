@@ -67,10 +67,21 @@ void XmlFileManager::setToDefault()
 	currentFilePath = "";
 	currentFileName = "";
 	isSaved = true;
+	isOpen = false;
 }
 
 void XmlFileManager::saveStatusChanged(bool saveStatus)
 {
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateEditorTabSaveStatus(saveStatus);
+}
+
+bool XmlFileManager::getIsOpen() const
+{
+	return isOpen;
+}
+
+void XmlFileManager::setIsOpen(bool value)
+{
+	isOpen = value;
 }

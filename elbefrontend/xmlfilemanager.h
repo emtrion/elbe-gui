@@ -18,6 +18,8 @@ class XmlFileManager
 
 		void saveStatusChanged(bool saveStatus);
 
+		bool isOpen;
+
 	public:
 		/* Static access method. */
 		static XmlFileManager *getInstance();
@@ -30,6 +32,8 @@ class XmlFileManager
 		void setToDefault();
 		bool getSaving() const;
 		void setSaving(bool value);
+		bool getIsOpen() const;
+		void setIsOpen(bool value);
 };
 
 #endif // XMLFILEMANAGER_H

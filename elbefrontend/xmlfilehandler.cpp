@@ -70,40 +70,21 @@ void XmlFileHandler::createFile()
 
 void XmlFileHandler::openFile()
 {
-	QFile file(filePath);
-	QString content;
-	if ( file.exists() ) {
-		if ( !file.open(QIODevice::ReadWrite) ) {
-			qDebug() << "ERROR from "<<__func__<<" Could not open file";
-			return;
-		}
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" File does not exist";
-		return;
-	}
-
-	content = QString::fromUtf8(file.readAll());
-	file.close();
-
-	MainWindow *mw = helpers::getMainWindow();
-	mw->getEditor()->setPlainText(content);
-	mw->getEditor()->setEnabled(true);
-	mw->getEditor()->setLineNumberAreaVisible(true);
-	mw->setEditorTabVisible(true);
-	mw->setOpenFileNameLabelText(fileName);
-
-	filemanager->setCurrentFilePath(filePath);
-	mw->enableActionsOnXMLOpen(true);
-
-	helpers::watcherAddPath(filemanager->getCurrentFilePath());
-
-	filemanager->setIsSaved(true);
-	return;
+	openFile_p(filePath);
 }
 
 void XmlFileHandler::openFile(QString filePath)
 {
-	QFile file(filePath);
+	openFile_p(filePath);
+}
+
+void XmlFileHandler::openFile_p(QString path)
+{
+	if ( filemanager->getIsOpen() ) {
+		closeFile();
+	}
+
+	QFile file(path);
 	QString content;
 	if ( file.exists() ) {
 		if ( !file.open(QIODevice::ReadWrite) ) {
@@ -125,11 +106,11 @@ void XmlFileHandler::openFile(QString filePath)
 	mw->setEditorTabVisible(true);
 	mw->setOpenFileNameLabelText(fileName);
 
-	filemanager->setCurrentFilePath(filePath);
+	filemanager->setCurrentFilePath(path);
 	mw->enableActionsOnXMLOpen(true);
 
 	helpers::watcherAddPath(filemanager->getCurrentFilePath());
-	qDebug() << "behind addpath";
+	filemanager->setIsOpen(true);
 	filemanager->setIsSaved(true);
 	return;
 }

@@ -25,5 +25,6 @@ class XmlFileHandler
 		QString filePath;
 		QString fileName;
 		XmlFileManager *filemanager;
+		void openFile_p(QString path);
 };
 #endif // XMLFILEHANDLER_H
