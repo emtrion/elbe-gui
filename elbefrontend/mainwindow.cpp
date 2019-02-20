@@ -282,3 +282,40 @@ void MainWindow::updateCurrentFile(QString path)
 	XmlFileHandler *handler = new XmlFileHandler();
 	handler->handleFileModification(path);
 }
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+	XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath(), filemanager->getCurrentFileName());
+	ProjectHandler *projecthandler = new ProjectHandler();
+	QMessageBox msgBox;
+	if ( !filemanager->getIsSaved() ) {
+		msgBox.setText("There are files which are not saved");
+		msgBox.setInformativeText("Do you want to save the changes before closing?");
+		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		msgBox.setDefaultButton(QMessageBox::Yes);
+		int ret = msgBox.exec();
+
+		switch ( ret ) {
+			case QMessageBox::Yes:
+			filehandler->saveFile();
+			projecthandler->closeProject();
+			event->accept();
+				break;
+			case QMessageBox::No:
+			filemanager->setIsSaved(true);
+			projecthandler->closeProject();
+			event->accept();
+				break;
+			case QMessageBox::Cancel:
+			msgBox.close();
+			event->ignore();
+				break;
+			default:
+			//should not be reached
+				break;
+		}
+	} else {
+		event->accept();
+	}
+}

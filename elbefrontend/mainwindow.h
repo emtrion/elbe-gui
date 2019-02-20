@@ -37,6 +37,7 @@ public:
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
+
 	private slots:
 	void on_actionNew_triggered();
 
@@ -68,6 +69,7 @@ public:
 	ProjectItemModel *model;
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	XmlFileManager *filemanager = XmlFileManager::getInstance();
+	void closeEvent(QCloseEvent *event);
 };
 
 #endif // MAINWINDOW_H
