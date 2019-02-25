@@ -31,6 +31,7 @@ class ProjectManager
 		QString srcPath;
 		QString outPath;
 		QString projectName;
+		QString elbeID;
 		projectSettings newProjectSettings;
 		bool projectOpened = false;
 		bool projectModified = false;
@@ -59,6 +60,8 @@ class ProjectManager
 		void setProjectDirectory(const QString &value);
 		bool isProjectModified() const;
 		void setProjectModified(bool value);
+		QString getElbeID() const;
+		void setElbeID(const QString &value);
 };
 
 

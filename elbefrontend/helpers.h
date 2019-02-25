@@ -8,6 +8,8 @@
 #include <QFile>
 #include <QByteArray>
 #include <QPixmap>
+#include <QListWidgetItem>
+#include "projectlistitem.h"
 
 namespace helpers {
     QString getHomeDirectoryFromSystem();
@@ -20,6 +22,11 @@ namespace helpers {
 	void initSystemWatcher();
 	void watcherAddPath(QString path);
 	void watcherRemovePath(QString path);
+	void addNewProjectToLookup(QString projectPath);
+	QList<ProjectListItem*> getLookupList();
+	void removeProjectFromLookup(QString projectPath);
+
+
 }
 
 #endif // HELPERS_H

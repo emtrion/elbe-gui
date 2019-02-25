@@ -2,6 +2,7 @@
 #define PROJECTHANDLER_H
 
 #include <QString>
+#include "elbehandler.h"
 #include "projectmanager.h"
 
 
@@ -13,13 +14,16 @@ class ProjectHandler
 		void createProject();
 		void closeProject();
 		void openProject(QString path);
+		void deleteProject(QString path);
 
 		ProjectManager *getProjectmanager() const;
+
 
 	private:
 		QString newProjectPath;
 		QString newProjectName;
 		ProjectManager *projectmanager;
+		ElbeHandler *elbehandler;
 };
 
 #endif // PROJECTHANDLER_H

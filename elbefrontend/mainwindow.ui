@@ -122,7 +122,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="EditorClosButton">
+               <widget class="QToolButton" name="EditorCloseButton">
                 <property name="text">
                  <string/>
                 </property>
@@ -283,6 +283,8 @@
     <addaction name="separator"/>
     <addaction name="actionValidate"/>
     <addaction name="separator"/>
+    <addaction name="actionDelete"/>
+    <addaction name="separator"/>
     <addaction name="actionExit_2"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -296,7 +298,6 @@
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
-    <addaction name="actionDelete"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -305,10 +306,11 @@
    </widget>
    <widget class="QMenu" name="menuHilfe">
     <property name="title">
-     <string>Hilfe</string>
+     <string>Help</string>
     </property>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
+    <addaction name="actionAbout_elbe"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -387,11 +389,6 @@
     <string>&amp;Exit</string>
    </property>
   </action>
-  <action name="actionDelete">
-   <property name="text">
-    <string>&amp;Delete</string>
-   </property>
-  </action>
   <action name="actionAbout">
    <property name="text">
     <string>&amp;About</string>
@@ -467,6 +464,16 @@
    </property>
    <property name="text">
     <string>&amp;Close</string>
+   </property>
+  </action>
+  <action name="actionAbout_elbe">
+   <property name="text">
+    <string>About &amp;elbe</string>
+   </property>
+  </action>
+  <action name="actionDelete">
+   <property name="text">
+    <string>Delete</string>
    </property>
   </action>
  </widget>

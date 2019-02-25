@@ -6,6 +6,7 @@
 #include "projectitemmodel.h"
 #include "projectmanager.h"
 #include <QAction>
+#include <QMessageBox>
 #include "xmlfilemanager.h"
 
 namespace Ui {
@@ -19,6 +20,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+
 	void displayFileInEditor(QString content);
 
 	CodeEditor *getEditor() const;
@@ -34,6 +37,10 @@ public:
 
 	void clearProjectStructure();
 	void renewProjectStructure();
+	void showElbeVersion(QString version);
+
+	void setElbeVersion(const QString &version);
+
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
@@ -59,9 +66,15 @@ public:
 
 	void on_actionClose_triggered();
 
-	void on_EditorClosButton_clicked();
+	void on_EditorCloseButton_clicked();
 
 	void on_actionSave_triggered();
+
+	void on_actionAbout_triggered();
+
+	void on_actionAbout_elbe_triggered();
+
+	void on_actionDelete_triggered();
 
 	private:
     Ui::MainWindow *ui;
@@ -70,6 +83,12 @@ public:
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	XmlFileManager *filemanager = XmlFileManager::getInstance();
 	void closeEvent(QCloseEvent *event);
+	void showTempStatusOnStatusBar(QString status);
+	void showPermStatusOnStatusBar(QString status);
+
+	QString elbeVersion;
+	QMessageBox *aboutElbeMessageBox;
+	void initAboutElbeMessageBox();
 };
 
 #endif // MAINWINDOW_H

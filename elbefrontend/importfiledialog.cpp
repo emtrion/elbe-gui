@@ -73,11 +73,9 @@ bool ImportFileDialog::isValid()
 void ImportFileDialog::on_buttonBox_accepted()
 {
 	QString target = srcFolder+fileName;
-//	qDebug() << target;
 	if ( !QFile().copy(filePath, target) ) {
 		qDebug() << "ERROR from "<<__func__<<"Copy failed";
 	}
-//	qDebug() << "Name: "<<fileName << "Path: "<<filePath << "Target: " << target;
 	XmlFileHandler *handler = new XmlFileHandler(target);
 	handler->openFile();
 }
@@ -85,7 +83,6 @@ void ImportFileDialog::on_buttonBox_accepted()
 void ImportFileDialog::chopNameFromPath()
 {
 	fileName = filePath.section('/', -1);
-//	qDebug() << fileName;
 }
 
 

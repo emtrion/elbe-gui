@@ -55,7 +55,6 @@ void NewXMLDialog::updateUI(bool valid)
 		ui->Icon->setPixmap(yesIcon);
 		ui->Icon->show();
 	} else {
-
 		ui->Icon->setPixmap(errorIcon);
 		ui->Icon->show();
 		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);

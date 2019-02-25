@@ -9,9 +9,15 @@
 #include "xmlfilehandler.h"
 
 
+#include "chooseprojectdialog.h"
+
+
 ProjectHandler::ProjectHandler()
 {
 	this->projectmanager = ProjectManager::getInstance();
+	elbehandler = new ElbeHandler();
+
+
 }
 
 ProjectHandler::ProjectHandler(QString path, QString name)
@@ -20,6 +26,7 @@ ProjectHandler::ProjectHandler(QString path, QString name)
 	this->newProjectName = name;
 
 	this->projectmanager = ProjectManager::getInstance();
+	elbehandler = new ElbeHandler();
 }
 
 
@@ -34,6 +41,8 @@ void ProjectHandler::createProject()
 			return;
 		}
 	}
+
+	projectmanager->setElbeID(elbehandler->createProjectElbeInstance());
 
 	QFile::copy(":/projectconfig.xml", newProjectPath+"/.project"); //copy conf-file template to directory
 	QFile confFile(newProjectPath+"/.project");
@@ -51,6 +60,7 @@ void ProjectHandler::createProject()
 	}
 
 	QFileInfo fi(confFile);
+	helpers::addNewProjectToLookup(fi.absoluteFilePath());
 	openProject(fi.absoluteFilePath());
 }
 
@@ -91,6 +101,22 @@ void ProjectHandler::closeProject()
 
 	projectmanager->setProjectOpened(false);
 	mw->enableActionsOnProjectOpen(false);
+}
+
+void ProjectHandler::deleteProject(QString path)
+{
+
+	if ( projectmanager->getProjectPath().compare(path) == 0 ) {//check if the selected project is currently open
+		closeProject();
+	}
+
+	helpers::removeProjectFromLookup(path);
+
+	//deleteElbeInstance
+//	elbehandler->deleteProjectElbeInstance();
+
+	//delete Project from src Directory
+
 }
 
 ProjectManager *ProjectHandler::getProjectmanager() const

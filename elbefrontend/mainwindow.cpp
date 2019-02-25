@@ -23,6 +23,7 @@
 #include "projecthandler.h"
 #include "xmlfilehandler.h"
 #include "openprojectfiledialog.h"
+#include "chooseprojectdialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -42,14 +43,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 	ui->Editor->setLineNumberAreaVisible(false);
 	setEditorTabVisible(false);
 
-	helpers::initSystemWatcher();
 }
-
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+
+/******************************** toolbar actions ***********************************/
 
 void MainWindow::on_actionNew_triggered()
 {
@@ -60,26 +61,11 @@ void MainWindow::on_actionNew_triggered()
 //	 projectmanager->setProjectOpened(true);
 }
 
+/************************************************************************************/
 
+/******************************** MenuBar actions ***********************************/
 
-void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
-{
-	Q_UNUSED(pos)
-//	QMenu *menu = new QMenu;
-//	closeAction = new QAction("&Close", menu);
-//	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
-
-
-//	closeAction->setEnabled(false);
-
-
-//	menu->addAction(closeAction);
-//	menu->exec(QCursor::pos());
-}
-
-
-
-
+/********************** file menu *********************/
 void MainWindow::on_actionNew_Project_triggered()
 {
 	NewProjectWizard *wiz = new NewProjectWizard();
@@ -88,39 +74,16 @@ void MainWindow::on_actionNew_Project_triggered()
 
 void MainWindow::on_actionNew_XML_triggered()
 {
-
-	if ( projectmanager->isProjectOpened()) {
+	if ( projectmanager->isProjectOpened() ) {
 		NewXMLDialog *xml = new NewXMLDialog();
 		xml->show();
 	} else {
-		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
-		//show error message TODO
 		QMessageBox *msgBox = new QMessageBox(this);
 		msgBox->setIcon(QMessageBox::Critical);
 		msgBox->setText("A project has to be opened!");
 		msgBox->exec();
 	}
-
 }
-
-void MainWindow::displayFileInEditor(QString content)
-{
-	ui->Editor->setPlainText(content);
-}
-
-void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
-{
-	QString path = model->getItemPath(index);
-	QFileInfo item(path);
-	if ( item.isFile() ) {
-		XmlFileHandler *handler = new XmlFileHandler(model->getItemPath(index));
-		handler->openFile();
-	} else {
-		return;
-	}
-
-}
-
 
 void MainWindow::on_actionOpen_triggered()
 {
@@ -128,19 +91,15 @@ void MainWindow::on_actionOpen_triggered()
 	if ( fileChooser->exec() == QDialog::Accepted ) {
 		ProjectHandler *handler = new ProjectHandler();
 		handler->openProject(fileChooser->selectedUrls().value(0).toLocalFile()+"/.project");
-
-//		qDebug() << fileChooser->selectedUrls().value(0).toLocalFile()+"/.project";
 	}
 }
 
 void MainWindow::on_actionImport_triggered()
 {
-
 	if ( projectmanager->isProjectOpened()) {
 		ImportFileDialog *dialog = new ImportFileDialog();
 		dialog->show();
 	} else {
-		qDebug() << "Project has to be \"opend\". ErrorMessage will be implemented later";
 		QMessageBox *msgBox = new QMessageBox(this);
 		msgBox->setIcon(QMessageBox::Critical);
 		msgBox->setText("A project has to be opened!");
@@ -154,29 +113,11 @@ void MainWindow::on_actionValidate_triggered()
 	sv->validate();
 }
 
-
-
-CodeEditor *MainWindow::getEditor() const
+void MainWindow::on_actionSave_triggered()
 {
-	return ui->Editor;
-}
-
-QTextEdit *MainWindow::getMessageLog() const
-{
-	return ui->MessageLog;
-}
-
-QAction *MainWindow::getActionClose() const
-{
-	return ui->actionClose;
-}
-
-
-
-void MainWindow::on_Editor_textChanged()
-{
-	filemanager->setIsSaved(false);
-	ui->Editor->setExtraSelections(QList<QTextEdit::ExtraSelection>());
+//	qDebug() << __func__;
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->saveFile();
 }
 
 void MainWindow::on_actionClose_triggered()
@@ -185,39 +126,48 @@ void MainWindow::on_actionClose_triggered()
 	handler->closeProject();
 }
 
-void MainWindow::clearProjectStructure()
+void MainWindow::on_actionDelete_triggered()
 {
-	model = new ProjectItemModel();
-	model->clear();
-	ui->ProjektStructure->setModel(model);
-
+	//open project selection
+	ChooseProjectDialog *projectChooser = new ChooseProjectDialog();
+	projectChooser->show();
 }
 
-void MainWindow::renewProjectStructure()
+/******************************************************/
+
+/******************** help menu ***********************/
+
+void MainWindow::on_actionAbout_triggered()
+{}
+
+void MainWindow::on_actionAbout_elbe_triggered()
 {
-	model = new ProjectItemModel();
-	model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
-	ui->ProjektStructure->setModel(model);
-	ui->ProjektStructure->header()->hide();
+	aboutElbeMessageBox->show();
 }
 
-void MainWindow::updateProjectStructure()
+/************************************************************************************/
+
+/********************************** editor utils ************************************/
+
+void MainWindow::displayFileInEditor(QString content)
 {
-	if ( projectmanager->isProjectOpened() ) {
-		clearProjectStructure();
-	} else {
-		renewProjectStructure();
-	}
+	ui->Editor->setPlainText(content);
+}
+
+void MainWindow::on_Editor_textChanged()
+{
+	filemanager->setIsSaved(false);
+	ui->Editor->setExtraSelections(QList<QTextEdit::ExtraSelection>());
 }
 
 void MainWindow::setEditorTabVisible(bool visible)
 {
 	if ( visible ) {
 		ui->OpenFileNameLabel->show();
-		ui->EditorClosButton->show();
+		ui->EditorCloseButton->show();
 	} else {
 		ui->OpenFileNameLabel->hide();
-		ui->EditorClosButton->hide();
+		ui->EditorCloseButton->hide();
 	}
 }
 
@@ -235,6 +185,112 @@ void MainWindow::setOpenFileNameLabelText(QString text)
 	ui->OpenFileNameLabel->setText(text);
 }
 
+void MainWindow::on_EditorCloseButton_clicked()
+{
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->closeFile();
+}
+
+/************************************************************************************/
+
+/*************************** project structure utils ********************************/
+
+void MainWindow::on_ProjektStructure_doubleClicked(const QModelIndex &index)
+{
+	QString path = model->getItemPath(index);
+	QFileInfo item(path);
+	if ( item.isFile() ) {
+		XmlFileHandler *handler = new XmlFileHandler(model->getItemPath(index));
+		handler->openFile();
+	} else {
+		return;
+	}
+}
+
+void MainWindow::updateProjectStructure()
+{
+	if ( projectmanager->isProjectOpened() ) {
+		clearProjectStructure();
+	} else {
+		renewProjectStructure();
+	}
+}
+
+void MainWindow::clearProjectStructure()
+{
+	model = new ProjectItemModel();
+	model->clear();
+	ui->ProjektStructure->setModel(model);
+}
+
+void MainWindow::renewProjectStructure()
+{
+	model = new ProjectItemModel();
+	model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
+	ui->ProjektStructure->setModel(model);
+	ui->ProjektStructure->header()->hide();
+}
+
+void MainWindow::updateItemModel(QString dir)
+{
+	Q_UNUSED(dir);
+//	qDebug() << "signal received in "<<__func__;
+
+	ProjectManager *pm = ProjectManager::getInstance();
+	pm->setProjectModified(true); //tell the projectmanager that current project has been modified
+
+	MainWindow *mw = helpers::getMainWindow();
+	mw->renewProjectStructure();
+}
+
+void MainWindow::updateCurrentFile(QString path)
+{
+//	qDebug() << "signal received in "<<__func__;
+	XmlFileHandler *handler = new XmlFileHandler();
+	handler->handleFileModification(path);
+}
+
+void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
+{
+	Q_UNUSED(pos)
+//	QMenu *menu = new QMenu;
+//	closeAction = new QAction("&Close", menu);
+//	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
+
+
+//	closeAction->setEnabled(false);
+
+
+//	menu->addAction(closeAction);
+//	menu->exec(QCursor::pos());
+}
+
+/************************************************************************************/
+
+/***************************** statusBar utils **************************************/
+
+void MainWindow::showTempStatusOnStatusBar(QString status)
+{
+	statusBar()->showMessage(status);
+}
+
+void MainWindow::showPermStatusOnStatusBar(QString status)
+{
+	QWidget *widget = new QWidget();
+	QLayout *layout = new QHBoxLayout();
+	QLabel *label = new QLabel(widget);
+	label->setText(status);
+	layout->addWidget(label);
+	layout->setMargin(0);
+
+	widget->setLayout(layout);
+	statusBar()->addPermanentWidget(widget);
+}
+
+/************************************************************************************/
+
+/********************************* misc *********************************************/
+
 void MainWindow::enableActionsOnProjectOpen(bool isOpen)
 {
 	ui->actionClose->setEnabled(isOpen);
@@ -249,73 +305,90 @@ void MainWindow::enableActionsOnXMLOpen(bool isOpen)
 	ui->actionValidate->setEnabled(isOpen);
 }
 
-
-
-void MainWindow::on_EditorClosButton_clicked()
+void MainWindow::setElbeVersion(const QString &version)
 {
-	XmlFileHandler *handler = new XmlFileHandler();
-	handler->closeFile();
+	elbeVersion = version;
+
+	showPermStatusOnStatusBar(elbeVersion);
+	initAboutElbeMessageBox();
 }
 
-void MainWindow::on_actionSave_triggered()
+void MainWindow::initAboutElbeMessageBox()
 {
-	qDebug() << __func__;
-	XmlFileHandler *handler = new XmlFileHandler();
-	handler->saveFile();
+	aboutElbeMessageBox = new QMessageBox();
+	aboutElbeMessageBox->setText("Elbe-Version on this system");
+	aboutElbeMessageBox->setInformativeText(elbeVersion);
+	aboutElbeMessageBox->setParent(this);
+	aboutElbeMessageBox->setIcon(QMessageBox::Information);
+	aboutElbeMessageBox->setStandardButtons(QMessageBox::Close);
+	aboutElbeMessageBox->setDefaultButton(QMessageBox::Close);
 }
 
-void MainWindow::updateItemModel(QString dir)
+/************************************************************************************/
+
+/*********************** getter for ui elements *************************************/
+
+CodeEditor *MainWindow::getEditor() const
 {
-	Q_UNUSED(dir);
-	qDebug() << "signal received in "<<__func__;
-
-	ProjectManager *pm = ProjectManager::getInstance();
-	pm->setProjectModified(true); //tell the projectmanager that current project has been modified
-
-	MainWindow *mw = helpers::getMainWindow();
-	mw->renewProjectStructure();
+	return ui->Editor;
 }
 
-void MainWindow::updateCurrentFile(QString path)
+QTextEdit *MainWindow::getMessageLog() const
 {
-	qDebug() << "signal received in "<<__func__;
-	XmlFileHandler *handler = new XmlFileHandler();
-	handler->handleFileModification(path);
+	return ui->MessageLog;
 }
 
-
-void MainWindow::closeEvent(QCloseEvent *event)
+QAction *MainWindow::getActionClose() const
 {
-	XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath(), filemanager->getCurrentFileName());
-	ProjectHandler *projecthandler = new ProjectHandler();
+	return ui->actionClose;
+}
+
+/************************************************************************************/
+
+/********************************* events *******************************************/
+
+void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
+{//when the application is closed and there are unsafed changes the user is asked if they should be safed
 	QMessageBox msgBox;
-	if ( !filemanager->getIsSaved() ) {
+	if ( !filemanager->getIsSaved() && filemanager->getIsOpen() ) {
+		XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath(), filemanager->getCurrentFileName());
+		ProjectHandler *projecthandler = new ProjectHandler();
 		msgBox.setText("There are files which are not saved");
 		msgBox.setInformativeText("Do you want to save the changes before closing?");
-		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
 		msgBox.setDefaultButton(QMessageBox::Yes);
 		int ret = msgBox.exec();
 
 		switch ( ret ) {
 			case QMessageBox::Yes:
-			filehandler->saveFile();
-			projecthandler->closeProject();
-			event->accept();
+				filehandler->saveFile();
+				projecthandler->closeProject();
+				event->accept();
 				break;
-			case QMessageBox::No:
-			filemanager->setIsSaved(true);
-			projecthandler->closeProject();
-			event->accept();
+			case QMessageBox::Discard:
+				filemanager->setIsSaved(true);
+				projecthandler->closeProject();
+				event->accept();
 				break;
 			case QMessageBox::Cancel:
-			msgBox.close();
-			event->ignore();
+				msgBox.close();
+				event->ignore();
 				break;
 			default:
-			//should not be reached
+				//should not be reached
 				break;
 		}
 	} else {
 		event->accept();
 	}
 }
+
+
+
+/************************************************************************************/
+
+
+
+
+
+

@@ -3,6 +3,10 @@
 
 #include <QAbstractMessageHandler>
 
+/* This is the messagehandler for the xml validator.
+ * It defines how the messages after a validation are formatted
+ */
+
 class MessageHandler : public QAbstractMessageHandler
 {
 	public:

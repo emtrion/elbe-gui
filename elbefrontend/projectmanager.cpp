@@ -54,6 +54,16 @@ void ProjectManager::setProjectModified(bool value)
 	projectModified = value;
 }
 
+QString ProjectManager::getElbeID() const
+{
+	return elbeID;
+}
+
+void ProjectManager::setElbeID(const QString &value)
+{
+	elbeID = value;
+}
+
 ProjectManager::ProjectManager()
 {}
 

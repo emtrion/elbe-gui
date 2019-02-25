@@ -9,7 +9,7 @@
 #include "helpers.h"
 #include "projectmanager.h"
 
-XmlFileHandler::XmlFileHandler()
+XmlFileHandler::XmlFileHandler() //default constructor
 {
 	this->filemanager = XmlFileManager::getInstance();
 }
@@ -43,15 +43,10 @@ XmlFileHandler::XmlFileHandler(QString file)
 }
 
 XmlFileHandler::~XmlFileHandler()
-{
-
-}
-
-
+{}
 
 void XmlFileHandler::createFile()
 {
-
 	QFile file(filePath);
 
 	if ( !file.exists() ) {
@@ -68,19 +63,22 @@ void XmlFileHandler::createFile()
 	openFile();
 }
 
+
 void XmlFileHandler::openFile()
-{
+{ //openFile with member variable as parameter
 	openFile_p(filePath);
 }
 
 void XmlFileHandler::openFile(QString filePath)
-{
+{ //openFile with extra parameter
 	openFile_p(filePath);
 }
 
+
 void XmlFileHandler::openFile_p(QString path)
-{
-	if ( filemanager->getIsOpen() ) {
+{ //the actual implementation of openFile only visible inside XmlFileHandler
+
+	if ( filemanager->getIsOpen() ) { //if another file is open, close it
 		closeFile();
 	}
 
@@ -204,17 +202,14 @@ void XmlFileHandler::XMLautoGenerate()
 
 void XmlFileHandler::saveFile()
 {
-	filemanager->setSaving(true);
+	filemanager->setSaving(true); //tells that the app is currently saving
 	MainWindow *mw = helpers::getMainWindow();
 
 	QByteArray content = mw->getEditor()->toPlainText().toUtf8();
 	QFile file(filemanager->getCurrentFilePath());
 
-	QFileInfo info(file);
-	qDebug() << info.filePath();
-
 	if ( file.open(QIODevice::ReadWrite | QIODevice::Truncate) ) {
-		if ( file.write(content) < 0 ) {//check if write was successful
+		if ( file.write(content) < 0 ) {
 			qDebug() << "ERROR from "<<__func__<<" Cannot write to file";
 		}
 	} else {
@@ -223,23 +218,19 @@ void XmlFileHandler::saveFile()
 	}
 	file.close();
 
-
 	filemanager->setIsSaved(true);
 }
-
-
-
 
 void XmlFileHandler::closeFile()
 {
 	helpers::watcherRemovePath(filemanager->getCurrentFilePath());
 	MainWindow *mw = helpers::getMainWindow();
-	if ( filemanager->getIsSaved() ) {
+	if ( filemanager->getIsSaved() ) { //if content is safed we are good to go
 		mw->getEditor()->clear();
 		mw->getEditor()->setEnabled(false);
 		mw->getEditor()->setLineNumberAreaVisible(false);
 		mw->setEditorTabVisible(false);
-	} else {
+	} else { //if not the user is asked what to do
 		QMessageBox msgBox;
 		msgBox.setText(filemanager->getCurrentFileName()+" has been modified.");
 		msgBox.setInformativeText("Do you want to save your changes?");
@@ -249,18 +240,19 @@ void XmlFileHandler::closeFile()
 
 		switch (ret) {
 			case QMessageBox::Save:
-			this->saveFile();
-			this->closeFile();
-				break;
-			case QMessageBox::Discard:
-			filemanager->setIsSaved(true); //on discard we pretend to save the file
+				this->saveFile();
 				this->closeFile();
 				break;
+			case QMessageBox::Discard:
+				filemanager->setIsSaved(true); //on discard, we pretend to save the file...
+				this->closeFile(); //...otherwise we would be stuck in a loop because: recursion
+				break;
 			case QMessageBox::Cancel:
-			msgBox.close();
+				//do nothing
+				msgBox.close();
 				break;
 			default:
-			// should never be reached
+				// should never be reached
 				break;
 		}
 	}
@@ -272,8 +264,8 @@ void XmlFileHandler::closeFile()
 void XmlFileHandler::handleFileModification(QString file)
 {
 
-	if ( file.compare(filemanager->getCurrentFilePath()) == 0 ) {
-		if ( !filemanager->getSaving() ) {
+	if ( file.compare(filemanager->getCurrentFilePath()) == 0 ) { //checking if the file which triggered the signal is open because if it isn't we don't bother
+		if ( !filemanager->getSaving() ) { //check if saveFile() was just called meaning it triggered the signal so we don't need to handle it
 			QMessageBox msgBox;
 			msgBox.setText(filemanager->getCurrentFileName()+" has been modified outside elbeFrontend");
 			msgBox.setInformativeText("Do you want to reload it?");
@@ -283,22 +275,22 @@ void XmlFileHandler::handleFileModification(QString file)
 
 			switch (ret) {
 				case QMessageBox::Yes:
-				this->closeFile();
-				this->openFile(file);
+					this->closeFile(); //close and...
+					this->openFile(file); //...open it so the content updates itself
 					break;
 				case QMessageBox::No:
-				filemanager->setIsSaved(false);
+					filemanager->setIsSaved(false); //just set state to unsafed to avoid conflicts with filesystem
 					break;
 				case QMessageBox::Cancel:
-				msgBox.close();
+					msgBox.close();
 					break;
 				default:
-				//should not be reached
+					//should not be reached
 					break;
 
 			}
 		}
 	}
-	filemanager->setSaving(false);
+	filemanager->setSaving(false); //obviously reset the value
 }
 

@@ -1,4 +1,4 @@
-
+#include "helpers.h"
 
 #include <iostream>
 #include <QString>
@@ -14,13 +14,14 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QDebug>
-#include "newprojectwizard.h"
+#include <QListWidgetItem>
 
+#include "newprojectwizard.h"
 #include "projectmanager.h"
 #include "mainwindow.h"
 
-#include "helpers.h"
 
+#include "projectlistitem.h"
 
 
 namespace helpers {
@@ -54,6 +55,8 @@ namespace helpers {
 	bool setProjectMetadata(QString projectName, QString projectPath)
 	{//adds metadata to the config file
 
+		ProjectManager *projectmanager = ProjectManager::getInstance();
+		QString elbeId = projectmanager->getElbeID();
 		/*----------------------------- create DOM from XML --------------------------*/
 
 		QFile file(projectPath+"/.project");
@@ -70,6 +73,8 @@ namespace helpers {
 			//look for nodes which have to be modified
 			if ( childElement.tagName().compare("projectname") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectName));
+			} else if (childElement.tagName().compare("elbe_id") == 0 ) {
+				childNode.appendChild(doc.createTextNode(elbeId));
 			} else if ( childElement.tagName().compare("source_directory") == 0 ) {
 				childNode.appendChild(doc.createTextNode(projectPath+"src/"));
 			} else if ( childElement.tagName().compare("output_directory") == 0 ) {
@@ -81,7 +86,7 @@ namespace helpers {
 		}
 
 
-		ProjectManager *projectmanager = ProjectManager::getInstance();
+
 		ProjectManager::projectSettings settings = projectmanager->getNewProjectSettings();
 
 		QDomNode mirrorSettingParentNode;
@@ -106,8 +111,6 @@ namespace helpers {
 			projectSettingNode = projectSettingNode.nextSibling();
 		}
 
-
-
 		QDomNode mirrorSettingNode = mirrorSettingParentNode.firstChild();
 		while (!mirrorSettingNode.isNull()) { //iterate over all children
 			QDomElement mirrorSettingElement = mirrorSettingNode.toElement();
@@ -121,13 +124,7 @@ namespace helpers {
 			mirrorSettingNode = mirrorSettingNode.nextSibling();
 		}
 
-
-
-		/*-------------------------------- Save changes ------------------------------------*/
-
-		QByteArray xml = doc.toByteArray(4); /*converts the DOM to its textual representation.
-												Returns a QByteArray containing UTF-8-encoded data.
-												QByteArray always contains a zero-terminated string*/
+		QByteArray xml = doc.toByteArray(4);
 		return saveXMLChanges(&file, xml);
 	}
 
@@ -161,10 +158,12 @@ namespace helpers {
 //	void deleteFile(QString path){}
 
 
-	void initSystemWatcher()
+	void initSystemWatcher() //watches filesystem to recognize changes on projects from outside
 	{
+//		qDebug() << "inside: " << __func__;
 		ProjectManager *projectmanager = ProjectManager::getInstance();
 		projectmanager->watcher = new QFileSystemWatcher();
+
 		MainWindow *mw = helpers::getMainWindow();
 		QObject::connect(projectmanager->watcher, SIGNAL(directoryChanged(QString)), mw, SLOT(updateItemModel(QString)));
 		QObject::connect(projectmanager->watcher, SIGNAL(fileChanged(QString)), mw, SLOT(updateCurrentFile(QString)));
@@ -174,22 +173,95 @@ namespace helpers {
 	{
 		ProjectManager *projectmanager = ProjectManager::getInstance();
 		if ( !projectmanager->watcher->addPath(path) ) {
-			qDebug() << "path could not be added in"<<__func__;
-		} else {
-			qDebug() << __func__<<" done";
+			qDebug() << path<<" could not be added in "<<__func__;
 		}
 
+//		foreach (QString str, projectmanager->watcher->directories()) {
+//			qDebug() << str;
+//		}
+
+//		foreach (QString str, projectmanager->watcher->files()) {
+//			qDebug() << str;
+//		}
 	}
 
 	void watcherRemovePath(QString path)
 	{
 		ProjectManager *projectmanager = ProjectManager::getInstance();
-		if ( !projectmanager->watcher->addPath(path) ) {
-			qDebug() << "path could not be removed in"<<__func__;
-		} else {
-			qDebug() << __func__<<" done";
+
+//		QStringList checkList = projectmanager->watcher->removePaths(QStringList(path));
+//		if ( !checkList.isEmpty() ) {
+//			qDebug() << path<<" could not be removed in "<<__func__;
+//		}
+
+		if ( !projectmanager->watcher->removePath(path) ) {
+			qDebug() << path<<" could not be removed in "<<__func__;
 		}
 	}
+
+
+	void addNewProjectToLookup(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
+	{
+		QFile lookup("/home/hico/.elbefrontend");
+		if ( !lookup.open(QIODevice::ReadWrite | QIODevice::Append) ) {
+			qDebug() << "ERROR from "<<__func__<<" Could not open/create file";
+			return;
+		}
+		projectPath = projectPath+"\n";
+		QByteArray input = (projectPath).toUtf8();
+		lookup.write(input);
+		lookup.close();
+	}
+
+	void removeProjectFromLookup(QString projectPath)
+	{
+		QFile lookup("/home/hico/.elbefrontend");
+		QList<ProjectListItem*> list = getLookupList();
+
+		for (int i = 0; i < list.size(); ++i) {
+			QString pathToRemove = list.at(i)->getProjectPath();
+			if ( pathToRemove.compare(projectPath) == 0 ) {
+				list.removeAt(i);
+			}
+		}
+
+		lookup.resize(0); //clear file to avoid doubled content
+
+		foreach (ProjectListItem *item, list) {
+			addNewProjectToLookup(item->getProjectPath());
+		}
+	}
+
+
+
+	QList<ProjectListItem*> getLookupList()
+	{
+		QList<ProjectListItem*> list;
+		QFile lookup("/home/hico/.elbefrontend");
+		if ( !lookup.exists() ) {
+			qDebug() << "ERROR from "<<__func__<<"file does not exist";
+			return list;
+		}
+		if ( !lookup.open(QIODevice::ReadOnly) ) {
+			qDebug() << "ERROR from "<<__func__<<" Could not open file";
+		}
+		QByteArray contentByteArray = lookup.readAll();
+		QString contentString = QString().fromUtf8(contentByteArray);
+		QStringList contentList = contentString.split("\n", QString::SkipEmptyParts);
+
+		QString str;
+		QString projectName;
+		for (int i = 0; i < contentList.size(); ++i) {
+			str = contentList.at(i);
+			projectName = str.section("/", -2, -2);
+			list.append(new ProjectListItem(projectName, str));
+		}
+
+		return list;
+	}
+
+
 }
+
 
 

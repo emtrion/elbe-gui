@@ -1,7 +1,7 @@
 #include <iostream>
 #include "mainwindow.h"
 
-
+#include <QDebug>
 #include <QApplication>
 #include <QFile>
 #include <QTextStream>
@@ -9,12 +9,14 @@
 #include <QRect>
 #include <QScreen>
 #include "projectmanager.h"
+#include "helpers.h"
+#include "elbehandler.h"
 
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    MainWindow w;
+	MainWindow w;
 
 	QFile f(":qdarkstyle/style.qss");
 	if (!f.exists())
@@ -28,13 +30,13 @@ int main(int argc, char *argv[])
 		qApp->setStyleSheet(ts.readAll());
 	}
 
-	QRect screenrect = a.primaryScreen()->geometry();
-	w.move(screenrect.left(), screenrect.top());
-
 	ProjectManager *pm = ProjectManager::getInstance();
 	pm->setProjectOpened(false);
 
-    w.show();
+	w.show();
+	helpers::initSystemWatcher();
+	ElbeHandler *elbe = new ElbeHandler();
+	w.setElbeVersion(elbe->checkSystemForElbeVersion());
 
     return a.exec();
 }

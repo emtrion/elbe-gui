@@ -1441,7 +1441,6 @@ QDockWidget::float-button:pressed {
 	border: 1px solid #1f1f1f;
 }
 
-
 /* QTreeView QTableView QListView ----------------------------------------- */
 
 

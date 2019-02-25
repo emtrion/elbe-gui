@@ -43,7 +43,10 @@ SOURCES += main.cpp\
     highlighter.cpp \
     projectitemmodel.cpp \
     xmlfilemanager.cpp \
-    openprojectfiledialog.cpp
+    openprojectfiledialog.cpp \
+    chooseprojectdialog.cpp \
+    projectlistitem.cpp \
+    elbehandler.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -62,12 +65,16 @@ HEADERS  += mainwindow.h \
     highlighter.h \
     projectitemmodel.h \
     xmlfilemanager.h \
-    openprojectfiledialog.h
+    openprojectfiledialog.h \
+    chooseprojectdialog.h \
+    projectlistitem.h \
+    elbehandler.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
     newxmldialog.ui \
-    importfiledialog.ui
+    importfiledialog.ui \
+    chooseprojectdialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc

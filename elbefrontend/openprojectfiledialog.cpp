@@ -37,7 +37,7 @@ OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) 
 
 
 void OpenProjectFileDialog::backOrForClicked()
-{
+{//connected to the navigation buttons in the filedialog
 //	qDebug() << directory().absolutePath();
 
 	QFileInfo file(directory().absolutePath());
@@ -45,14 +45,12 @@ void OpenProjectFileDialog::backOrForClicked()
 
 	if ( !file.path().isEmpty() ) {
 		if ( checkIfProject(file.absoluteFilePath()) ) {
-//			qDebug() << "true";
 			myOpenButton->setEnabled(true);
 		} else {
-//			qDebug() << "false";
 			myOpenButton->setEnabled(false);
 		}
 	} else {
-//		qDebug() << "file is empty";
+		//file is empty
 	}
 }
 
@@ -64,14 +62,12 @@ void OpenProjectFileDialog::fileSelectionChanged(const QString &file)
 
 	if ( !file.isEmpty() ) {
 		if ( checkIfProject(file) ) {
-//			qDebug() << "true";
 			myOpenButton->setEnabled(true);
 		} else {
-//			qDebug() << "false";
 			myOpenButton->setEnabled(false);
 		}
 	} else {
-//		qDebug() << "file is empty";
+		//file is empty
 	}
 }
 
@@ -103,16 +99,17 @@ bool OpenProjectFileDialog::isSelectionValid()
 }
 
 bool OpenProjectFileDialog::eventFilter(QObject *obj, QEvent *event)
-{
+{//catch events which alter the enabled state of the open button
 	if ( obj == myOpenButton ) {
-		if( event->type() == QEvent::EnabledChange && !isSelectionValid() && myOpenButton->isEnabled()) {
-			myOpenButton->setEnabled(false);
+		if( event->type() == QEvent::EnabledChange && !isSelectionValid() && myOpenButton->isEnabled()) {//if the change was not on purpose...
+			myOpenButton->setEnabled(false);//...it's reset
 //			qDebug() << "filtered: "<<event->type();
 			return true;
 		} else {
 			return false;
 		}
 	} else {
+		//if the event didn't came from myOpenButton it's passed down to the default eventfilter which will know what to do with it
 		return QFileDialog::eventFilter(obj, event);
 	}
 }
