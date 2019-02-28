@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     openprojectfiledialog.cpp \
     chooseprojectdialog.cpp \
     projectlistitem.cpp \
-    elbehandler.cpp
+    elbehandler.cpp \
+    existingprojects.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -68,7 +69,8 @@ HEADERS  += mainwindow.h \
     openprojectfiledialog.h \
     chooseprojectdialog.h \
     projectlistitem.h \
-    elbehandler.h
+    elbehandler.h \
+    existingprojects.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \

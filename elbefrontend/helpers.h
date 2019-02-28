@@ -22,9 +22,9 @@ namespace helpers {
 	void initSystemWatcher();
 	void watcherAddPath(QString path);
 	void watcherRemovePath(QString path);
-	void addNewProjectToLookup(QString projectPath);
-	QList<ProjectListItem*> getLookupList();
-	void removeProjectFromLookup(QString projectPath);
+	QString getProjectID(QString confFile);
+	QString getProjectName(QString confFile);
+	QString parseProjectDescriptionForNodeValue(QString confFile, QString node);
 
 
 }

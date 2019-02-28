@@ -1,6 +1,7 @@
 #ifndef CHOOSEPROJECTDIALOG_H
 #define CHOOSEPROJECTDIALOG_H
 
+#include "existingprojects.h"
 #include "projectlistitem.h"
 
 #include <QDialog>
@@ -25,6 +26,7 @@ class ChooseProjectDialog : public QDialog
 		bool listIsEmpty();
 		void addListItem(QString item);
 		void addItems(QList<ProjectListItem*> itemList);
+		ExistingProjects *existingProjectsHandler;
 };
 
 #endif // CHOOSEPROJECTDIALOG_H

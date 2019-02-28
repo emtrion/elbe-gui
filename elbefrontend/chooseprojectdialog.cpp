@@ -1,4 +1,5 @@
 #include "chooseprojectdialog.h"
+#include "existingprojects.h"
 #include "projecthandler.h"
 #include "ui_chooseprojectdialog.h"
 
@@ -15,11 +16,20 @@ ui(new Ui::ChooseProjectDialog)
 
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Delete");
 
-	//getLookupList returns a Qlist<ProjectListItem>
-	addItems(helpers::getLookupList());
+	existingProjectsHandler = new ExistingProjects();
 
+	//getLookupList returns a Qlist<ProjectListItem>
+	addItems(existingProjectsHandler->getExistingProjects());
+
+	QSizePolicy sp = ui->projectList->sizePolicy();
+	sp.setRetainSizeWhenHidden(true);
+	ui->projectList->setSizePolicy(sp);
+
+	ui->Information->hide();
 	if ( listIsEmpty() ) {//if list is empty there are no existing projects
-		addListItem("No Project existend...");
+		ui->projectList->hide();
+		ui->Information->show();
+		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 	}
 }
 

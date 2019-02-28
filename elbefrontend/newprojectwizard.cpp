@@ -149,6 +149,7 @@ void NewProjectWizard::on_NewProjectWizard_accepted()
 //	qDebug() << set.path;
 //	qDebug() << set.proto;
 
+
 	handler.createProject();
 }
 

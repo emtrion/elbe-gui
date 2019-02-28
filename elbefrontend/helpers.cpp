@@ -42,11 +42,13 @@ namespace helpers {
 
 		if (!file->open(QIODevice::ReadOnly)) {// Open file
 			qDebug() << "ERROR from "<<__func__<<" Cannot open file";
+			return QDomDocument();
 		}
 
 		if (!doc.setContent(file)) {// Parse file
 			qDebug() << "ERROR from "<<__func__<<" Cannot parse the content";
 			file->close();
+			return QDomDocument();
 		}
 		file->close();
 		return doc;
@@ -200,66 +202,40 @@ namespace helpers {
 	}
 
 
-	void addNewProjectToLookup(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
+	QString parseProjectDescriptionForNodeValue(QString confFile, QString node)
 	{
-		QFile lookup("/home/hico/.elbefrontend");
-		if ( !lookup.open(QIODevice::ReadWrite | QIODevice::Append) ) {
-			qDebug() << "ERROR from "<<__func__<<" Could not open/create file";
-			return;
+		QFile file(confFile);
+		QString retVal; //empty string
+
+		QDomDocument doc = helpers::parseXMLFile(&file);
+		QDomElement root = doc.firstChildElement("projectDescription"); //get root element
+		QDomNode childNode = root.firstChild();
+		while (!childNode.isNull()) { //iterate over all child nodes
+			QDomElement childElement = childNode.toElement();
+			 if (childElement.tagName().compare(node) == 0 ) {
+				retVal = childNode.firstChild().nodeValue();
+				break;
+			 }
+			 childNode = childNode.nextSibling();
 		}
-		projectPath = projectPath+"\n";
-		QByteArray input = (projectPath).toUtf8();
-		lookup.write(input);
-		lookup.close();
+		file.close();
+
+		return retVal;
 	}
 
-	void removeProjectFromLookup(QString projectPath)
+	QString getProjectID(QString confFile)
 	{
-		QFile lookup("/home/hico/.elbefrontend");
-		QList<ProjectListItem*> list = getLookupList();
-
-		for (int i = 0; i < list.size(); ++i) {
-			QString pathToRemove = list.at(i)->getProjectPath();
-			if ( pathToRemove.compare(projectPath) == 0 ) {
-				list.removeAt(i);
-			}
-		}
-
-		lookup.resize(0); //clear file to avoid doubled content
-
-		foreach (ProjectListItem *item, list) {
-			addNewProjectToLookup(item->getProjectPath());
-		}
+		QString retVal = parseProjectDescriptionForNodeValue(confFile, "elbe_id");
+		qDebug() <<__func__<<": "<< retVal;
+		return retVal;
 	}
 
-
-
-	QList<ProjectListItem*> getLookupList()
+	QString getProjectName(QString confFile)
 	{
-		QList<ProjectListItem*> list;
-		QFile lookup("/home/hico/.elbefrontend");
-		if ( !lookup.exists() ) {
-			qDebug() << "ERROR from "<<__func__<<"file does not exist";
-			return list;
-		}
-		if ( !lookup.open(QIODevice::ReadOnly) ) {
-			qDebug() << "ERROR from "<<__func__<<" Could not open file";
-		}
-		QByteArray contentByteArray = lookup.readAll();
-		QString contentString = QString().fromUtf8(contentByteArray);
-		QStringList contentList = contentString.split("\n", QString::SkipEmptyParts);
-
-		QString str;
-		QString projectName;
-		for (int i = 0; i < contentList.size(); ++i) {
-			str = contentList.at(i);
-			projectName = str.section("/", -2, -2);
-			list.append(new ProjectListItem(projectName, str));
-		}
-
-		return list;
+		QString retVal = parseProjectDescriptionForNodeValue(confFile, "projectname");
+		qDebug()<< __func__<<": "<< retVal;
+		return retVal;
 	}
-
 
 }
 

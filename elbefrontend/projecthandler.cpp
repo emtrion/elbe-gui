@@ -10,6 +10,7 @@
 
 
 #include "chooseprojectdialog.h"
+#include "existingprojects.h"
 
 
 ProjectHandler::ProjectHandler()
@@ -60,7 +61,7 @@ void ProjectHandler::createProject()
 	}
 
 	QFileInfo fi(confFile);
-	helpers::addNewProjectToLookup(fi.absoluteFilePath());
+	ExistingProjects().addNewProjectToList(fi.absoluteFilePath());
 	openProject(fi.absoluteFilePath());
 }
 
@@ -96,8 +97,11 @@ void ProjectHandler::closeProject()
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
 
-	XmlFileHandler *filehandler = new XmlFileHandler();
-	filehandler->closeFile();
+	XmlFileManager *filemanager = XmlFileManager::getInstance();
+	if ( filemanager->getIsOpen() ) {
+		XmlFileHandler *filehandler = new XmlFileHandler();
+		filehandler->closeFile();
+	}
 
 	projectmanager->setProjectOpened(false);
 	mw->enableActionsOnProjectOpen(false);
@@ -107,15 +111,21 @@ void ProjectHandler::deleteProject(QString path)
 {
 
 	if ( projectmanager->getProjectPath().compare(path) == 0 ) {//check if the selected project is currently open
-		closeProject();
+		closeProject(); //if so, close it
 	}
 
-	helpers::removeProjectFromLookup(path);
-
 	//deleteElbeInstance
-//	elbehandler->deleteProjectElbeInstance();
-
+	if ( !elbehandler->deleteProjectElbeInstance(path) ) {
+		qDebug() << "delet from elbe failed! It may be already deleted.";
+	}
+	ExistingProjects().removeProjectFromList(path);
 	//delete Project from src Directory
+	QDir projectDir(path);
+	projectDir.cdUp(); //move one up because path = .../.project
+	if ( !projectDir.removeRecursively() ) {
+		qDebug() << "ERROR from "<<__func__<<" could not remove project from filesystem";
+		return;
+	}
 
 }
 

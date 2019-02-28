@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Delete Project</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -32,7 +32,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="Headline">
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -42,6 +42,13 @@
        </property>
        <property name="text">
         <string>Choose project to delete:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="Information">
+       <property name="text">
+        <string>There are no projects to delete...</string>
        </property>
       </widget>
      </item>
