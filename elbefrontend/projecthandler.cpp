@@ -17,8 +17,7 @@ ProjectHandler::ProjectHandler()
 {
 	this->projectmanager = ProjectManager::getInstance();
 	elbehandler = new ElbeHandler();
-
-
+	filemanager = XmlFileManager::getInstance();
 }
 
 ProjectHandler::ProjectHandler(QString path, QString name)
@@ -28,6 +27,7 @@ ProjectHandler::ProjectHandler(QString path, QString name)
 
 	this->projectmanager = ProjectManager::getInstance();
 	elbehandler = new ElbeHandler();
+	filemanager = XmlFileManager::getInstance();
 }
 
 
@@ -62,10 +62,11 @@ void ProjectHandler::createProject()
 
 	QFileInfo fi(confFile);
 	ExistingProjects().addNewProjectToList(fi.absoluteFilePath());
+	projectmanager->setProjectHasFile(false);
 	openProject(fi.absoluteFilePath());
 }
 
-void ProjectHandler::openProject(QString path)
+void ProjectHandler::openProject(QString path) //path to .project file
 {
 	if ( projectmanager->isProjectOpened() ) {
 		//close open project before opening a new one
@@ -80,9 +81,29 @@ void ProjectHandler::openProject(QString path)
 	mw->enableActionsOnProjectOpen(true);
 	helpers::watcherAddPath(projectmanager->getSrcPath());
 
+	if ( checkIfProjectHasXML(path) ) {
+		projectmanager->setProjectHasFile(true);
+		mw->changeNewXmlButtonEnabledStatus(false);
+	}
+
 //	qDebug() << "ProjectOpened: " << path;
 }
 
+
+bool ProjectHandler::checkIfProjectHasXML(QString path)
+{
+	QDir project(path);
+	if ( !project.cd("../src/") ) {
+		qDebug() << "src dir doesn't exist";
+		return false;
+	}
+
+	if ( !project.isEmpty() ) {
+		return true;
+	} else {
+		return false;
+	}
+}
 
 void ProjectHandler::closeProject()
 {
@@ -97,7 +118,7 @@ void ProjectHandler::closeProject()
 	MainWindow *mw = helpers::getMainWindow();
 	mw->updateProjectStructure();
 
-	XmlFileManager *filemanager = XmlFileManager::getInstance();
+
 	if ( filemanager->getIsOpen() ) {
 		XmlFileHandler *filehandler = new XmlFileHandler();
 		filehandler->closeFile();

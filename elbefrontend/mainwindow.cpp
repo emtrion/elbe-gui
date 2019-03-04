@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //add terminal to window
     QTermWidget *console = new QTermWidget(ui->Terminal_Tab);
     console->setColorScheme("DarkPastels");
-    console->setContentsMargins(0, 0, 0, 0);
+//    console->setContentsMargins(0, 0, 0, 0);
     ui->Terminal_Tab->layout()->addWidget(console);
 
     //set starting size for upperSection
@@ -131,6 +131,12 @@ void MainWindow::on_actionDelete_triggered()
 	//open project selection
 	ChooseProjectDialog *projectChooser = new ChooseProjectDialog();
 	projectChooser->show();
+}
+
+void MainWindow::on_actionBuild_triggered()
+{
+	ElbeHandler *elbeHandler = new ElbeHandler();
+	elbeHandler->startBuildProcess();
 }
 
 /******************************************************/
@@ -252,17 +258,29 @@ void MainWindow::updateCurrentFile(QString path)
 
 void MainWindow::on_ProjektStructure_customContextMenuRequested(const QPoint &pos)
 {
-	Q_UNUSED(pos)
 //	QMenu *menu = new QMenu;
-//	closeAction = new QAction("&Close", menu);
-//	connect(closeAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_closeAction_triggered()));
+//	QAction *deleteAction = new QAction("&Delete", menu);
+//	connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(on_ProjektStructure_ContextMenu_deleteAction_triggered()));
 
 
-//	closeAction->setEnabled(false);
+//	QModelIndex idx = ui->ProjektStructure->indexAt(pos);
+//	if ( !idx.isValid() ) {
+//		return;
+//	}
+////	qDebug() << idx;
+////	qDebug() << idx.column() << idx.row();
+////	qDebug() << idx.internalId();
+////	qDebug() << idx.parent();
 
-
-//	menu->addAction(closeAction);
+//	menu->addAction(deleteAction);
 //	menu->exec(QCursor::pos());
+
+
+}
+
+void MainWindow::on_ProjektStructure_ContextMenu_deleteAction_triggered()
+{
+ //
 }
 
 /************************************************************************************/
@@ -285,6 +303,13 @@ void MainWindow::showPermStatusOnStatusBar(QString status)
 
 	widget->setLayout(layout);
 	statusBar()->addPermanentWidget(widget);
+}
+
+void MainWindow::setStatusBarTextColor(QColor color)
+{
+//	QPalette *p = new QPalette();
+//	p->setColor(QPalette::Text, color);
+//	ui->statusBar->setForegroundRole(p);
 }
 
 /************************************************************************************/
@@ -322,6 +347,11 @@ void MainWindow::initAboutElbeMessageBox()
 	aboutElbeMessageBox->setIcon(QMessageBox::Information);
 	aboutElbeMessageBox->setStandardButtons(QMessageBox::Close);
 	aboutElbeMessageBox->setDefaultButton(QMessageBox::Close);
+}
+
+void MainWindow::changeNewXmlButtonEnabledStatus(bool enable)
+{
+	ui->actionNew_XML->setEnabled(enable);
 }
 
 /************************************************************************************/
@@ -386,6 +416,8 @@ void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
 
 
 /************************************************************************************/
+
+
 
 
 

@@ -2,11 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QAction>
+#include <QMessageBox>
+
 #include "codeeditor.h"
 #include "projectitemmodel.h"
 #include "projectmanager.h"
-#include <QAction>
-#include <QMessageBox>
 #include "xmlfilemanager.h"
 
 namespace Ui {
@@ -28,7 +29,7 @@ public:
 	QTextEdit *getMessageLog() const;
 	QAction *getActionClose() const;
 	void updateProjectStructure();
-	QAction *closeAction;
+
 	void setEditorTabVisible(bool visible);
 	void setOpenFileNameLabelText(QString text);
 	void enableActionsOnProjectOpen(bool isOpen);
@@ -40,10 +41,13 @@ public:
 	void showElbeVersion(QString version);
 
 	void setElbeVersion(const QString &version);
-
+	void showTempStatusOnStatusBar(QString status);
+	void changeNewXmlButtonEnabledStatus(bool enable);
+	void setStatusBarTextColor(QColor color);
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
+
 
 	private slots:
 	void on_actionNew_triggered();
@@ -76,6 +80,10 @@ public:
 
 	void on_actionDelete_triggered();
 
+	void on_actionBuild_triggered();
+
+	void on_ProjektStructure_ContextMenu_deleteAction_triggered();
+
 	private:
     Ui::MainWindow *ui;
 //	CodeEditor *editor;
@@ -83,7 +91,7 @@ public:
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	XmlFileManager *filemanager = XmlFileManager::getInstance();
 	void closeEvent(QCloseEvent *event);
-	void showTempStatusOnStatusBar(QString status);
+
 	void showPermStatusOnStatusBar(QString status);
 
 	QString elbeVersion;

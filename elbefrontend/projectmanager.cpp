@@ -64,6 +64,16 @@ void ProjectManager::setElbeID(const QString &value)
 	elbeID = value;
 }
 
+bool ProjectManager::getProjectHasFile() const
+{
+	return projectHasFile;
+}
+
+void ProjectManager::setProjectHasFile(bool value)
+{
+	projectHasFile = value;
+}
+
 ProjectManager::ProjectManager()
 {}
 
@@ -110,9 +120,11 @@ void ProjectManager::update(QString path /*should only get path which directs to
 	while (!childNode.isNull()) {
 		if ( childNode.toElement().tagName().compare("projectname") == 0 ) {
 			projectName = childNode.firstChild().nodeValue();
-		} else if ( childNode.toElement().tagName().compare("source_directory") == 0) {
+		} else if ( childNode.toElement().tagName().compare("elbe_id") == 0 ) {
+			elbeID = childNode.firstChild().nodeValue();
+		} else if ( childNode.toElement().tagName().compare("source_directory") == 0 ) {
 			srcPath = childNode.firstChild().nodeValue();
-		} else if( childNode.toElement().tagName().compare("output_directory") == 0){
+		} else if ( childNode.toElement().tagName().compare("output_directory") == 0 ) {
 			outPath = childNode.firstChild().nodeValue();
 		} else if( childNode.toElement().tagName().compare("project") == 0) {
 			projectNode = childNode;

@@ -14,38 +14,15 @@ ElbeHandler::ElbeHandler()
 
 QString ElbeHandler::checkSystemForElbeVersion()
 {
-//		qDebug() << "insdide: "<<__func__;
-	QByteArray output;
-	elbeProcess.start("./elbe");
-	if ( elbeProcess.waitForFinished() ) {
-		output = elbeProcess.readAllStandardOutput();
-	} else {
-		qDebug() << "timed out!";
-		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardError());
-		return "No elbe found!";
-	}
 
-	elbeProcess.close();
-	QString outputString = QString().fromUtf8(output);
-//		qDebug() << outputString.section("\n", 0, 0);
-	return outputString.section("\n", 0, 0);
+
+
+	return execCommand("./elbe").section("\n", 0, 0);
 }
 
 QString ElbeHandler::createProjectElbeInstance()
 {
-	QByteArray output;
-	elbeProcess.start("./elbe control create_project");
-	if ( elbeProcess.waitForFinished() ) {
-		output = elbeProcess.readAllStandardOutput();
-	} else {
-		qDebug() << "timed out";
-		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardError());
-		return "Elbe error";
-	}
-
-	elbeProcess.close();
-	QString outputString = QString().fromUtf8(output);
-	return outputString.section("\n", 0, 0);
+	return execCommand("./elbe control create_project").section("\n", 0, 0);
 }
 
 bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
@@ -57,24 +34,14 @@ bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
 		qDebug() << "ERROR from "<<__func__<<" selected project does not exist in elbe";
 		return false;
 	}
-	QByteArray output;
-	//delete
-	elbeProcess.start("./elbe control del_project "+id);
-	if ( elbeProcess.waitForFinished() ) {
-		output = elbeProcess.readAllStandardOutput();
-	} else {
-		qDebug() << "timed out";
-		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardError());
-		return false;
-	}
 
-	elbeProcess.close();
+	QString out = execCommand("./elbe control del_project "+id);
 
-	if ( output.isEmpty() ) {
+	if ( out.isEmpty() ) {
 		qDebug() << "Deleted.";
 		return true;
 	} else {
-		qDebug() << "An error occured: "<<output;
+		qDebug() << "ERROR from "<<__func__<<": "<<out;
 		return false;
 	}
 	//del_project only returns output if an error occured
@@ -89,23 +56,10 @@ bool ElbeHandler::projectIsInElbe(QString projectPath)
 
 QStringList ElbeHandler::getElbeProjects()
 {
-	QByteArray output;
 	QStringList list;
-	elbeProcess.start("./elbe control list_projects");
-	if ( elbeProcess.waitForFinished() ) {
-		output = elbeProcess.readAllStandardOutput();
-	} else {
-		qDebug() << "timed out";
-		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardError());
-		return list; //which is empty at that point
-	}
 
-
-
-	elbeProcess.close();
-	QString tempString = QString().fromUtf8(output);
-//	qDebug() << tmp;
-	QStringList tempList = tempString.split("\n", QString::SkipEmptyParts); // returns a list of substrings, sectioned wherever the given seperator occurs
+	// returns a list of substrings, sectioned wherever the given seperator occurs
+	QStringList tempList = execCommand("./elbe control list_projects").split("\n", QString::SkipEmptyParts);
 	foreach (QString str, tempList) {
 		list.append(str.section("\t", 0, 0));
 //		qDebug() << str;
@@ -113,3 +67,55 @@ QStringList ElbeHandler::getElbeProjects()
 	return list;
 }
 
+void ElbeHandler::startBuildProcess()
+{
+	XmlFileManager *filemanager = XmlFileManager::getInstance();
+	ProjectManager *projectmanager = ProjectManager::getInstance();
+	if ( !setXmlFile(filemanager->getCurrentFilePath(), projectmanager->getElbeID()) ) {
+		qDebug() << "xml wasn't set -> don't commence build";
+		return;
+	}
+
+	qDebug() << "now start build process!";
+	if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
+		qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
+		return;
+	}
+	qDebug() << "build finished";
+
+}
+
+bool ElbeHandler::setXmlFile(QString file, QString elbeID)
+{
+	qDebug() << "./elbe control set_xml "+elbeID+" "+file;
+	QString out = execCommand("./elbe control set_xml "+elbeID+" "+file);
+
+	qDebug() << __func__<<": "<<out;
+
+	if ( out.compare("upload of xml finished\n") != 0 ) { //check if set_xml was successful
+		qDebug() << "ERROR from "<<__func__;
+		return false;
+	} else {
+		return true;
+	}
+}
+
+
+QString ElbeHandler::execCommand(QString command)
+{
+	QByteArray outputByteArray;
+	QString outputString;
+
+	elbeProcess.start(command);
+	if ( elbeProcess.waitForFinished() ) {
+		outputByteArray = elbeProcess.readAllStandardOutput();
+	} else {
+		qDebug() << "timed out";
+		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardOutput());
+		return outputString; //which is empty at that point
+	}
+	elbeProcess.close();
+
+	outputString = QString().fromUtf8(outputByteArray);
+	return outputString;
+}

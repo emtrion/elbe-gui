@@ -4,6 +4,7 @@
 #include <QString>
 #include "elbehandler.h"
 #include "projectmanager.h"
+#include "xmlfilemanager.h"
 
 
 class ProjectHandler
@@ -24,6 +25,8 @@ class ProjectHandler
 		QString newProjectName;
 		ProjectManager *projectmanager;
 		ElbeHandler *elbehandler;
+		bool checkIfProjectHasXML(QString path);
+		XmlFileManager *filemanager;
 };
 
 #endif // PROJECTHANDLER_H

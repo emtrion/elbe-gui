@@ -364,22 +364,22 @@
            </property>
            <item>
             <property name="text">
-             <string notr="true">Jessi</string>
+             <string notr="true">jessi</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string notr="true">Stretch</string>
+             <string notr="true">stretch</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string notr="true">Buster</string>
+             <string notr="true">buster</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string notr="true">Sid</string>
+             <string notr="true">sid</string>
             </property>
            </item>
           </widget>

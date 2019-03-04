@@ -1,5 +1,6 @@
 #include "schemavalidation.h"
 
+#include <QApplication>
 #include <QFile>
 #include <QXmlSchema>
 #include <QDebug>
@@ -49,14 +50,19 @@ bool SchemaValidation::loadSchema()
 
 void SchemaValidation::validate()
 {
+//	qDebug() << "validate start";
+
 	bool errorOccured = false;
 	if ( !loadSchema() ) {
 		errorOccured = true;
 	} else {
+//		qDebug() << "schema loaded";
+		QApplication::setOverrideCursor(Qt::WaitCursor);
 		QXmlSchemaValidator valildator(schema);
 		if ( !valildator.validate(instanceFile)){
 			errorOccured = true;
 		}
+		QApplication::restoreOverrideCursor();
 	}
 
 	if ( errorOccured ) {
@@ -73,16 +79,19 @@ void SchemaValidation::validate()
 void SchemaValidation::displayValidationMessage(bool errorOccured)
 {
 	QColor color;
-	QTextEdit *messageLog = mainwindow->getMessageLog();
+	MainWindow *mw = helpers::getMainWindow();
+//	QTextEdit *messageLog = mainwindow->getMessageLog();
 	if ( errorOccured ){
 		color.setNamedColor("#d30102");
-		messageLog->setTextColor(color);
-		messageLog->setText(messageHandler.statusMessage());
+//		messageLog->setTextColor(color);
+//		messageLog->setText(messageHandler.statusMessage());
+		mw->setStatusBarTextColor(color);
+		mw->showTempStatusOnStatusBar(messageHandler.statusMessage());
 	} else {
-
 		color.setNamedColor("#5f8700");
-		messageLog->setTextColor(color);
-		messageLog->setPlainText("validation successful");
+//		messageLog->setTextColor(color);
+//		messageLog->setPlainText("validation successful");
+		mw->showTempStatusOnStatusBar("validation successful");
 	}
 }
 
@@ -103,7 +112,7 @@ void SchemaValidation::moveCursor(int line, int column)
 	QList<QTextEdit::ExtraSelection> extraSelections;
 	QTextEdit::ExtraSelection selection;
 
-	const QColor lineColor = QColor(Qt::red).lighter(160);
+	const QColor lineColor = QColor(Qt::red).lighter(80);
 	selection.format.setBackground(lineColor);
 	selection.format.setProperty(QTextFormat::FullWidthSelection, true);
 	selection.cursor = ce->textCursor();

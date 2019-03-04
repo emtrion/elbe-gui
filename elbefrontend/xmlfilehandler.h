@@ -1,8 +1,11 @@
 #ifndef XMLFILEHANDLER_H
 #define XMLFILEHANDLER_H
 
+
 #include <QString>
 
+#include "elbehandler.h"
+#include "projectmanager.h"
 #include "xmlfilemanager.h"
 
 class XmlFileHandler
@@ -21,10 +24,13 @@ class XmlFileHandler
 		void handleFileModification(QString file);
 
 		void openFile(QString filePath);
+
 	private:
 		QString filePath;
 		QString fileName;
 		XmlFileManager *filemanager;
 		void openFile_p(QString path);
+		ProjectManager *projectmanager;
+		ElbeHandler *elbeHandler;
 };
 #endif // XMLFILEHANDLER_H

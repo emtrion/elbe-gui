@@ -210,6 +210,21 @@
             <string>MessageLog</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
             <item>
              <widget class="QTextEdit" name="MessageLog">
               <property name="font">
@@ -241,7 +256,23 @@
            <attribute name="title">
             <string>Terminal</string>
            </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_4"/>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -273,13 +304,14 @@
     </widget>
     <addaction name="menu_New"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionImport"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
-    <addaction name="actionImport"/>
+    <addaction name="actionBuild"/>
     <addaction name="separator"/>
     <addaction name="actionValidate"/>
     <addaction name="separator"/>
@@ -329,6 +361,7 @@
    </attribute>
    <addaction name="actionNew"/>
    <addaction name="actionSave"/>
+   <addaction name="actionBuild"/>
    <addaction name="action_ChangeView"/>
    <addaction name="separator"/>
    <addaction name="separator"/>
@@ -473,7 +506,12 @@
   </action>
   <action name="actionDelete">
    <property name="text">
-    <string>Delete</string>
+    <string>&amp;Delete</string>
+   </property>
+  </action>
+  <action name="actionBuild">
+   <property name="text">
+    <string>Build Project</string>
    </property>
   </action>
  </widget>

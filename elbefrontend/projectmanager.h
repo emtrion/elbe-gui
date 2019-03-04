@@ -35,6 +35,8 @@ class ProjectManager
 		projectSettings newProjectSettings;
 		bool projectOpened = false;
 		bool projectModified = false;
+		bool projectHasFile = false;
+
 
 		projectSettings emptyStruct;
 		/* Private constructor to prevent instancing. */
@@ -62,6 +64,8 @@ class ProjectManager
 		void setProjectModified(bool value);
 		QString getElbeID() const;
 		void setElbeID(const QString &value);
+		bool getProjectHasFile() const;
+		void setProjectHasFile(bool value);
 };
 
 

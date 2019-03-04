@@ -226,14 +226,14 @@ namespace helpers {
 	QString getProjectID(QString confFile)
 	{
 		QString retVal = parseProjectDescriptionForNodeValue(confFile, "elbe_id");
-		qDebug() <<__func__<<": "<< retVal;
+//		qDebug() <<__func__<<": "<< retVal;
 		return retVal;
 	}
 
 	QString getProjectName(QString confFile)
 	{
 		QString retVal = parseProjectDescriptionForNodeValue(confFile, "projectname");
-		qDebug()<< __func__<<": "<< retVal;
+//		qDebug()<< __func__<<": "<< retVal;
 		return retVal;
 	}
 
