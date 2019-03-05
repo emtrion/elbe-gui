@@ -15,6 +15,8 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent)
 	QFontMetrics metrics(this->font());
 	this->setTabStopDistance(tabStop * metrics.width(' '));
 
+	this->setMinimumSize(5,5);
+
 	highlighter = new Highlighter(this->document());
 
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));

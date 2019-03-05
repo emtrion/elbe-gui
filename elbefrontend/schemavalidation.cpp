@@ -9,6 +9,7 @@
 #include <QXmlSchemaValidator>
 #include <QSourceLocation>
 #include <QAbstractMessageHandler>
+#include <QTime>
 #include "helpers.h"
 
 SchemaValidation::SchemaValidation(QFile instanceFile)
@@ -26,6 +27,7 @@ SchemaValidation::SchemaValidation(QString fileContent)
 
 bool SchemaValidation::loadSchema()
 {
+
 //	QFile file(":/schema.xsd");
 	QFile file(":/schemaModified.xsd");
 	file.open(QIODevice::ReadOnly);
@@ -33,7 +35,6 @@ bool SchemaValidation::loadSchema()
 	schema.setMessageHandler(&messageHandler);
 
 	schema.load(&file, QUrl::fromLocalFile(file.fileName()));
-//	schema.load(&file, QUrl("https://www.linutronix.de/projects/Elbe"));
 
 	if ( schema.isValid() ) {
 		qDebug() << "schema is valid";
@@ -53,18 +54,18 @@ void SchemaValidation::validate()
 //	qDebug() << "validate start";
 
 	bool errorOccured = false;
+	QApplication::setOverrideCursor(Qt::WaitCursor); //show wait cursor while validating because it can take some time
 	if ( !loadSchema() ) {
 		errorOccured = true;
 	} else {
 //		qDebug() << "schema loaded";
-		QApplication::setOverrideCursor(Qt::WaitCursor);
+
 		QXmlSchemaValidator valildator(schema);
 		if ( !valildator.validate(instanceFile)){
 			errorOccured = true;
 		}
-		QApplication::restoreOverrideCursor();
 	}
-
+	QApplication::restoreOverrideCursor(); //restore cursor
 	if ( errorOccured ) {
 		moveCursor(messageHandler.line(), messageHandler.column());
 		qDebug() << "File is not valid";
