@@ -95,9 +95,9 @@ QMainWindow::separator:vertical {
 /* QToolTip --------------------------------------------------------------- */
 
 QToolTip {
-	background-color: #148CD2;
-	border: 1px solid #333333;
-	color: #333333;
+	background-color: #151515;
+	border: 1px solid #e2e2e2;
+	color: #e2e2e2;
 	padding: 0;   /*remove padding, for fix combo box tooltip*/
 	opacity: 230; /*reducing transparency to read better*/
 }
@@ -109,9 +109,9 @@ QStatusBar {
 }
 
 QStatusBar QToolTip {
-	background-color: #148CD2;
-	border: 1px solid #333333;
-	color: #333333;
+	background-color: #151515;
+	border: 1px solid #e2e2e2;
+	color: #e2e2e2;
 	padding: 0;   /*remove padding, for fix combo box tooltip*/
 	opacity: 230; /*reducing transparency to read better*/
 }
@@ -150,7 +150,7 @@ QCheckBox::indicator:unchecked:hover,
 QCheckBox::indicator:unchecked:focus,
 QCheckBox::indicator:unchecked:pressed {
 	border: none;
-	image: url(:/qss_icons/rc/checkbox_unchecked_focus.png);
+	image: url(:/qss_icons/rc/checkbox_unchecked.png);
 }
 
 QCheckBox::indicator:unchecked:disabled {
@@ -165,7 +165,7 @@ QCheckBox::indicator:checked:hover,
 QCheckBox::indicator:checked:focus,
 QCheckBox::indicator:checked:pressed {
 	border: none;
-	image: url(:/qss_icons/rc/checkbox_checked_focus.png);
+	image: url(:/qss_icons/rc/checkbox_checked.png);
 }
 
 QCheckBox::indicator:checked:disabled{
@@ -325,7 +325,7 @@ QMenuBar {
 }
 
 QMenuBar:focus {
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 }
 
 QMenuBar::item {
@@ -615,7 +615,7 @@ QTextEdit {
 }
 
 QTextEdit:hover {
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 	color: #F0F0F0;
 }
 
@@ -760,7 +760,7 @@ QAbstractSpinBox::down-arrow:hover {
 }
 
 QAbstractSpinBox:hover{
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 	color: #F0F0F0;
 }
 
@@ -982,7 +982,8 @@ QToolButton:disabled {
 
 QToolButton:hover,
 QToolButton:checked:hover{
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
+	background-color: #505050;
 }
 
 /* the subcontrols below are used only in the MenuButtonPopup mode*/
@@ -1015,7 +1016,7 @@ QToolButton::menu-button {
 
 QToolButton::menu-button:hover,
 QToolButton::menu-button:checked:hover {
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 }
 
 QToolButton::menu-indicator {
@@ -1086,7 +1087,7 @@ QComboBox:item:hover{
 
 QComboBox:hover{
 	background-color: #1f1f1f;
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 }
 
 QComboBox:on {
@@ -1164,7 +1165,7 @@ QSlider::handle:horizontal {
 
 QSlider::handle:horizontal:hover {
 	background: #148CD2;
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 }
 
 QSlider::groove:vertical {
@@ -1198,7 +1199,7 @@ QSlider::handle:vertical {
 
 QSlider::handle:vertical:hover {
 	background: #148CD2;
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 }
 
 
@@ -1714,7 +1715,7 @@ QToolBox::tab:!selected:disabled {
 
 QToolBox::tab:hover {
 	border-color: #148CD2;
-	border-bottom: 2px solid #148CD2;
+	border-bottom: 0px solid #148CD2;
 }
 
 QToolBox QScrollArea QWidget QWidget {
@@ -1815,7 +1816,7 @@ QDateEdit QAbstractItemView {
 }
 
 QAbstractView:hover{
-	border: 1px solid #148CD2;
+	border: 0px solid #148CD2;
 	color: #F0F0F0;
 }
 

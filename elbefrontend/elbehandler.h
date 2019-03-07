@@ -17,6 +17,8 @@ class ElbeHandler
 		bool projectIsInElbe(QString projectPath);
 		void startBuildProcess();
 		bool setXmlFile(QString file, QString elbeID);
+
+		void getFile(QString filename);
 	private:
 		QProcess elbeProcess;
 		QStringList getElbeProjects();

@@ -24,6 +24,7 @@
 #include "xmlfilehandler.h"
 #include "openprojectfiledialog.h"
 #include "chooseprojectdialog.h"
+#include "buildprocessstartdialog.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -135,8 +136,11 @@ void MainWindow::on_actionDelete_triggered()
 
 void MainWindow::on_actionBuild_triggered()
 {
-	ElbeHandler *elbeHandler = new ElbeHandler();
-	elbeHandler->startBuildProcess();
+//	ElbeHandler *elbeHandler = new ElbeHandler();
+//	elbeHandler->startBuildProcess();
+
+	BuildProcessStartDialog *dialog = new BuildProcessStartDialog();
+	dialog->show();
 }
 
 /******************************************************/
@@ -285,11 +289,33 @@ void MainWindow::on_ProjektStructure_ContextMenu_deleteAction_triggered()
 
 /************************************************************************************/
 
+/***************************** messageLog utils *************************************/
+
+void MainWindow::on_MessageLog_textChanged()
+{
+	ui->MessageLog->ensureCursorVisible();
+}
+
+/************************************************************************************/
+
 /***************************** statusBar utils **************************************/
 
 void MainWindow::showTempStatusOnStatusBar(QString status)
 {
 	statusBar()->showMessage(status);
+}
+
+void MainWindow::showNormalStatusOnStatusBar(QString status)
+{
+	QWidget *widget = new QWidget();
+	QLayout *layout = new QHBoxLayout();
+	QLabel *label = new QLabel(widget);
+	label->setText(status);
+	layout->addWidget(label);
+	layout->setMargin(0);
+
+	widget->setLayout(layout);
+	statusBar()->addWidget(widget);
 }
 
 void MainWindow::showPermStatusOnStatusBar(QString status)
@@ -416,6 +442,8 @@ void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
 
 
 /************************************************************************************/
+
+
 
 
 

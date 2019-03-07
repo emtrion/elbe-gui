@@ -14,9 +14,6 @@ ElbeHandler::ElbeHandler()
 
 QString ElbeHandler::checkSystemForElbeVersion()
 {
-
-
-
 	return execCommand("./elbe").section("\n", 0, 0);
 }
 
@@ -72,17 +69,30 @@ void ElbeHandler::startBuildProcess()
 	XmlFileManager *filemanager = XmlFileManager::getInstance();
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	if ( !setXmlFile(filemanager->getCurrentFilePath(), projectmanager->getElbeID()) ) {
-		qDebug() << "xml wasn't set -> don't commence build";
+		qDebug() << "xml wasn't set. Abort";
 		return;
 	}
 
-	qDebug() << "now start build process!";
+	qDebug() << "now starting build process!";
 	if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
 		qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 		return;
 	}
-	qDebug() << "build finished";
+	qDebug() << "build started";
 
+}
+
+
+void ElbeHandler::getFile(QString filename)
+{
+	ProjectManager *projectmanager = ProjectManager::getInstance();
+	QString out = execCommand("./elbe control --output "+projectmanager->getOutPath()+" get_file "+projectmanager->getElbeID()+" "+filename);
+	if ( out.compare(filename+" saved\n" ) != 0 ) {
+		qDebug() << "ERROR from "<<__func__;
+		return;
+	} else {
+		qDebug() << "saved!";
+	}
 }
 
 bool ElbeHandler::setXmlFile(QString file, QString elbeID)

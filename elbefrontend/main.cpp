@@ -30,6 +30,10 @@ int main(int argc, char *argv[])
 		qApp->setStyleSheet(ts.readAll());
 	}
 
+	//set the starting position of mainwindow
+	QRect screenrect = a.primaryScreen()->geometry();
+	w.move(screenrect.left(), screenrect.top());
+
 	ProjectManager *pm = ProjectManager::getInstance();
 	pm->setProjectOpened(false);
 
