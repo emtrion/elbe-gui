@@ -8,6 +8,10 @@
 BuildProcess::BuildProcess(QObject *parent) : QObject(parent)
 {
 	handler = new ElbeHandler();
+	ProjectManager *manager = ProjectManager::getInstance();
+	buildingElbeID = manager->getElbeID();
+	buildingXmlPath = manager->getBuildXmlPath();
+	buildingOutPath = manager->getOutPath();
 }
 
 BuildProcess::~BuildProcess()
@@ -16,8 +20,7 @@ BuildProcess::~BuildProcess()
 
 void BuildProcess::startBuild()
 {
-
-//	handler->startBuildProcess();
+	handler->startBuildProcess();
 	buildThreadInit();
 }
 
@@ -37,6 +40,7 @@ void BuildProcess::buildThreadInit()
 	connect(statusBarThread, SIGNAL(started()), statusBarWorker, SLOT(changeStatusBar()));
 	connect(statusBarWorker, SIGNAL(statusBarHasChanged(QString)), this, SLOT(updateStatusBar(QString)));
 
+	connect(buildWorker, SIGNAL(readyToLoadFiles()), this, SLOT(downloadFiles()));
 
 	statusBarWorker->moveToThread(statusBarThread);
 	buildWorker->moveToThread(buildThread);
@@ -51,14 +55,24 @@ void BuildProcess::buildThreadInit()
 
 void BuildProcess::handleResults(const QString &result)
 {
-	qDebug() << result;
-	foreach (QCheckBox *file, outputFiles) {
-		qDebug() << file->text();
-		handler->getFile(file->text());
-	}
-
 	//end the statusbar thread
 	statusBarThread->requestInterruption();
+
+	updateMessageLog(result);
+	qDebug() << result;
+}
+
+void BuildProcess::downloadFiles()
+{
+	if ( outputFiles.contains("Image")) {
+		if ( !handler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
+			qDebug() << "Could not load all images. Check Output directory and try again";
+		}
+		outputFiles.removeOne("Image");
+	}
+	if ( !handler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
+		qDebug() << "Could not load all files. Check Output directory and try again";
+	}
 }
 
 void BuildProcess::updateMessageLog(const QString &str)
@@ -76,12 +90,12 @@ void BuildProcess::updateStatusBar(const QString &str)
 	mw->showTempStatusOnStatusBar(str);
 }
 
-QList<QCheckBox *> BuildProcess::getOutputFiles() const
+QStringList BuildProcess::getOutputFiles() const
 {
 	return outputFiles;
 }
 
-void BuildProcess::setOutputFiles(const QList<QCheckBox *> &value)
+void BuildProcess::setOutputFiles(const QStringList &value)
 {
 	outputFiles = value;
 }

@@ -24,6 +24,7 @@ class BuildProcessWorker : public QObject
 	signals:
 		void resultReady(const QString &result);
 		void outputReady(const QString &str);
+		void readyToLoadFiles();
 
 
 	public slots:

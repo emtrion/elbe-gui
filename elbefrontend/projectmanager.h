@@ -27,11 +27,12 @@ class ProjectManager
 		/* Here, the instance will be stored. */
 		static ProjectManager* instance;
 		QString projectDirectory;
-		QString projectPath; //path config file where all important data is saved
+		QString projectPath; //path to config file where all important data is saved
 		QString srcPath;
 		QString outPath;
 		QString projectName;
 		QString elbeID;
+		QString buildXmlPath; //path to the xml file of the project
 		projectSettings newProjectSettings;
 		bool projectOpened = false;
 		bool projectModified = false;
@@ -66,6 +67,8 @@ class ProjectManager
 		void setElbeID(const QString &value);
 		bool getProjectHasFile() const;
 		void setProjectHasFile(bool value);
+		QString getBuildXmlPath() const;
+		void setBuildXmlPath(const QString &value);
 };
 
 

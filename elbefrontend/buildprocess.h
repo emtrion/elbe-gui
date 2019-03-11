@@ -18,8 +18,8 @@ class BuildProcess : public QObject
 		QThread *buildThread;
 		QThread *statusBarThread;
 
-		QList<QCheckBox *> getOutputFiles() const;
-		void setOutputFiles(const QList<QCheckBox *> &value);
+		QStringList getOutputFiles() const;
+		void setOutputFiles(const QStringList &value);
 
 		void startBuild();
 
@@ -30,10 +30,14 @@ class BuildProcess : public QObject
 		void handleResults(const QString &result);
 		void updateMessageLog(const QString &str);
 		void updateStatusBar(const QString &str);
+		void downloadFiles();
 	private:
-		QList<QCheckBox*> outputFiles;
+		QStringList outputFiles;
 		void buildThreadInit();
 		ElbeHandler *handler;
+		QString buildingElbeID;
+		QString buildingXmlPath;
+		QString buildingOutPath;
 };
 
 #endif // BUILDPROCESS_H

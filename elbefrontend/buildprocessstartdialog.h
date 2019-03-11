@@ -22,7 +22,7 @@ class BuildProcessStartDialog : public QDialog
 	private:
 		Ui::BuildProcessStartDialog *ui;
 		QList<QCheckBox *> checkBoxList;
-		QList<QCheckBox *> checkedBoxes;
+		QStringList checkedBoxes;
 };
 
 #endif // BUILDPROCESSSTARTDIALOG_H

@@ -237,6 +237,68 @@ namespace helpers {
 		return retVal;
 	}
 
+	QStringList getImageFiles(QString buildXmlPath)
+	{
+//		qDebug() << __func__<<": "<<buildXmlPath;
+		QFile file(buildXmlPath);
+
+		QStringList imageFilenames;
+
+		QDomNode target;
+
+		QDomDocument doc = helpers::parseXMLFile(&file);
+		QDomElement root = doc.firstChildElement("ns0:RootFileSystem");
+		QDomNode childNode = root.firstChild();
+		while(!childNode.isNull()) {
+			if(childNode.toElement().tagName().compare("target") == 0 ) {
+				target = childNode;
+			}
+			childNode = childNode.nextSibling();
+		}
+
+		QDomNode package;
+		QDomNode images;
+
+
+		QDomNode targetChild = target.firstChild();
+		while(!targetChild.isNull()) {
+			if (targetChild.toElement().tagName().compare("package") == 0 ) {
+				package = targetChild;
+			} else if (targetChild.toElement().tagName().compare("images") == 0 ) {
+				images = targetChild;
+			}
+			targetChild = targetChild.nextSibling();
+		}
+
+		QList<QDomNode> nodeList;
+		nodeList.append(package);
+		nodeList.append(images);
+
+
+
+		QDomNode tmpNode;
+		QDomNode tmpNode2;
+		foreach (QDomNode node, nodeList) { //iterate over the two nodes packages and images
+			QDomNode nodeChild = node.firstChild();
+			while(!nodeChild.isNull()) {
+				tmpNode = nodeChild;
+				while(!tmpNode.isNull()) { //because all the childnodes have the same structure it's not necessary to id them by name
+					tmpNode2 = tmpNode.firstChild();
+					while(!tmpNode2.isNull()) {
+						if ( tmpNode2.toElement().tagName().compare("name") == 0) {
+							imageFilenames.append(tmpNode2.firstChild().nodeValue()); //append every name tag found to the list which is returned
+							break;
+						}
+						tmpNode2 = tmpNode2.nextSibling();
+					}
+					tmpNode = tmpNode.nextSibling();
+				}
+				nodeChild = nodeChild.nextSibling();
+			}
+		}
+		return imageFilenames;
+	}
+
 }
 
 

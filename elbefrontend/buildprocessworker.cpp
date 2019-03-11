@@ -25,14 +25,18 @@ void BuildProcessWorker::doWork()
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	wait_busy = new QProcess(this);
 
-//	wait_busy->setWorkingDirectory("/home/hico/elbe");
-	wait_busy->setWorkingDirectory("/home/hico/tmp");
+	emit(outputReady("start elbe-build"));
 
-//	wait_busy->start("./elbe control wait_busy "+projectmanager->getElbeID());
-	wait_busy->start("./a.out");
+	wait_busy->setWorkingDirectory("/home/hico/elbe");
+//	wait_busy->setWorkingDirectory("/home/hico/tmp");
+
+	wait_busy->start("./elbe control wait_busy "+projectmanager->getElbeID());
+//	wait_busy->start("./a.out");
 
 	connect(wait_busy, &QProcess::readyReadStandardOutput, this, &BuildProcessWorker::printLog);
 	wait_busy->waitForFinished(-1);
+
+	emit(readyToLoadFiles());
 
 	result = "build done";
 	emit resultReady(result);
@@ -50,8 +54,6 @@ void BuildProcessWorker::printLog()
 	} else {
 		list = output.split("\n", QString::SkipEmptyParts);
 	}
-
-
 	foreach (QString str, list) {
 		qDebug() << str;
 		emit(outputReady(str));

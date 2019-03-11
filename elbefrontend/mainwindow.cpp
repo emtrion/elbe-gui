@@ -32,10 +32,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     //add terminal to window
-    QTermWidget *console = new QTermWidget(ui->Terminal_Tab);
-    console->setColorScheme("DarkPastels");
-//    console->setContentsMargins(0, 0, 0, 0);
-    ui->Terminal_Tab->layout()->addWidget(console);
+//    QTermWidget *console = new QTermWidget(ui->Terminal_Tab);
+//    console->setColorScheme("DarkPastels");
+////    console->setContentsMargins(0, 0, 0, 0);
+//    ui->Terminal_Tab->layout()->addWidget(console);
+
+	ui->Terminal_Tab->hide();
+	ui->DisplaView->removeTab(1);
+
 
     //set starting size for upperSection
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);

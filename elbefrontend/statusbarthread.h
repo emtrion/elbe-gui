@@ -14,10 +14,6 @@ class StatusBarThread : public QObject
 
 	public slots:
 		void changeStatusBar();
-		void endThread(const QString &str);
-
-	private:
-		bool stillRunning;
 };
 
 #endif // STATUSBARTHREAD_H

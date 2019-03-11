@@ -25,6 +25,7 @@ namespace helpers {
 	QString getProjectID(QString confFile);
 	QString getProjectName(QString confFile);
 	QString parseProjectDescriptionForNodeValue(QString confFile, QString node);
+	QStringList getImageFiles(QString buildXmlPath);
 
 
 }
