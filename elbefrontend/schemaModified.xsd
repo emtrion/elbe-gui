@@ -1062,7 +1062,7 @@
 		</annotation>
 	  </element>
 	</sequence>
-	<attribute ref="xml:base"/>
+<attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="binaryblob">
@@ -1091,7 +1091,7 @@
 	</simpleContent>
   </complexType>
 
-  <!--<complexType name="msdoshd">
+<!--  <complexType name="msdoshd">
 	<annotation>
 	  <documentation>
 		 describes a harddisk
@@ -1150,7 +1150,7 @@
 		</annotation>
 	  </element>
 	</sequence>
-	<attribute ref="xml:base"/>
+	  <attribute ref="xml:base"/>
   </complexType>-->
 
   <complexType name="images">
@@ -2062,7 +2062,7 @@
 	</annotation>
 	<simpleContent>
 	  <extension base="string">
-		 <attribute ref="xml:base"/>
+<!--		 <attribute ref="xml:base"/>-->
 	  </extension>
 	</simpleContent>
   </complexType>

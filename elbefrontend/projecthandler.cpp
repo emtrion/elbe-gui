@@ -80,6 +80,7 @@ void ProjectHandler::openProject(QString path) //path to .project file
 
 	mw->enableActionsOnProjectOpen(true);
 	helpers::watcherAddPath(projectmanager->getSrcPath());
+	helpers::watcherAddPath(projectmanager->getOutPath());
 
 	if ( checkIfProjectHasXML(path) ) {
 		projectmanager->setProjectHasFile(true);
@@ -93,12 +94,22 @@ void ProjectHandler::openProject(QString path) //path to .project file
 bool ProjectHandler::checkIfProjectHasXML(QString path)
 {
 	QDir project(path);
-	if ( !project.cd("../src/") ) {
+	if ( !project.cd("../src/") ) {//navigate to /src/
 		qDebug() << "src dir doesn't exist";
 		return false;
 	}
 
+	//get all files from src
+	QFileInfoList entryList = project.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
+
+//	qDebug() << entryList.first().absoluteFilePath();
+
 	if ( !project.isEmpty() ) {
+		if ( entryList.size() == 1 ) { //entry list should be exactly one as only one xml file is expected
+			projectmanager->setBuildXmlPath(entryList.first().absoluteFilePath());
+		} else {
+			qDebug() << "WARNING: src has got more than one file. Couldn't determine which file is the intended. Please remove all files but the intended";
+		}
 		return true;
 	} else {
 		return false;
@@ -113,6 +124,7 @@ void ProjectHandler::closeProject()
 	}
 
 	helpers::watcherRemovePath(projectmanager->getSrcPath());
+	helpers::watcherRemovePath(projectmanager->getOutPath());
 
 	projectmanager->update(QString()); //call update() with a null-string -> all properties of ProjectManager are reset
 	MainWindow *mw = helpers::getMainWindow();

@@ -44,6 +44,7 @@ public:
 	void showTempStatusOnStatusBar(QString status);
 	void changeNewXmlButtonEnabledStatus(bool enable);
 	void setStatusBarTextColor(QColor color);
+	void showNormalStatusOnStatusBar(QString status);
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
@@ -83,6 +84,8 @@ public:
 	void on_actionBuild_triggered();
 
 	void on_ProjektStructure_ContextMenu_deleteAction_triggered();
+
+	void on_MessageLog_textChanged();
 
 	private:
     Ui::MainWindow *ui;

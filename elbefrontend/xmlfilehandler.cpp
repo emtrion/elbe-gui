@@ -73,6 +73,7 @@ void XmlFileHandler::createFile()
 	file.close();
 
 	projectmanager->setProjectHasFile(true);
+	projectmanager->setBuildXmlPath(filePath);
 //	elbeHandler->setXmlFile(filePath, projectmanager->getElbeID());
 
 	MainWindow *mw = helpers::getMainWindow();

@@ -47,7 +47,11 @@ SOURCES += main.cpp\
     chooseprojectdialog.cpp \
     projectlistitem.cpp \
     elbehandler.cpp \
-    existingprojects.cpp
+    existingprojects.cpp \
+    buildprocess.cpp \
+    buildprocessworker.cpp \
+    buildprocessstartdialog.cpp \
+    statusbarthread.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -70,13 +74,18 @@ HEADERS  += mainwindow.h \
     chooseprojectdialog.h \
     projectlistitem.h \
     elbehandler.h \
-    existingprojects.h
+    existingprojects.h \
+    buildprocess.h \
+    buildprocessworker.h \
+    buildprocessstartdialog.h \
+    statusbarthread.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
     newxmldialog.ui \
     importfiledialog.ui \
-    chooseprojectdialog.ui
+    chooseprojectdialog.ui \
+    buildprocessstartdialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc

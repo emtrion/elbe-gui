@@ -58,7 +58,7 @@ void SchemaValidation::validate()
 	if ( !loadSchema() ) {
 		errorOccured = true;
 	} else {
-//		qDebug() << "schema loaded";
+		qDebug() << "schema loaded";
 
 		QXmlSchemaValidator valildator(schema);
 		if ( !valildator.validate(instanceFile)){
@@ -81,18 +81,22 @@ void SchemaValidation::displayValidationMessage(bool errorOccured)
 {
 	QColor color;
 	MainWindow *mw = helpers::getMainWindow();
-//	QTextEdit *messageLog = mainwindow->getMessageLog();
+	QTextEdit *messageLog = mainwindow->getMessageLog();
+
+	//make the error message readable
+	QString errorMsg = messageHandler.statusMessage().remove(QRegExp("<[^>]*>"));
+
 	if ( errorOccured ){
-		color.setNamedColor("#d30102");
-//		messageLog->setTextColor(color);
-//		messageLog->setText(messageHandler.statusMessage());
-		mw->setStatusBarTextColor(color);
-		mw->showTempStatusOnStatusBar(messageHandler.statusMessage());
+		color.setNamedColor("#f66464");
+		messageLog->setTextColor(color);
+		messageLog->setText(errorMsg);
+//		mw->setStatusBarTextColor(color);
+//		mw->showTempStatusOnStatusBar(errorMsg);
 	} else {
 		color.setNamedColor("#5f8700");
-//		messageLog->setTextColor(color);
-//		messageLog->setPlainText("validation successful");
-		mw->showTempStatusOnStatusBar("validation successful");
+		messageLog->setTextColor(color);
+		messageLog->setPlainText("validation successful");
+//		mw->showTempStatusOnStatusBar("validation successful");
 	}
 }
 

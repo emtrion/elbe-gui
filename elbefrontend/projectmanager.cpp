@@ -74,6 +74,16 @@ void ProjectManager::setProjectHasFile(bool value)
 	projectHasFile = value;
 }
 
+QString ProjectManager::getBuildXmlPath() const
+{
+	return buildXmlPath;
+}
+
+void ProjectManager::setBuildXmlPath(const QString &value)
+{
+	buildXmlPath = value;
+}
+
 ProjectManager::ProjectManager()
 {}
 

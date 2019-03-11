@@ -4,11 +4,7 @@
 	<projectname></projectname>
     <elbe_id></elbe_id>  
     <source_directory></source_directory>
-    <output_directory></output_directory>
-                                         
-    <output_files>
-        <file>source.xml</file> 
-    </output_files>
+	<output_directory></output_directory>
 
 	<project>
 		<name></name>
