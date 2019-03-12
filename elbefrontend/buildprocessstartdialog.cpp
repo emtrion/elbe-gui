@@ -11,11 +11,13 @@ ui(new Ui::BuildProcessStartDialog)
 {
 	ui->setupUi(this);
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Start build"); //change accept button text
+	//change accept button text
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Start build");
 
 	ui->ImageCheck->setChecked(true);
 
-	checkBoxList = this->findChildren<QCheckBox*>(); //store all the checkboxes in a list
+	//store all the checkboxes in a list
+	checkBoxList = this->findChildren<QCheckBox*>();
 }
 
 BuildProcessStartDialog::~BuildProcessStartDialog()
@@ -25,6 +27,7 @@ BuildProcessStartDialog::~BuildProcessStartDialog()
 
 void BuildProcessStartDialog::on_buttonBox_accepted()
 {
+	//store all checked boxes
 	foreach (QCheckBox *box, checkBoxList) {
 		qDebug() << box->text();
 		if ( box->isChecked() ) {
@@ -33,6 +36,8 @@ void BuildProcessStartDialog::on_buttonBox_accepted()
 	}
 
 	BuildProcess *buildProcess = new BuildProcess();
+	//pass the selected output files
 	buildProcess->setOutputFiles(checkedBoxes);
-	buildProcess->startBuild();
+	//start the build
+	buildProcess->startBuild(ui->sourceCdCheck->isChecked(), ui->binCdCheck->isChecked());
 }

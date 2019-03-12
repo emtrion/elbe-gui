@@ -45,10 +45,11 @@ public:
 	void changeNewXmlButtonEnabledStatus(bool enable);
 	void setStatusBarTextColor(QColor color);
 	void showNormalStatusOnStatusBar(QString status);
+
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
-
+	void messageLogAppendText(const QString &str, const QString &colorHexVal);
 
 	private slots:
 	void on_actionNew_triggered();

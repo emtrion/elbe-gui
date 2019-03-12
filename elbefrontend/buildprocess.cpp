@@ -8,87 +8,34 @@
 BuildProcess::BuildProcess(QObject *parent) : QObject(parent)
 {
 	handler = new ElbeHandler();
-	ProjectManager *manager = ProjectManager::getInstance();
-	buildingElbeID = manager->getElbeID();
-	buildingXmlPath = manager->getBuildXmlPath();
-	buildingOutPath = manager->getOutPath();
 }
 
 BuildProcess::~BuildProcess()
 {
 }
 
-void BuildProcess::startBuild()
+void BuildProcess::startBuild(bool sourceOptionChecked, bool binOptionChecked)
 {
-	handler->startBuildProcess();
+//	handler->startBuildProcess(sourceOptionChecked, binOptionChecked);
 	buildThreadInit();
 }
 
 void BuildProcess::buildThreadInit()
 {
 	buildThread = new QThread();
-	statusBarThread = new QThread();
 
-	BuildProcessWorker *buildWorker = new BuildProcessWorker();
-	StatusBarThread *statusBarWorker = new StatusBarThread();
+	BuildProcessWorker *buildWorker = new BuildProcessWorker(outputFiles);
 
 	connect(buildThread, SIGNAL(started()), buildWorker, SLOT(doWork()));
-	connect(buildWorker, SIGNAL(resultReady(QString)), this, SLOT(handleResults(QString)));
-	connect(buildWorker, SIGNAL(outputReady(QString)), this, SLOT(updateMessageLog(QString)));
+	connect(buildThread, SIGNAL(finished()), buildWorker, SLOT(deleteLater()));
 
-
-	connect(statusBarThread, SIGNAL(started()), statusBarWorker, SLOT(changeStatusBar()));
-	connect(statusBarWorker, SIGNAL(statusBarHasChanged(QString)), this, SLOT(updateStatusBar(QString)));
-
-	connect(buildWorker, SIGNAL(readyToLoadFiles()), this, SLOT(downloadFiles()));
-
-	statusBarWorker->moveToThread(statusBarThread);
 	buildWorker->moveToThread(buildThread);
-
-	statusBarThread->start();
 	buildThread->start();
 
-
-	qDebug() << statusBarThread->currentThreadId();
-	qDebug() << QThread::currentThreadId();
+//	qDebug() << QThread::currentThreadId();
 }
 
-void BuildProcess::handleResults(const QString &result)
-{
-	//end the statusbar thread
-	statusBarThread->requestInterruption();
 
-	updateMessageLog(result);
-	qDebug() << result;
-}
-
-void BuildProcess::downloadFiles()
-{
-	if ( outputFiles.contains("Image")) {
-		if ( !handler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
-			qDebug() << "Could not load all images. Check Output directory and try again";
-		}
-		outputFiles.removeOne("Image");
-	}
-	if ( !handler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
-		qDebug() << "Could not load all files. Check Output directory and try again";
-	}
-}
-
-void BuildProcess::updateMessageLog(const QString &str)
-{
-	MainWindow *mw = helpers::getMainWindow();
-	QColor color;
-	color.setNamedColor("#F36363");
-	mw->getMessageLog()->setTextColor(color);
-	mw->getMessageLog()->append(str);
-}
-
-void BuildProcess::updateStatusBar(const QString &str)
-{
-	MainWindow *mw = helpers::getMainWindow();
-	mw->showTempStatusOnStatusBar(str);
-}
 
 QStringList BuildProcess::getOutputFiles() const
 {

@@ -11,6 +11,7 @@
 #include <QErrorMessage>
 #include <QFileDialog>
 #include <QCheckBox>
+#include <QThread>
 
 #include "codeeditor.h"
 #include "qtermwidget5/qtermwidget.h"
@@ -298,6 +299,20 @@ void MainWindow::on_ProjektStructure_ContextMenu_deleteAction_triggered()
 void MainWindow::on_MessageLog_textChanged()
 {
 	ui->MessageLog->ensureCursorVisible();
+}
+
+void MainWindow::messageLogAppendText(const QString &str, const QString &colorHexVal)
+{
+
+	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
+
+	QColor color;
+	color.setNamedColor(colorHexVal);
+
+	QTextEdit *msgLog = this->getMessageLog();
+
+	msgLog->setTextColor(color);
+	msgLog->append(str);
 }
 
 /************************************************************************************/

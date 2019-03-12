@@ -16,21 +16,18 @@ class BuildProcess : public QObject
 		explicit BuildProcess(QObject *parent = 0);
 		~BuildProcess();
 		QThread *buildThread;
-		QThread *statusBarThread;
+
 
 		QStringList getOutputFiles() const;
 		void setOutputFiles(const QStringList &value);
 
-		void startBuild();
+		void startBuild(bool sourceOptionChecked, bool binOptionChecked);
 
 	signals:
 
 
 	public slots:
-		void handleResults(const QString &result);
-		void updateMessageLog(const QString &str);
-		void updateStatusBar(const QString &str);
-		void downloadFiles();
+
 	private:
 		QStringList outputFiles;
 		void buildThreadInit();

@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "projectmanager.h"
+#include "statusbarthread.h"
 
 #include <QObject>
 #include <QProcess>
@@ -16,15 +17,18 @@ class BuildProcessWorker : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit BuildProcessWorker();
+		explicit BuildProcessWorker(QStringList outputFiles);
 		~BuildProcessWorker();
-		QProcess *wait_busy;
+		QProcess *process;
 		QString output;
 
 	signals:
-		void resultReady(const QString &result);
+		void resultReady();
 		void outputReady(const QString &str);
-		void readyToLoadFiles();
+		void messageLogHasUpdate(const QString &str, const QString &colorHexValue);
+		void messageTextNeedsChange();
+		void startStatusBarBuild();
+		void startStatusBarLoad();
 
 
 	public slots:
@@ -32,7 +36,21 @@ class BuildProcessWorker : public QObject
 		void printLog();
 
 
+
+	private slots:
+		void updateMessageLog(const QString &str);
+		void downloadFiles();
 	private:
+		QStringList outputFiles;
+		ElbeHandler *handler;
+		QString buildingElbeID;
+		QString buildingXmlPath;
+		QString buildingOutPath;
+		ProjectManager *projectmanager;
+		StatusBarThread *statusBarWorker;
+
+		QThread *statusBarBuildThread;
+		QThread *statusBarLoadThread;
 
 };
 

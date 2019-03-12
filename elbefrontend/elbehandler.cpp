@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDebug>
 #include <QDir>
+#include <QThread>
 
 #include "helpers.h"
 
@@ -66,7 +67,7 @@ QStringList ElbeHandler::getElbeProjects()
 	return list;
 }
 
-void ElbeHandler::startBuildProcess()
+void ElbeHandler::startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
 {
 	if ( !setXmlFile(projectmanager->getBuildXmlPath(), projectmanager->getElbeID()) ) {
 		qDebug() << "xml wasn't set. Abort";
@@ -74,12 +75,29 @@ void ElbeHandler::startBuildProcess()
 	}
 
 	qDebug() << "now starting build process!";
-	if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
-		qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
-		return;
+	if ( sourceOptionChecked && binOptionChecked ) {
+		if ( !execCommand("./elbe control --build-bin --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
+			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
+			return;
+		}
+	} else if ( sourceOptionChecked && !binOptionChecked ) {
+		if ( !execCommand("./elbe control --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
+			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
+			return;
+		}
+	} else if ( !sourceOptionChecked && binOptionChecked ) {
+		if ( !execCommand("./elbe control --build-bin build "+projectmanager->getElbeID()).isEmpty() ) {
+			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
+			return;
+		}
+	} else {
+		if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
+			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
+			return;
+		}
 	}
-	qDebug() << "build started";
 
+	qDebug() << "build started";
 }
 
 
@@ -93,21 +111,22 @@ void ElbeHandler::removeFalseLoadedFiles(QString outPath, QString filename)
 
 bool ElbeHandler::getImages_p(QString buildXmlPath, QString outPath, QString elbeID)
 {
+	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
 	bool check;
 	QStringList imageList = helpers::getImageFiles(buildXmlPath);
 	foreach(QString filename, imageList) {
 
 //		qDebug() << __func__<<": "<< filename;
 
+		if (!filename.endsWith(".gz") ) {
+			filename.append(".gz");
+		}
+
 		if( !getFile_p(filename, outPath, elbeID) ) {
 			removeFalseLoadedFiles(outPath, filename);
 			//adjust filename in case getFile failed
-			if (!filename.endsWith(".gz") ) {
-				filename.append(".gz");
-			} else {
-				filename.chop(3);
-			}
-			//try a second time with adjusted filename, in case the file was/wasn't zipped with gz
+			filename.chop(3);
+			//try a second time with adjusted filename, in case the file wasn't zipped with gz
 			if ( !getFile_p(filename, outPath, elbeID) ) {
 				removeFalseLoadedFiles(outPath, filename);
 				check = false;
@@ -117,7 +136,6 @@ bool ElbeHandler::getImages_p(QString buildXmlPath, QString outPath, QString elb
 //			qDebug() << "ERROR from "<<__func__<<": didnt't get image file "<<filename;
 //			check = false;
 
-			//remove false copied files
 		} else {
 			check = true; //set check=true because getFile succeeded
 		}
@@ -128,8 +146,10 @@ bool ElbeHandler::getImages_p(QString buildXmlPath, QString outPath, QString elb
 bool ElbeHandler::getFile_p(QString filename, QString outPath, QString elbeID)
 {
 
-	QString out = execCommand("./elbe control --output "+outPath+" get_file "+elbeID+" "+filename);
-//	qDebug() << __func__<<" says: "<<outPath+filename+" saved\n";
+//	qDebug() << __func__<<" loading: "<<filename<<" in Thread: "<<QThread::currentThreadId();
+
+	QString out = execCommand("./elbe control --output "+outPath+" get_file "+elbeID+" "+filename, -1/*causes the waitForFinished to wait without any timeout*/);
+	qDebug() << __func__<<" says: "<<outPath+filename+" saved\n";
 	if ( out.compare(outPath+filename+" saved\n" ) != 0 ) {
 		qDebug() << "ERROR from "<<__func__<<" while downloading "<<filename;
 		return false;
@@ -143,6 +163,7 @@ bool ElbeHandler::getFiles_p(QStringList filenames, QString outPath, QString elb
 {
 	bool check;
 	foreach( QString str, filenames) {
+		qDebug() << "filename: "<<str<<" in "<<__func__;
 		check = getFile_p(str, outPath, elbeID);
 	}
 	return check;
@@ -194,24 +215,28 @@ bool ElbeHandler::getImages(QString buildXmlPath, QString outPath, QString elbeI
 }
 
 
-QString ElbeHandler::execCommand(QString command)
+QString ElbeHandler::execCommand(QString command, int timeout)
 {
-	elbeProcess.setProcessChannelMode(QProcess::MergedChannels);
+	QProcess p;
+	p.setWorkingDirectory("/home/hico/elbe");
+	p.setProcessChannelMode(QProcess::MergedChannels);
 	QByteArray outputByteArray;
 	QString outputString;
 
-	elbeProcess.start(command);
-	if ( elbeProcess.waitForFinished() ) {
-		outputByteArray = elbeProcess.readAll();
+//	qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
+
+	p.start(command);
+	if ( p.waitForFinished(timeout) ) {
+		outputByteArray = p.readAll();
 	} else {
 		qDebug() << "timed out";
-		qDebug() << QString().fromUtf8(elbeProcess.readAllStandardOutput());
+		qDebug() << QString().fromUtf8(p.readAllStandardOutput());
 		return outputString; //which is empty at that point
 	}
-	elbeProcess.close();
+	p.close();
 
 	outputString = QString().fromUtf8(outputByteArray);
 
-//	qDebug() << __func__<<" got: "<<outputString;
+	qDebug() << __func__<<" got: "<<outputString;
 	return outputString;
 }

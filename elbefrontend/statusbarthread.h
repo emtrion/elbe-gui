@@ -9,11 +9,18 @@ class StatusBarThread : public QObject
 	public:
 		explicit StatusBarThread(QObject *parent = 0);
 
+	private:
+		QStringList list;
+		void changeStatusBar();
+
 	signals:
 		void statusBarHasChanged(const QString &str);
 
 	public slots:
-		void changeStatusBar();
+		void statusBarLoadingFile();
+		void statusBarBuildRunning();
+	private slots:
+		void updateStatusBar(const QString &str);
 };
 
 #endif // STATUSBARTHREAD_H

@@ -19,6 +19,7 @@
 #include "newprojectwizard.h"
 #include "projectmanager.h"
 #include "mainwindow.h"
+#include <QThread>
 
 
 #include "projectlistitem.h"
@@ -239,6 +240,7 @@ namespace helpers {
 
 	QStringList getImageFiles(QString buildXmlPath)
 	{
+		//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
 //		qDebug() << __func__<<": "<<buildXmlPath;
 		QFile file(buildXmlPath);
 
