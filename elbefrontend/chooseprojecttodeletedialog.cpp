@@ -1,16 +1,16 @@
-#include "chooseprojectdialog.h"
+#include "chooseprojecttodeletedialog.h"
 #include "existingprojects.h"
 #include "projecthandler.h"
-#include "ui_chooseprojectdialog.h"
+#include "ui_chooseprojecttodeletedialog.h"
 
 #include "projectlistitem.h"
 #include "helpers.h"
 #include <QPushButton>
 #include <QDebug>
 
-ChooseProjectDialog::ChooseProjectDialog(QWidget *parent) :
+ChooseProjectToDeleteDialog::ChooseProjectToDeleteDialog(QWidget *parent) :
 QDialog(parent),
-ui(new Ui::ChooseProjectDialog)
+ui(new Ui::ChooseProjectToDeleteDialog)
 {
 	ui->setupUi(this);
 
@@ -33,23 +33,23 @@ ui(new Ui::ChooseProjectDialog)
 	}
 }
 
-ChooseProjectDialog::~ChooseProjectDialog()
+ChooseProjectToDeleteDialog::~ChooseProjectToDeleteDialog()
 {
 	delete ui;
 }
 
 
-bool ChooseProjectDialog::listIsEmpty()
+bool ChooseProjectToDeleteDialog::listIsEmpty()
 {
 	return ui->projectList->count() == 0;
 }
 
-void ChooseProjectDialog::addListItem(QString item)
+void ChooseProjectToDeleteDialog::addListItem(QString item)
 {
 	ui->projectList->addItem(item);
 }
 
-void ChooseProjectDialog::addItems(QList<ProjectListItem*> itemList)
+void ChooseProjectToDeleteDialog::addItems(QList<ProjectListItem*> itemList)
 {
 	foreach (ProjectListItem *item, itemList) {
 		ui->projectList->addItem(item);
@@ -58,7 +58,7 @@ void ChooseProjectDialog::addItems(QList<ProjectListItem*> itemList)
 
 /********************* SLOTS *************************/
 
-void ChooseProjectDialog::on_buttonBox_accepted()
+void ChooseProjectToDeleteDialog::on_buttonBox_accepted()
 {
 	QList<QListWidgetItem*> list = ui->projectList->selectedItems();
 

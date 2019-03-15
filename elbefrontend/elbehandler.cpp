@@ -10,8 +10,7 @@
 
 ElbeHandler::ElbeHandler()
 {
-	elbeProcess.setWorkingDirectory("/home/hico/elbe");
-	projectmanager = ProjectManager::getInstance();
+
 }
 
 
@@ -30,7 +29,7 @@ bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
 
 	QString id = helpers::getProjectID(projectPath);
 	//check if project exists
-	if ( !getElbeProjects().contains(id) ) {
+	if ( !makeProjectList().contains(id) ) {
 		qDebug() << "ERROR from "<<__func__<<" selected project does not exist in elbe";
 		return false;
 	}
@@ -50,11 +49,11 @@ bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
 
 bool ElbeHandler::projectIsInElbe(QString projectPath)
 {
-	QStringList elbeProjects = getElbeProjects();
+	QStringList elbeProjects = makeProjectList();
 	return elbeProjects.contains(helpers::getProjectID(projectPath));
 }
 
-QStringList ElbeHandler::getElbeProjects()
+QStringList ElbeHandler::makeProjectList()
 {
 	QStringList list;
 
@@ -67,37 +66,40 @@ QStringList ElbeHandler::getElbeProjects()
 	return list;
 }
 
-void ElbeHandler::startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
+bool ElbeHandler::startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
 {
+	ProjectManager *projectmanager = ProjectManager::getInstance();
+
 	if ( !setXmlFile(projectmanager->getBuildXmlPath(), projectmanager->getElbeID()) ) {
 		qDebug() << "xml wasn't set. Abort";
-		return;
+		return false;
 	}
 
 	qDebug() << "now starting build process!";
 	if ( sourceOptionChecked && binOptionChecked ) {
 		if ( !execCommand("./elbe control --build-bin --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
-			return;
+			return false;
 		}
 	} else if ( sourceOptionChecked && !binOptionChecked ) {
 		if ( !execCommand("./elbe control --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
-			return;
+			return false;
 		}
 	} else if ( !sourceOptionChecked && binOptionChecked ) {
 		if ( !execCommand("./elbe control --build-bin build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
-			return;
+			return false;
 		}
 	} else {
 		if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
-			return;
+			return false;
 		}
 	}
 
 	qDebug() << "build started";
+	return true;
 }
 
 
@@ -186,16 +188,19 @@ bool ElbeHandler::setXmlFile(QString file, QString elbeID)
 
 bool ElbeHandler::getFiles(QStringList filenames)
 {
+	ProjectManager *projectmanager = ProjectManager::getInstance();
 	return getFiles_p(filenames, projectmanager->getOutPath(), projectmanager->getElbeID());
 }
 
 bool ElbeHandler::getFile(QString filename)
 {
+	ProjectManager *projectmanager = ProjectManager::getInstance();
 	return getFile_p(filename, projectmanager->getOutPath(), projectmanager->getElbeID());
 }
 
 bool ElbeHandler::getImages()
 {
+	ProjectManager *projectmanager = ProjectManager::getInstance();
 	return getImages_p(projectmanager->getBuildXmlPath(), projectmanager->getOutPath(), projectmanager->getElbeID());
 }
 
@@ -212,6 +217,33 @@ bool ElbeHandler::getFile(QString filename, QString outPath, QString elbeID)
 bool ElbeHandler::getImages(QString buildXmlPath, QString outPath, QString elbeID)
 {
 	return getImages_p(buildXmlPath, outPath, elbeID);
+}
+
+
+bool ElbeHandler::checkIfBusy(QString id)
+{
+	QString out;
+	QStringList projects;
+	QStringList details;
+	out = execCommand("./elbe control list_projects");
+
+	projects = out.split("\n", QString::SkipEmptyParts);
+//	qDebug() << "projects: ";
+	foreach (QString str, projects) {
+		if ( str.indexOf(id) != -1 ) {
+			details = str.split("\t", QString::SkipEmptyParts);
+			break;
+		}
+	}
+
+//	qDebug() << "details: ";
+	foreach (QString str, details) {
+//		qDebug() << str;
+		if ( str.compare("busy") == 0 ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 

@@ -1,12 +1,14 @@
 #ifndef BUILDPROCESS_H
 #define BUILDPROCESS_H
 
-#include "elbehandler.h"
 
-#include <QCheckBox>
 #include <QObject>
-#include <QThread>
 
+
+class QThread;
+class BuildManager;
+class ElbeHandler;
+class BuildProcessWorker;
 
 
 class BuildProcess : public QObject
@@ -23,18 +25,24 @@ class BuildProcess : public QObject
 
 		void startBuild(bool sourceOptionChecked, bool binOptionChecked);
 
+		void waitBusyWithoutStartingBuild(QString id);
 	signals:
 
 
 	public slots:
 
+	private slots:
+		void cleanup();
 	private:
 		QStringList outputFiles;
 		void buildThreadInit();
-		ElbeHandler *handler;
+		ElbeHandler *elbehandler;
+		BuildManager *buildmanager;
 		QString buildingElbeID;
 		QString buildingXmlPath;
 		QString buildingOutPath;
+
+		BuildProcessWorker *buildWorker;
 };
 
 #endif // BUILDPROCESS_H

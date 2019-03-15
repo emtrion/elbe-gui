@@ -1,3 +1,4 @@
+#include "buildmanager.h"
 #include "buildprocessworker.h"
 #include "mainwindow.h"
 
@@ -19,10 +20,11 @@ BuildProcessWorker::BuildProcessWorker(QStringList outputFiles)
 	buildingElbeID = projectmanager->getElbeID();
 	buildingXmlPath = projectmanager->getBuildXmlPath();
 	buildingOutPath = projectmanager->getOutPath();
+	buildingProjectPath = projectmanager->getProjectPath();
+
+
 
 	MainWindow *mw = helpers::getMainWindow();
-	//it's not allowed to communicate with the GUI directly from another thread but the mainthread
-	connect(this, SIGNAL(outputReady(QString)), this, SLOT(updateMessageLog(QString)));
 	connect(this, SIGNAL(messageLogHasUpdate(QString,QString)), mw, SLOT(messageLogAppendText(QString,QString)));
 }
 
@@ -36,50 +38,64 @@ void BuildProcessWorker::doWork()
 {
 //	qDebug() << __func__<<"is in: "<<QThread::currentThreadId();
 
+	BuildManager *buildmanager = BuildManager::getInstance();
 	process = new QProcess(this);
 
-	//two threads  which show the status on statusbar
-	StatusBarThread *statusBarBuildWorker = new StatusBarThread();
-	StatusBarThread *statusBarLoadWorker = new StatusBarThread();
-	statusBarBuildThread = new QThread();
-	statusBarLoadThread = new QThread();
+	//it's not allowed to communicate with the GUI directly from another thread but the mainthread
+	connect(this, SIGNAL(outputReady(QString)), this, SLOT(updateMessageLog(QString)));
+	connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(printLog()));
+
+	//exec the wait_busy command where we wait for the build to finish and receive the build log messages
+	waitBusy();
+	//was set before the actual build command in "buildmanager". After waitBusy returns we can be sure the build has finished
+	buildmanager->setBuildRunning(false);
+
+	//just for a better look
+	updateMessageLog(" ");
+
+	if ( !skipDownload ) {
+		//inidcates that a download is currently running...
+		buildmanager->setLoadingFiles(true);
+		downloadFiles();
+		//...now it's done
+		buildmanager->setLoadingFiles(false);
+	}
+
+	emit(done());
+}
 
 
-	//connect the start and finish routines
-	connect(statusBarBuildThread, SIGNAL(started()), statusBarBuildWorker, SLOT(statusBarBuildRunning()));
-	connect(statusBarLoadThread, SIGNAL(started()), statusBarLoadWorker, SLOT(statusBarLoadingFile()));
-	connect(statusBarBuildThread, SIGNAL(finished()), statusBarBuildWorker, SLOT(deleteLater()));
-	connect(statusBarBuildThread, SIGNAL(finished()), statusBarLoadWorker, SLOT(deleteLater()));
-
-	statusBarBuildWorker->moveToThread(statusBarBuildThread);
-	statusBarBuildThread->start();
-
+void BuildProcessWorker::waitBusy()
+{
+	//start to show "build" in the status bar
+	showBuildingInStatusBar();
 
 	emit(outputReady("start elbe-build"));
 
-//	wait_busy->setWorkingDirectory("/home/hico/elbe");
-	process->setWorkingDirectory("/home/hico/tmp");
+	process->setWorkingDirectory("/home/hico/elbe");
+	process->start("./elbe control wait_busy "+buildingElbeID); //change this. It depends on the opened project which is not itended
 
-//	wait_busy->start("./elbe control wait_busy "+projectmanager->getElbeID());
-	process->start("./a.out");
+//	process->setWorkingDirectory("/home/hico/tmp");
+//	process->start("./a.out");
 
-	connect(process, SIGNAL(readyReadStandardOutput()), this, SLOT(printLog()));
+	//wait until build has finished. Events are still handled so messages are coming through
 	process->waitForFinished(-1);
 
 	updateMessageLog("finished");
+
+	//stop the loop inside the thread
 	statusBarBuildThread->requestInterruption();
 
-	//change statusbar message
-	statusBarLoadWorker->moveToThread(statusBarLoadThread);
-	statusBarLoadThread->start();
-
-	emit(messageTextNeedsChange());
-	updateMessageLog(" ");
-	updateMessageLog("downloading files...");
-
-	downloadFiles();
-
+	//end the thread
+	statusBarBuildThread->quit();
+	statusBarBuildThread->wait();
 }
+
+void BuildProcessWorker::setSkipDownload(bool value)
+{
+	skipDownload = value;
+}
+
 /*prints the elbe build output in the MessageLog*/
 void BuildProcessWorker::printLog()
 {
@@ -111,12 +127,18 @@ void BuildProcessWorker::updateMessageLog(const QString &str)
 
 void BuildProcessWorker::downloadFiles()
 {
+	//change statusbar message
+	showLoadingInStatusBar();
+
 //	qDebug() << "XMLPATH: "<<buildingXmlPath;
+	updateMessageLog("downloading files...");
 
 	if ( outputFiles.contains("Image")) {
 		if ( !handler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
 			qDebug() << "Could not load all images. Check Output directory and try again";
 			updateMessageLog("Could not load all images. Check Output directory and try again");
+		} else {
+			updateMessageLog("images loaded.");
 		}
 		outputFiles.removeOne("Image");
 	}
@@ -124,14 +146,60 @@ void BuildProcessWorker::downloadFiles()
 		if ( !handler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
 			qDebug() << "Could not load all files. Check Output directory and try again";
 			updateMessageLog("Could not load all files. Check Output directory and try again");
+		} else {
+			updateMessageLog("files loaded.");
 		}
 	}
 
-	emit statusBarLoadThread->requestInterruption();
+	//stop the loop inside the thread
+	statusBarLoadThread->requestInterruption();
 
-	updateMessageLog("files loaded.");
+	statusBarLoadThread->quit();
+	statusBarLoadThread->wait();
+
+
 	updateMessageLog(" ");
 	updateMessageLog("finished");
 
 	return;
+}
+
+QString BuildProcessWorker::getBuildingElbeID() const
+{
+	return buildingElbeID;
+}
+
+void BuildProcessWorker::setBuildingElbeID(const QString &value)
+{
+	buildingElbeID = value;
+}
+
+QThread *BuildProcessWorker::getStatusBarBuildThread() const
+{
+	return statusBarBuildThread;
+}
+
+void BuildProcessWorker::showBuildingInStatusBar()
+{
+	StatusBarThread *statusBarBuildWorker = new StatusBarThread();
+	statusBarBuildThread = new QThread();
+	connect(statusBarBuildThread, SIGNAL(started()), statusBarBuildWorker, SLOT(statusBarBuildRunning()));
+	connect(statusBarBuildThread, SIGNAL(finished()), statusBarBuildWorker, SLOT(deleteLater()));
+	statusBarBuildWorker->moveToThread(statusBarBuildThread);
+	statusBarBuildThread->start();
+}
+
+void BuildProcessWorker::showLoadingInStatusBar()
+{
+	StatusBarThread *statusBarLoadWorker = new StatusBarThread();
+	statusBarLoadThread = new QThread();
+	connect(statusBarLoadThread, SIGNAL(started()), statusBarLoadWorker, SLOT(statusBarLoadingFile()));
+	connect(statusBarBuildThread, SIGNAL(finished()), statusBarLoadWorker, SLOT(deleteLater()));
+	statusBarLoadWorker->moveToThread(statusBarLoadThread);
+	statusBarLoadThread->start();
+}
+
+QString BuildProcessWorker::getBuildingProjectPath() const
+{
+	return buildingProjectPath;
 }

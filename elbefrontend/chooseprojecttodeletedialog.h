@@ -1,5 +1,5 @@
-#ifndef CHOOSEPROJECTDIALOG_H
-#define CHOOSEPROJECTDIALOG_H
+#ifndef CHOOSEPROJECTTODELETEDIALOG_H
+#define CHOOSEPROJECTTODELETEDIALOG_H
 
 #include "existingprojects.h"
 #include "projectlistitem.h"
@@ -7,26 +7,26 @@
 #include <QDialog>
 
 namespace Ui {
-	class ChooseProjectDialog;
+	class ChooseProjectToDeleteDialog;
 }
 
-class ChooseProjectDialog : public QDialog
+class ChooseProjectToDeleteDialog : public QDialog
 {
 		Q_OBJECT
 
 	public:
-		explicit ChooseProjectDialog(QWidget *parent = 0);
-		~ChooseProjectDialog();
+		explicit ChooseProjectToDeleteDialog(QWidget *parent = 0);
+		~ChooseProjectToDeleteDialog();
 
 	private slots:
 		void on_buttonBox_accepted();
 
 	private:
-		Ui::ChooseProjectDialog *ui;
+		Ui::ChooseProjectToDeleteDialog *ui;
 		bool listIsEmpty();
 		void addListItem(QString item);
 		void addItems(QList<ProjectListItem*> itemList);
 		ExistingProjects *existingProjectsHandler;
 };
 
-#endif // CHOOSEPROJECTDIALOG_H
+#endif // CHOOSEPROJECTTODELETEDIALOG_H

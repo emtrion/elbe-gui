@@ -22,10 +22,56 @@
 #include <QThread>
 
 
+#include "buildprocess.h"
+#include "existingprojects.h"
+#include "filedownloaddialog.h"
+#include "projecthandler.h"
 #include "projectlistitem.h"
 
 
 namespace helpers {
+
+
+	void doStartUpRoutine()
+	{
+
+		QString id;
+		ExistingProjects *existing = new ExistingProjects();
+		BuildProcess *process = new BuildProcess();
+		FileDownloadDialog *dialog = new FileDownloadDialog();
+		ElbeHandler *elbehandler = new ElbeHandler();
+		ProjectHandler *projecthandler = new ProjectHandler();
+
+
+		QString projectPath = existing->checkForBusyFlag();
+
+		if ( !projectPath.isEmpty() ) {
+			id = helpers::getProjectID(projectPath);
+			if ( elbehandler->checkIfBusy(id) ) {
+				process->waitBusyWithoutStartingBuild(id);
+				helpers::showMessageBox("Information", "The build you started in a previous session is still in progess",
+				QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
+			} else {
+				int ret = helpers::showMessageBox("The build you started in a previous session has finished",
+				"Couldn't download your selected files as the application was closed. Would you like to do that now?",
+				QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
+				switch ( ret ) {
+					case QMessageBox::Yes :
+						projecthandler->openProject(projectPath);
+						dialog->show();
+						break;
+					case QMessageBox::No :
+						break;
+					default:
+						//shouldn't be reached
+						break;
+				}
+			}
+		} else {
+			qDebug() << "no busyflag found";
+			return;
+		}
+	}
 
 	QString getHomeDirectoryFromSystem()
 	{//get the homedirectory
@@ -301,6 +347,19 @@ namespace helpers {
 		return imageFilenames;
 	}
 
+
+	int showMessageBox(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton)
+	{
+		QMessageBox msgBox;
+		msgBox.setText(text);
+		msgBox.setInformativeText(informativeText);
+		msgBox.setStandardButtons(buttons);
+		msgBox.setDefaultButton(defaultButton);
+
+		msgBox.setModal(true);
+		msgBox.resize(400, 300);
+		return msgBox.exec();
+	}
 }
 
 

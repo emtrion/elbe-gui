@@ -42,10 +42,11 @@ public:
 
 	void setElbeVersion(const QString &version);
 	void showTempStatusOnStatusBar(QString status);
-	void changeNewXmlButtonEnabledStatus(bool enable);
+	void changeNewXmlButtonEnabledStatus(bool status);
 	void setStatusBarTextColor(QColor color);
 	void showNormalStatusOnStatusBar(QString status);
 
+	void changeImportButtonEnabledStatus(bool status);
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
@@ -88,6 +89,8 @@ public:
 
 	void on_MessageLog_textChanged();
 
+	void on_actionDownload_files_triggered();
+
 	private:
     Ui::MainWindow *ui;
 //	CodeEditor *editor;
@@ -101,6 +104,9 @@ public:
 	QString elbeVersion;
 	QMessageBox *aboutElbeMessageBox;
 	void initAboutElbeMessageBox();
+	bool saveOnClose();
+//	int showCloseError(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton);
+	void handleCloseDuringBuild();
 };
 
 #endif // MAINWINDOW_H

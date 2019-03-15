@@ -15,8 +15,11 @@ class ExistingProjects : public QObject
 
 		void removeProjectFromList(QString projectPath);
 
-		QList<ProjectListItem *> getExistingProjects() const;
+		QList<ProjectListItem *> getExistingProjects();
 
+		void addBusyFlag(const QString &projectPath);
+		QString removeBusyFlag(int index);
+		QString checkForBusyFlag();
 	signals:
 
 	public slots:

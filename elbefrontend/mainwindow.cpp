@@ -24,8 +24,13 @@
 #include "projecthandler.h"
 #include "xmlfilehandler.h"
 #include "openprojectfiledialog.h"
-#include "chooseprojectdialog.h"
+#include "chooseprojecttodeletedialog.h"
 #include "buildprocessstartdialog.h"
+#include "filedownloaddialog.h"
+#include "buildmanager.h"
+
+#include "buildprocessworker.h"
+
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -40,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 	ui->Terminal_Tab->hide();
 	ui->DisplaView->removeTab(1);
-
 
     //set starting size for upperSection
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
@@ -113,11 +117,6 @@ void MainWindow::on_actionImport_triggered()
 	}
 }
 
-void MainWindow::on_actionValidate_triggered()
-{
-	SchemaValidation *sv = new SchemaValidation(ui->Editor->toPlainText());
-	sv->validate();
-}
 
 void MainWindow::on_actionSave_triggered()
 {
@@ -135,9 +134,15 @@ void MainWindow::on_actionClose_triggered()
 void MainWindow::on_actionDelete_triggered()
 {
 	//open project selection
-	ChooseProjectDialog *projectChooser = new ChooseProjectDialog();
+	ChooseProjectToDeleteDialog *projectChooser = new ChooseProjectToDeleteDialog();
 	projectChooser->show();
 }
+
+
+
+/******************************************************/
+
+/******************** elbe menu ***********************/
 
 void MainWindow::on_actionBuild_triggered()
 {
@@ -145,6 +150,18 @@ void MainWindow::on_actionBuild_triggered()
 //	elbeHandler->startBuildProcess();
 
 	BuildProcessStartDialog *dialog = new BuildProcessStartDialog();
+	dialog->show();
+}
+
+void MainWindow::on_actionValidate_triggered()
+{
+	SchemaValidation *sv = new SchemaValidation(ui->Editor->toPlainText());
+	sv->validate();
+}
+
+void MainWindow::on_actionDownload_files_triggered()
+{
+	FileDownloadDialog *dialog = new FileDownloadDialog();
 	dialog->show();
 }
 
@@ -366,6 +383,8 @@ void MainWindow::enableActionsOnProjectOpen(bool isOpen)
 	ui->actionClose->setEnabled(isOpen);
 	ui->actionImport->setEnabled(isOpen);
 	ui->actionNew_XML->setEnabled(isOpen);
+	ui->actionBuild->setEnabled(isOpen);
+	ui->actionDownload_files->setEnabled(isOpen);
 }
 
 void MainWindow::enableActionsOnXMLOpen(bool isOpen)
@@ -394,9 +413,14 @@ void MainWindow::initAboutElbeMessageBox()
 	aboutElbeMessageBox->setDefaultButton(QMessageBox::Close);
 }
 
-void MainWindow::changeNewXmlButtonEnabledStatus(bool enable)
+void MainWindow::changeNewXmlButtonEnabledStatus(bool status)
 {
-	ui->actionNew_XML->setEnabled(enable);
+	ui->actionNew_XML->setEnabled(status);
+}
+
+void MainWindow::changeImportButtonEnabledStatus(bool status)
+{
+	ui->actionImport->setEnabled(status);
 }
 
 /************************************************************************************/
@@ -420,54 +444,115 @@ QAction *MainWindow::getActionClose() const
 
 /************************************************************************************/
 
-/********************************* events *******************************************/
+/********************************* exit handling *******************************************/
 
 void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
-{//when the application is closed and there are unsafed changes the user is asked if they should be safed
-	QMessageBox msgBox;
-	if ( !filemanager->getIsSaved() && filemanager->getIsOpen() ) {
-		XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath(), filemanager->getCurrentFileName());
-		ProjectHandler *projecthandler = new ProjectHandler();
-		msgBox.setText("There are files which are not saved");
-		msgBox.setInformativeText("Do you want to save the changes before closing?");
-		msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
-		msgBox.setDefaultButton(QMessageBox::Yes);
-		int ret = msgBox.exec();
+{// there are some things which must be handled before closing the application
+	bool canAcceptCloseEvent = false;
+	BuildManager *buildmanager = BuildManager::getInstance();
 
+	if ( buildmanager->isLoadingFiles() ) {
+		helpers::showMessageBox("Application can not be closed!", "Download in progress.", QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
+		event->ignore();
+		return;
+	}
+	if ( filemanager->getIsOpen() && !filemanager->getIsSaved() ) {
+		canAcceptCloseEvent = saveOnClose();
+	}  else {
+		canAcceptCloseEvent = true;
+	}
+
+	if ( canAcceptCloseEvent && buildmanager->isBuildRunning() ) {
+		int ret = helpers::showMessageBox("Build is still running", "Are you sure you want to exit the application",
+		QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::Cancel), QMessageBox::Yes);
 		switch ( ret ) {
 			case QMessageBox::Yes:
-				filehandler->saveFile();
-				projecthandler->closeProject();
-				event->accept();
-				break;
-			case QMessageBox::Discard:
-				filemanager->setIsSaved(true);
-				projecthandler->closeProject();
-				event->accept();
+				//re-check in case the messagebox was left open the whole time
+				if ( buildmanager->isLoadingFiles() ) {
+					helpers::showMessageBox("Application can not be closed!", "Download in progress.", QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
+					event->ignore();
+					return;
+				}
+				//handle close if build is running
+				handleCloseDuringBuild();
 				break;
 			case QMessageBox::Cancel:
-				msgBox.close();
-				event->ignore();
+				canAcceptCloseEvent = false;
 				break;
 			default:
 				//should not be reached
 				break;
 		}
-	} else {
+	}
+
+	if ( canAcceptCloseEvent ) {
 		event->accept();
+	} else {
+		event->ignore();
 	}
 }
 
 
+//int MainWindow::showCloseError(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton)
+//{
+//	QMessageBox msgBox;
+//	msgBox.setText(text);
+//	msgBox.setInformativeText(informativeText);
+//	msgBox.setStandardButtons(buttons);
+//	msgBox.setDefaultButton(defaultButton);
+//	return msgBox.exec();
+//}
 
-/************************************************************************************/
+bool MainWindow::saveOnClose()
+{//when the application is closed and there are unsafed changes the user is asked if they should be safed
+
+	bool value;
+
+	XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath());
+	ProjectHandler *projecthandler = new ProjectHandler();
+
+	QMessageBox::StandardButtons stdButtons = (QMessageBox::Yes | QMessageBox::Discard | QMessageBox::Cancel);
+	int ret = helpers::showMessageBox("There are files which are not saved","Do you want to save the changes before closing?", stdButtons, QMessageBox::Yes);
+
+	switch ( ret ) {
+		case QMessageBox::Yes:
+			filehandler->saveFile();
+			projecthandler->closeProject();
+			value = true;
+			break;
+		case QMessageBox::Discard:
+			//pretened the project was saved
+			filemanager->setIsSaved(true);
+			projecthandler->closeProject();
+			value = true;
+			break;
+		case QMessageBox::Cancel:
+//				msgBox.close();
+			value = false;
+			break;
+		default:
+			//should not be reached
+			break;
+	}
+
+	return value;
+}
 
 
+void MainWindow::handleCloseDuringBuild()
+{
+	BuildManager *buildmanager = BuildManager::getInstance();
+	ExistingProjects *exist = new ExistingProjects();
 
+	//set flag in .elbefrontend
+	exist->addBusyFlag(buildmanager->getProcessWorkerPointer()->getBuildingProjectPath());
 
+	//quit threads
+	QThread *buildThread = buildmanager->getProcessWorkerPointer()->thread();
+	if ( buildThread->isRunning() ) {
+		//stop thread
+		buildmanager->getProcessWorkerPointer()->getStatusBarBuildThread()->requestInterruption();
+	}
+}
 
-
-
-
-
-
+/******************************************************************s******************/

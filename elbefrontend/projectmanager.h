@@ -27,7 +27,7 @@ class ProjectManager
 		/* Here, the instance will be stored. */
 		static ProjectManager* instance;
 		QString projectDirectory;
-		QString projectPath; //path to config file where all important data is saved
+		QString projectPath; //path to config file where all important data is stored
 		QString srcPath;
 		QString outPath;
 		QString projectName;

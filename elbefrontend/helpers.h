@@ -12,6 +12,7 @@
 #include "projectlistitem.h"
 
 namespace helpers {
+	void doStartUpRoutine();
     QString getHomeDirectoryFromSystem();
 	bool setProjectMetadata(QString projectName, QString projectPath);
 //	void deleteFile(QString path);
@@ -26,6 +27,7 @@ namespace helpers {
 	QString getProjectName(QString confFile);
 	QString parseProjectDescriptionForNodeValue(QString confFile, QString node);
 	QStringList getImageFiles(QString buildXmlPath);
+	int showMessageBox(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton);
 
 
 }

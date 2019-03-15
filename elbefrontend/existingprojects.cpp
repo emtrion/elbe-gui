@@ -2,6 +2,7 @@
 #include "existingprojects.h"
 #include "projectlistitem.h"
 
+#include <QString>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QList>
@@ -11,8 +12,7 @@
 ExistingProjects::ExistingProjects(QObject *parent) : QObject(parent)
 {
 	projectListFile = new QFile("/home/hico/.elbefrontend");
-	initFileList();
-	updateList();
+
 }
 
 void ExistingProjects::addNewProjectToList(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
@@ -45,12 +45,14 @@ void ExistingProjects::removeProjectFromList(QString projectPath)
 	}
 }
 
-QList<ProjectListItem *> ExistingProjects::getExistingProjects() const
+QList<ProjectListItem *> ExistingProjects::getExistingProjects()
 {
+	initFileList();
+	updateList();
 	return existingProjects;
 }
 
-void ExistingProjects::updateList() //is called from the constructor which means every time this class is used
+void ExistingProjects::updateList() //is called from getExistingProjects
 {
 	ElbeHandler *elbe = new ElbeHandler();
 	bool isInElbe;
@@ -76,6 +78,58 @@ void ExistingProjects::updateList() //is called from the constructor which means
 	}
 }
 
+/*marks the project which was still building when the application was closed*/
+void ExistingProjects::addBusyFlag(const QString &projectPath)
+{
+	int index = 0;
+	initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.compare(projectPath) == 0 ) {
+			projectFileList.replace(index, str+" (busy)");
+			break;
+		}
+		index++;
+	}
+
+	projectListFile->resize(0);
+
+	foreach (QString str, projectFileList) {
+		addNewProjectToList(str);
+	}
+}
+
+QString ExistingProjects::checkForBusyFlag()
+{
+	QString projectPath = "";
+	int index = 0;
+	initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.endsWith(" (busy)") ) {
+			projectPath = removeBusyFlag(index);
+		}
+		index++;
+	}
+	//if no busyFlag was found it returns an empty string
+	return projectPath;
+}
+
+QString ExistingProjects::removeBusyFlag(int index)
+{
+	QStringList strList;
+	QString busyProject = projectFileList.at(index);
+	//split at space character to get the directory seperated
+	strList = busyProject.split(QRegExp("\\s"), QString::SkipEmptyParts);
+	//there can be only two entries and the first one (index = 0) has to be the directory
+	projectFileList.replace(index, strList.at(0));
+
+	projectListFile->resize(0);
+	foreach (QString s, projectFileList) {
+		addNewProjectToList(s);
+	}
+
+	//return the projectPath without the busy flag
+	return strList.at(0);
+}
 
 void ExistingProjects::initFileList()
 {

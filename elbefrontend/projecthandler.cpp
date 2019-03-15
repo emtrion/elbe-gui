@@ -9,7 +9,7 @@
 #include "xmlfilehandler.h"
 
 
-#include "chooseprojectdialog.h"
+#include "chooseprojecttodeletedialog.h"
 #include "existingprojects.h"
 
 
@@ -85,6 +85,7 @@ void ProjectHandler::openProject(QString path) //path to .project file
 	if ( checkIfProjectHasXML(path) ) {
 		projectmanager->setProjectHasFile(true);
 		mw->changeNewXmlButtonEnabledStatus(false);
+		mw->changeImportButtonEnabledStatus(false);
 	}
 
 //	qDebug() << "ProjectOpened: " << path;

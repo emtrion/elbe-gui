@@ -44,14 +44,16 @@ SOURCES += main.cpp\
     projectitemmodel.cpp \
     xmlfilemanager.cpp \
     openprojectfiledialog.cpp \
-    chooseprojectdialog.cpp \
     projectlistitem.cpp \
     elbehandler.cpp \
     existingprojects.cpp \
     buildprocess.cpp \
     buildprocessworker.cpp \
     buildprocessstartdialog.cpp \
-    statusbarthread.cpp
+    statusbarthread.cpp \
+    filedownloaddialog.cpp \
+    buildmanager.cpp \
+    chooseprojecttodeletedialog.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -71,21 +73,24 @@ HEADERS  += mainwindow.h \
     projectitemmodel.h \
     xmlfilemanager.h \
     openprojectfiledialog.h \
-    chooseprojectdialog.h \
     projectlistitem.h \
     elbehandler.h \
     existingprojects.h \
     buildprocess.h \
     buildprocessworker.h \
     buildprocessstartdialog.h \
-    statusbarthread.h
+    statusbarthread.h \
+    filedownloaddialog.h \
+    buildmanager.h \
+    chooseprojecttodeletedialog.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
     newxmldialog.ui \
     importfiledialog.ui \
-    chooseprojectdialog.ui \
-    buildprocessstartdialog.ui
+    buildprocessstartdialog.ui \
+    filedownloaddialog.ui \
+    chooseprojecttodeletedialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc

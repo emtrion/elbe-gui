@@ -29,7 +29,7 @@ void BuildProcessStartDialog::on_buttonBox_accepted()
 {
 	//store all checked boxes
 	foreach (QCheckBox *box, checkBoxList) {
-		qDebug() << box->text();
+//		qDebug() << box->text();
 		if ( box->isChecked() ) {
 			checkedBoxes.append(box->text());
 		}

@@ -17,7 +17,7 @@ class ElbeHandler
 		bool deleteProjectElbeInstance(QString projectID);
 
 		bool projectIsInElbe(QString projectPath);
-		void startBuildProcess(bool sourceOptionChecked, bool binOptionChecked);
+		bool startBuildProcess(bool sourceOptionChecked, bool binOptionChecked);
 		bool setXmlFile(QString file, QString elbeID);
 
 		bool getFiles(QStringList filenames);
@@ -30,12 +30,10 @@ class ElbeHandler
 
 
 		void removeFalseLoadedFiles(QString outPath, QString filename);
+		bool checkIfBusy(QString id);
 	private:
-		QProcess elbeProcess;
-		QStringList getElbeProjects();
+		QStringList makeProjectList();
 		QString execCommand(QString command, int timeout = 30000);
-		ProjectManager *projectmanager;
-
 		bool getFiles_p(QStringList filenames, QString outPath, QString elbeID);
 		bool getFile_p(QString filename, QString outPath, QString elbeID);
 		bool getImages_p(QString buildXmlPath, QString outPath, QString elbeID);

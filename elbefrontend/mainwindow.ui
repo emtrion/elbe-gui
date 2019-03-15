@@ -320,10 +320,6 @@
     <addaction name="separator"/>
     <addaction name="actionClose"/>
     <addaction name="separator"/>
-    <addaction name="actionBuild"/>
-    <addaction name="separator"/>
-    <addaction name="actionValidate"/>
-    <addaction name="separator"/>
     <addaction name="actionDelete"/>
     <addaction name="separator"/>
     <addaction name="actionExit_2"/>
@@ -342,8 +338,11 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>&amp;View</string>
+     <string>Elbe</string>
     </property>
+    <addaction name="actionBuild"/>
+    <addaction name="actionValidate"/>
+    <addaction name="actionDownload_files"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">
     <property name="title">
@@ -372,8 +371,6 @@
    <addaction name="actionSave"/>
    <addaction name="actionBuild"/>
    <addaction name="action_ChangeView"/>
-   <addaction name="separator"/>
-   <addaction name="separator"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
@@ -519,8 +516,19 @@
    </property>
   </action>
   <action name="actionBuild">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
-    <string>&amp;Build Project</string>
+    <string>&amp;Build project</string>
+   </property>
+  </action>
+  <action name="actionDownload_files">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Download files</string>
    </property>
   </action>
  </widget>

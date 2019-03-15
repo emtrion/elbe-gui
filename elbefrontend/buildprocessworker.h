@@ -1,6 +1,7 @@
 #ifndef BUILDPROCESSWORKER_H
 #define BUILDPROCESSWORKER_H
 
+
 #include "mainwindow.h"
 #include "projectmanager.h"
 #include "statusbarthread.h"
@@ -22,27 +23,35 @@ class BuildProcessWorker : public QObject
 		QProcess *process;
 		QString output;
 
+		QString getBuildingProjectPath() const;
+
+		void setSkipDownload(bool value);
+
+		QThread *getStatusBarBuildThread() const;
+
+		void setBuildingElbeID(const QString &value);
+
+		QString getBuildingElbeID() const;
+
 	signals:
 		void resultReady();
 		void outputReady(const QString &str);
 		void messageLogHasUpdate(const QString &str, const QString &colorHexValue);
-		void messageTextNeedsChange();
 		void startStatusBarBuild();
 		void startStatusBarLoad();
+		void done();
 
 
 	public slots:
-		void doWork(/*const QString &parameter*/);
+		void doWork();
 		void printLog();
-
-
-
-	private slots:
 		void updateMessageLog(const QString &str);
 		void downloadFiles();
+
 	private:
 		QStringList outputFiles;
 		ElbeHandler *handler;
+		QString buildingProjectPath;
 		QString buildingElbeID;
 		QString buildingXmlPath;
 		QString buildingOutPath;
@@ -52,6 +61,11 @@ class BuildProcessWorker : public QObject
 		QThread *statusBarBuildThread;
 		QThread *statusBarLoadThread;
 
+		void showLoadingInStatusBar();
+		void showBuildingInStatusBar();
+		void waitBusy();
+
+		bool skipDownload;
 };
 
 #endif // BUILDPROCESSWORKER_H
