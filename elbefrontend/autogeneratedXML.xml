@@ -17,7 +17,7 @@
 		<hostname></hostname>
 		<domain></domain>
 		<passwd></passwd>
-		<console></console>
+		<console>ttyS0, 115200</console>
 		<package></package>
 		<finetuning></finetuning>
 		<pkg-list></pkg-list>

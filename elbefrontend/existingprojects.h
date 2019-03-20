@@ -1,10 +1,12 @@
 #ifndef EXISTINGPROJECTS_H
 #define EXISTINGPROJECTS_H
 
-#include "projectlistitem.h"
 
-#include <QFile>
-#include <QFileSystemWatcher>
+#include <QObject>
+
+class QStringList;
+class QFile;
+class ProjectListItem;
 
 class ExistingProjects : public QObject
 {
@@ -18,8 +20,10 @@ class ExistingProjects : public QObject
 		QList<ProjectListItem *> getExistingProjects();
 
 		void addBusyFlag(const QString &projectPath);
-		QString removeBusyFlag(int index);
+
 		QString checkForBusyFlag();
+		void addOpenFlag(const QString &projectPath);
+		QString checkForOpenFlag();
 	signals:
 
 	public slots:
@@ -32,6 +36,8 @@ class ExistingProjects : public QObject
 		void updateList();
 		void initFileList();
 		void putItemInList(QString name, QString path);
+		QString removeBusyFlag(int index);
+		QString removeOpenFlag(int index);
 };
 
 #endif // EXISTINGPROJECTS_H

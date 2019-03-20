@@ -1,12 +1,8 @@
 #ifndef ELBEHANDLER_H
 #define ELBEHANDLER_H
 
-#include "projectmanager.h"
-
-#include <QProcessEnvironment>
-#include <QString>
-
-
+class QStringList;
+class QString;
 
 class ElbeHandler
 {

@@ -10,7 +10,9 @@
 
 
 #include "chooseprojecttodeletedialog.h"
+#include "elbehandler.h"
 #include "existingprojects.h"
+#include "mainwindow.h"
 
 
 ProjectHandler::ProjectHandler()

@@ -2,13 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QAction>
-#include <QMessageBox>
 
-#include "codeeditor.h"
-#include "projectitemmodel.h"
+
 #include "projectmanager.h"
 #include "xmlfilemanager.h"
+
+class CodeEditor;
+class QTextEdit;
+class QAction;
+class QMessageBox;
+class ProjectItemModel;
+
 
 namespace Ui {
 	class MainWindow;
@@ -47,6 +51,8 @@ public:
 	void showNormalStatusOnStatusBar(QString status);
 
 	void changeImportButtonEnabledStatus(bool status);
+
+	void changeElbeActionsEnabledStatus(bool status);
 	public slots:
 	void updateCurrentFile(QString path);
 	void updateItemModel(QString dir);
@@ -91,9 +97,10 @@ public:
 
 	void on_actionDownload_files_triggered();
 
+	void on_actionOpen_in_Explorer_triggered();
+
 	private:
     Ui::MainWindow *ui;
-//	CodeEditor *editor;
 	ProjectItemModel *model;
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 	XmlFileManager *filemanager = XmlFileManager::getInstance();
@@ -105,8 +112,8 @@ public:
 	QMessageBox *aboutElbeMessageBox;
 	void initAboutElbeMessageBox();
 	bool saveOnClose();
-//	int showCloseError(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton);
 	void handleCloseDuringBuild();
+	void rememberOpenedProject(QString project);
 };
 
 #endif // MAINWINDOW_H

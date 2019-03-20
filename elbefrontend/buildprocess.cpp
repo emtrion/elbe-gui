@@ -4,7 +4,9 @@
 #include "buildprocessworker.h"
 #include <QThread>
 #include <QDebug>
-#include "statusbarthread.h"
+#include "buildprocessstatusbarupdate.h"
+#include "mainwindow.h"
+#include "helpers.h"
 
 BuildProcess::BuildProcess(QObject *parent) : QObject(parent)
 {
@@ -19,17 +21,20 @@ BuildProcess::~BuildProcess()
 
 void BuildProcess::startBuild(bool sourceOptionChecked, bool binOptionChecked)
 {
+	MainWindow *mw = helpers::getMainWindow();
+
 	if ( elbehandler->checkIfBusy(buildWorker->getBuildingElbeID()) ) {
 		buildWorker->updateMessageLog("The project is busy right now");
 		return;
 	}
 
 	buildmanager->setBuildRunning(true);
-	if ( !elbehandler->startBuildProcess(sourceOptionChecked, binOptionChecked) ) {
-		buildmanager->setBuildRunning(false);
-		buildWorker->updateMessageLog("Couldn't start build. Most likely there is a problem with your initVM");
-		return;
-	}
+	mw->changeElbeActionsEnabledStatus(false);
+//	if ( !elbehandler->startBuildProcess(sourceOptionChecked, binOptionChecked) ) {
+//		buildmanager->setBuildRunning(false);
+//		buildWorker->updateMessageLog("Couldn't start build. Most likely there is a problem with your initVM");
+//		return;
+//	}
 	buildWorker->setSkipDownload(false);
 	buildThreadInit();
 }
@@ -39,7 +44,9 @@ void BuildProcess::startBuild(bool sourceOptionChecked, bool binOptionChecked)
  * It makes sure that the build has finished or if not just contionues as normal*/
 void BuildProcess::waitBusyWithoutStartingBuild(QString elbeid)
 {
+	MainWindow *mw = helpers::getMainWindow();
 	buildmanager->setBuildRunning(true);
+	mw->changeElbeActionsEnabledStatus(false);
 	buildWorker->setSkipDownload(true);
 	buildWorker->setBuildingElbeID(elbeid);
 	buildThreadInit();
@@ -65,6 +72,8 @@ void BuildProcess::buildThreadInit()
 
 void BuildProcess::cleanup()
 {
+	MainWindow *mw = helpers::getMainWindow();
+	mw->changeElbeActionsEnabledStatus(true);
 	buildThread->quit();
 	buildThread->wait();
 }

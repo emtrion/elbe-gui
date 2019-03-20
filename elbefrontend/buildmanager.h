@@ -10,20 +10,18 @@ class BuildProcessWorker;
 
 class BuildManager
 {
-	public:
-
 	private:
-		/* Here, the instance will be stored. */
+		/* The instance will be stored here. */
 		static BuildManager* instance;
 
-		/* Private constructor to prevent instancing. */
+		/* Private constructor to prevent instantiation. From outside*/
 		BuildManager();
 
-		bool m_buildRunning = false;
+		bool buildRunning = false;
 		//is true if the build is finished and the files are loading
-		bool m_loadingFiles = false;
+		bool loadingFiles = false;
 		//the ID of the project currently building
-		QString m_currentBuildDirectory;
+		QString currentBuildDirectory;
 		//pointer to the worker in which the build happens
 		BuildProcessWorker *processWorkerPointer;
 

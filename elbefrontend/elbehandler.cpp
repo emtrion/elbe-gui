@@ -7,6 +7,7 @@
 #include <QThread>
 
 #include "helpers.h"
+#include "projectmanager.h"
 
 ElbeHandler::ElbeHandler()
 {

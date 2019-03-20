@@ -1,6 +1,8 @@
 #include "projectmanager.h"
 #include "helpers.h"
 #include <QDebug>
+#include <QDomDocument>
+#include <QFile>
 /* This is a singelton class...
  * because their can always be just one open project at the time.
  * Should another project be opened, the previous will be closed and the instance

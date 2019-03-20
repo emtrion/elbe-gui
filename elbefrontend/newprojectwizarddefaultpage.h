@@ -2,9 +2,9 @@
 #define NEWPROJECTWIZARDDEFAULTPAGE_H
 
 #include <QWizardPage>
-#include <QLineEdit>
-#include <QObjectList>
-#include "newprojectwizard.h"
+
+class QLineEdit;
+class NewProjectWizard;
 
 namespace Ui {
 	class NewProjectWizard;

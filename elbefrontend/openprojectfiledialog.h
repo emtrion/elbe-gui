@@ -4,7 +4,8 @@
 
 
 #include <QFileDialog>
-#include <QToolButton>
+
+class QToolButton;
 
 class OpenProjectFileDialog : public QFileDialog
 {

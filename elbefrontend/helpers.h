@@ -1,15 +1,12 @@
 #ifndef HELPERS_H
 #define HELPERS_H
 
-#include <QString>
-#include "newprojectwizard.h"
-#include "mainwindow.h"
-#include <QDomDocument>
-#include <QFile>
-#include <QByteArray>
-#include <QPixmap>
-#include <QListWidgetItem>
-#include "projectlistitem.h"
+#include <QMessageBox>
+
+class QString;
+class QFile;
+class MainWindow;
+class QDomDocument;
 
 namespace helpers {
 	void doStartUpRoutine();

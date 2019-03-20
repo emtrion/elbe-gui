@@ -1,9 +1,10 @@
 #ifndef FILEDOWNLOADDIALOG_H
 #define FILEDOWNLOADDIALOG_H
 
-#include <QCheckBox>
+
 #include <QDialog>
 
+class QCheckBox;
 namespace Ui {
 	class FileDownloadDialog;
 }

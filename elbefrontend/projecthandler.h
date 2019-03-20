@@ -2,9 +2,10 @@
 #define PROJECTHANDLER_H
 
 #include <QString>
-#include "elbehandler.h"
-#include "projectmanager.h"
-#include "xmlfilemanager.h"
+
+class ElbeHandler;
+class ProjectManager;
+class XmlFileManager;
 
 
 class ProjectHandler

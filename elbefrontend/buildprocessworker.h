@@ -1,18 +1,13 @@
 #ifndef BUILDPROCESSWORKER_H
 #define BUILDPROCESSWORKER_H
 
-
-#include "mainwindow.h"
-#include "projectmanager.h"
-#include "statusbarthread.h"
-
 #include <QObject>
-#include <QProcess>
-#include <QDebug>
-#include "helpers.h"
-#include <QThread>
 
-
+class QProcess;
+class QThread;
+class BuildProcessStatusBarUpdate;
+class ProjectManager;
+class ElbeHandler;
 
 class BuildProcessWorker : public QObject
 {
@@ -50,13 +45,13 @@ class BuildProcessWorker : public QObject
 
 	private:
 		QStringList outputFiles;
-		ElbeHandler *handler;
+		ElbeHandler *elbehandler;
 		QString buildingProjectPath;
 		QString buildingElbeID;
 		QString buildingXmlPath;
 		QString buildingOutPath;
 		ProjectManager *projectmanager;
-		StatusBarThread *statusBarWorker;
+		BuildProcessStatusBarUpdate *statusBarWorker;
 
 		QThread *statusBarBuildThread;
 		QThread *statusBarLoadThread;

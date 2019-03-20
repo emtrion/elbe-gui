@@ -50,10 +50,10 @@ SOURCES += main.cpp\
     buildprocess.cpp \
     buildprocessworker.cpp \
     buildprocessstartdialog.cpp \
-    statusbarthread.cpp \
     filedownloaddialog.cpp \
     buildmanager.cpp \
-    chooseprojecttodeletedialog.cpp
+    chooseprojecttodeletedialog.cpp \
+    buildprocessstatusbarupdate.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -79,10 +79,10 @@ HEADERS  += mainwindow.h \
     buildprocess.h \
     buildprocessworker.h \
     buildprocessstartdialog.h \
-    statusbarthread.h \
     filedownloaddialog.h \
     buildmanager.h \
-    chooseprojecttodeletedialog.h
+    chooseprojecttodeletedialog.h \
+    buildprocessstatusbarupdate.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \

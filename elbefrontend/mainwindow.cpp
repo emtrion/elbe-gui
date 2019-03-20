@@ -1,35 +1,40 @@
 #include "ui_mainwindow.h"
 #include "mainwindow.h"
-#include <QWidget>
-#include <QPlainTextEdit>
-#include <QColor>
+//#include <QWidget>
+//#include <QPlainTextEdit>
+//#include <QColor>
 #include <QDebug>
-#include <QFileSystemModel>
-#include <QStandardItemModel>
-#include <QTreeWidgetItem>
-#include <QMessageBox>
-#include <QErrorMessage>
-#include <QFileDialog>
-#include <QCheckBox>
-#include <QThread>
+//#include <QFileSystemModel>
+//#include <QStandardItemModel>
+//#include <QTreeWidgetItem>
+//#include <QMessageBox>
+//#include <QErrorMessage>
+//#include <QFileDialog>
+//#include <QCheckBox>
+//#include <QThread>
+//#include <QString>
 
-#include "codeeditor.h"
-#include "qtermwidget5/qtermwidget.h"
+#include <QDesktopServices>
+
+//#include "codeeditor.h"
+//#include "qtermwidget5/qtermwidget.h"
 #include "newxmldialog.h"
-#include "helpers.h"
+//#include "helpers.h"
 #include "newprojectwizard.h"
 #include "importfiledialog.h"
-#include "projectmanager.h"
+//#include "projectmanager.h"
 #include "schemavalidation.h"
 #include "projecthandler.h"
-#include "xmlfilehandler.h"
 #include "openprojectfiledialog.h"
 #include "chooseprojecttodeletedialog.h"
 #include "buildprocessstartdialog.h"
 #include "filedownloaddialog.h"
 #include "buildmanager.h"
-
 #include "buildprocessworker.h"
+#include "existingprojects.h"
+#include "xmlfilehandler.h"
+#include "projectitemmodel.h"
+#include "elbehandler.h"
 
 
 
@@ -138,7 +143,10 @@ void MainWindow::on_actionDelete_triggered()
 	projectChooser->show();
 }
 
-
+void MainWindow::on_actionOpen_in_Explorer_triggered()
+{
+	QDesktopServices::openUrl(QUrl(projectmanager->getProjectDirectory()));
+}
 
 /******************************************************/
 
@@ -257,8 +265,16 @@ void MainWindow::clearProjectStructure()
 
 void MainWindow::renewProjectStructure()
 {
+	QString projectName;
+	ElbeHandler *elbe = new ElbeHandler();
+	if ( !elbe->projectIsInElbe(projectmanager->getProjectPath()) ) {
+		projectName = projectmanager->getProjectName() + " (does not exist in initVM)";
+	} else {
+		projectName = projectmanager->getProjectName();
+	}
+
 	model = new ProjectItemModel();
-	model->setProjectDetails( projectmanager->getProjectDirectory(),  projectmanager->getProjectName());
+	model->setProjectDetails( projectmanager->getProjectDirectory(),  projectName);
 	ui->ProjektStructure->setModel(model);
 	ui->ProjektStructure->header()->hide();
 }
@@ -383,8 +399,13 @@ void MainWindow::enableActionsOnProjectOpen(bool isOpen)
 	ui->actionClose->setEnabled(isOpen);
 	ui->actionImport->setEnabled(isOpen);
 	ui->actionNew_XML->setEnabled(isOpen);
-	ui->actionBuild->setEnabled(isOpen);
-	ui->actionDownload_files->setEnabled(isOpen);
+	ui->actionOpen_in_Explorer->setEnabled(isOpen);
+
+	BuildManager *buildmanager = BuildManager::getInstance();
+	//only if no build is running it's safe to enable the actions
+	if ( !(buildmanager->isBuildRunning() || buildmanager->isLoadingFiles()) ) {
+		changeElbeActionsEnabledStatus(isOpen);
+	}
 }
 
 void MainWindow::enableActionsOnXMLOpen(bool isOpen)
@@ -423,6 +444,18 @@ void MainWindow::changeImportButtonEnabledStatus(bool status)
 	ui->actionImport->setEnabled(status);
 }
 
+void MainWindow::changeElbeActionsEnabledStatus(bool status)
+{
+	BuildManager *buildmanager = BuildManager::getInstance();
+//	if ( (buildmanager->isBuildRunning() || buildmanager->isLoadingFiles()) ) {
+	ui->actionBuild->setEnabled(status);
+	ui->actionDownload_files->setEnabled(status);
+//	} else {
+//		ui->actionBuild->setEnabled(!status);
+//		ui->actionDownload_files->setEnabled(!status);
+//	}
+}
+
 /************************************************************************************/
 
 /*********************** getter for ui elements *************************************/
@@ -446,28 +479,43 @@ QAction *MainWindow::getActionClose() const
 
 /********************************* exit handling *******************************************/
 
-void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
-{// there are some things which must be handled before closing the application
+//overwrite closeEvent
+// there are things which must be handled before closing the application
+void MainWindow::closeEvent(QCloseEvent *event)
+{
 	bool canAcceptCloseEvent = false;
 	BuildManager *buildmanager = BuildManager::getInstance();
 
-	if ( buildmanager->isLoadingFiles() ) {
-		helpers::showMessageBox("Application can not be closed!", "Download in progress.", QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
-		event->ignore();
-		return;
+	//save the opened project
+	QString openedProject;
+	if ( projectmanager->isProjectOpened() ) {
+		openedProject = projectmanager->getProjectPath();
+		qDebug() << "Open project is: "<<openedProject;
 	}
+
+	//check if there are unsafed changes and handle them
 	if ( filemanager->getIsOpen() && !filemanager->getIsSaved() ) {
 		canAcceptCloseEvent = saveOnClose();
 	}  else {
 		canAcceptCloseEvent = true;
 	}
 
+
+	//the application can not be closed if the filedownload after the build is still in progress
+	if ( buildmanager->isLoadingFiles() ) {
+		helpers::showMessageBox("Application can not be closed!", "Download in progress.", QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
+		event->ignore();
+		return;
+	}
+
+
+	//if the closeEvent was declined previously we can skip the following
 	if ( canAcceptCloseEvent && buildmanager->isBuildRunning() ) {
 		int ret = helpers::showMessageBox("Build is still running", "Are you sure you want to exit the application",
 		QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::Cancel), QMessageBox::Yes);
 		switch ( ret ) {
 			case QMessageBox::Yes:
-				//re-check in case the messagebox was left open the whole time
+		//re-check in case the messagebox was left open and the situation has changed
 				if ( buildmanager->isLoadingFiles() ) {
 					helpers::showMessageBox("Application can not be closed!", "Download in progress.", QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
 					event->ignore();
@@ -480,12 +528,13 @@ void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
 				canAcceptCloseEvent = false;
 				break;
 			default:
-				//should not be reached
+		//should never be reached
 				break;
 		}
 	}
 
 	if ( canAcceptCloseEvent ) {
+		rememberOpenedProject(openedProject);
 		event->accept();
 	} else {
 		event->ignore();
@@ -493,19 +542,9 @@ void MainWindow::closeEvent(QCloseEvent *event) //overwrite closeEvent
 }
 
 
-//int MainWindow::showCloseError(const QString &text, const QString &informativeText, QMessageBox::StandardButtons buttons, QMessageBox::Button defaultButton)
-//{
-//	QMessageBox msgBox;
-//	msgBox.setText(text);
-//	msgBox.setInformativeText(informativeText);
-//	msgBox.setStandardButtons(buttons);
-//	msgBox.setDefaultButton(defaultButton);
-//	return msgBox.exec();
-//}
-
+//when the application is closed and there are unsafed changes the user is asked if they should be safed
 bool MainWindow::saveOnClose()
-{//when the application is closed and there are unsafed changes the user is asked if they should be safed
-
+{
 	bool value;
 
 	XmlFileHandler *filehandler = new XmlFileHandler(filemanager->getCurrentFilePath());
@@ -555,4 +594,13 @@ void MainWindow::handleCloseDuringBuild()
 	}
 }
 
-/******************************************************************s******************/
+void MainWindow::rememberOpenedProject(QString project)
+{
+	ExistingProjects *exist = new ExistingProjects();
+	qDebug() << "adding openflag";
+	exist->addOpenFlag(project);
+}
+
+/************************************************************************************/
+
+

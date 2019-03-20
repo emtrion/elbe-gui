@@ -112,7 +112,11 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="ProjectNameEntry"/>
+          <widget class="QLineEdit" name="ProjectNameEntry">
+           <property name="toolTip">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -151,6 +155,9 @@
           <widget class="QLineEdit" name="ProjectPathEntry">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string/>
            </property>
            <property name="text">
             <string/>
@@ -243,6 +250,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>name of the project this rootfilesystem is associated with</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -266,6 +276,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>version of the rootfilesystem definition</string>
            </property>
            <property name="text">
             <string>1.0</string>
@@ -297,6 +310,10 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>human readable description of the project
+</string>
+           </property>
            <property name="text">
             <string/>
            </property>
@@ -317,6 +334,9 @@
           <widget class="QComboBox" name="buildtypeDropDown">
            <property name="enabled">
             <bool>false</bool>
+           </property>
+           <property name="toolTip">
+            <string>Default buildtype</string>
            </property>
            <item>
             <property name="text">
@@ -361,6 +381,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>name of the debian suite that should be used to generate the buildenvironment and the rootfilesystem</string>
            </property>
            <item>
             <property name="text">
@@ -479,8 +502,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>IP address or hostname of the primary debian mirror e.g. “debian.org” without a protocol or any slash</string>
+           </property>
            <property name="text">
-            <string>fgh</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -506,8 +532,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>base path to the debian mirror on the given host e.g. “/debian”</string>
+           </property>
            <property name="text">
-            <string>fgh</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -536,8 +565,11 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>protocol to access the primary debian mirror e.g. “http” or “ftp”</string>
+           </property>
            <property name="text">
-            <string>fgh</string>
+            <string/>
            </property>
           </widget>
          </item>

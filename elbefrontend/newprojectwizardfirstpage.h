@@ -2,10 +2,6 @@
 #define NEWPROJECTWIZARDFIRSTPAGE_H
 
 #include <QWizardPage>
-#include <QString>
-#include <QPixmap>
-#include "newprojectwizard.h"
-
 
 namespace Ui {
 	class NewProjectWizard;

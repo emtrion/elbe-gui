@@ -3,6 +3,7 @@
 #include "filedownloaddialog.h"
 #include "ui_filedownloaddialog.h"
 #include <QPushButton>
+#include <QThread>
 
 FileDownloadDialog::FileDownloadDialog(QWidget *parent) :
 QDialog(parent),

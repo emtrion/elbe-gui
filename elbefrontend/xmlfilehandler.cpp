@@ -1,3 +1,5 @@
+#include "elbehandler.h"
+#include "mainwindow.h"
 #include "schemavalidation.h"
 #include "xmlfilehandler.h"
 
@@ -9,6 +11,7 @@
 #include <QMessageBox>
 #include "helpers.h"
 #include "projectmanager.h"
+#include "codeeditor.h"
 
 XmlFileHandler::XmlFileHandler() //default constructor
 {

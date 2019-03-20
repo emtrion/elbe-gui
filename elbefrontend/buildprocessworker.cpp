@@ -1,20 +1,21 @@
-#include "buildmanager.h"
 #include "buildprocessworker.h"
-#include "mainwindow.h"
 
-#include "elbehandler.h"
 #include <QProcess>
-#include "projectmanager.h"
-#include "helpers.h"
 #include <QDebug>
 
+#include "projectmanager.h"
+#include "helpers.h"
+#include "buildmanager.h"
+#include "mainwindow.h"
+#include "buildprocessstatusbarupdate.h"
+#include "elbehandler.h"
 
 BuildProcessWorker::BuildProcessWorker(QStringList outputFiles)
 {
 	//outputfiles which are seleceted in buildprocessstartdialog
 	this->outputFiles = outputFiles;
 
-	handler = new ElbeHandler();
+	elbehandler = new ElbeHandler();
 
 	projectmanager = ProjectManager::getInstance();
 	buildingElbeID = projectmanager->getElbeID();
@@ -72,11 +73,11 @@ void BuildProcessWorker::waitBusy()
 
 	emit(outputReady("start elbe-build"));
 
-	process->setWorkingDirectory("/home/hico/elbe");
-	process->start("./elbe control wait_busy "+buildingElbeID); //change this. It depends on the opened project which is not itended
+//	process->setWorkingDirectory("/home/hico/elbe");
+//	process->start("./elbe control wait_busy "+buildingElbeID); //change this. It depends on the opened project which is not itended
 
-//	process->setWorkingDirectory("/home/hico/tmp");
-//	process->start("./a.out");
+	process->setWorkingDirectory("/home/hico/tmp");
+	process->start("./a.out");
 
 	//wait until build has finished. Events are still handled so messages are coming through
 	process->waitForFinished(-1);
@@ -134,7 +135,7 @@ void BuildProcessWorker::downloadFiles()
 	updateMessageLog("downloading files...");
 
 	if ( outputFiles.contains("Image")) {
-		if ( !handler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
+		if ( !elbehandler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
 			qDebug() << "Could not load all images. Check Output directory and try again";
 			updateMessageLog("Could not load all images. Check Output directory and try again");
 		} else {
@@ -143,7 +144,7 @@ void BuildProcessWorker::downloadFiles()
 		outputFiles.removeOne("Image");
 	}
 	if( !outputFiles.isEmpty() ) {
-		if ( !handler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
+		if ( !elbehandler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
 			qDebug() << "Could not load all files. Check Output directory and try again";
 			updateMessageLog("Could not load all files. Check Output directory and try again");
 		} else {
@@ -181,7 +182,7 @@ QThread *BuildProcessWorker::getStatusBarBuildThread() const
 
 void BuildProcessWorker::showBuildingInStatusBar()
 {
-	StatusBarThread *statusBarBuildWorker = new StatusBarThread();
+	BuildProcessStatusBarUpdate *statusBarBuildWorker = new BuildProcessStatusBarUpdate();
 	statusBarBuildThread = new QThread();
 	connect(statusBarBuildThread, SIGNAL(started()), statusBarBuildWorker, SLOT(statusBarBuildRunning()));
 	connect(statusBarBuildThread, SIGNAL(finished()), statusBarBuildWorker, SLOT(deleteLater()));
@@ -191,7 +192,7 @@ void BuildProcessWorker::showBuildingInStatusBar()
 
 void BuildProcessWorker::showLoadingInStatusBar()
 {
-	StatusBarThread *statusBarLoadWorker = new StatusBarThread();
+	BuildProcessStatusBarUpdate *statusBarLoadWorker = new BuildProcessStatusBarUpdate();
 	statusBarLoadThread = new QThread();
 	connect(statusBarLoadThread, SIGNAL(started()), statusBarLoadWorker, SLOT(statusBarLoadingFile()));
 	connect(statusBarBuildThread, SIGNAL(finished()), statusBarLoadWorker, SLOT(deleteLater()));

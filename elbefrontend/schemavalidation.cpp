@@ -1,6 +1,8 @@
+#include "mainwindow.h"
 #include "schemavalidation.h"
 
 #include <QApplication>
+#include <QTextEdit>
 #include <QFile>
 #include <QXmlSchema>
 #include <QDebug>
@@ -11,6 +13,7 @@
 #include <QAbstractMessageHandler>
 #include <QTime>
 #include "helpers.h"
+#include "codeeditor.h"
 
 SchemaValidation::SchemaValidation(QFile instanceFile)
 {
@@ -80,7 +83,6 @@ void SchemaValidation::validate()
 void SchemaValidation::displayValidationMessage(bool errorOccured)
 {
 	QColor color;
-	MainWindow *mw = helpers::getMainWindow();
 	QTextEdit *messageLog = mainwindow->getMessageLog();
 
 	//make the error message readable

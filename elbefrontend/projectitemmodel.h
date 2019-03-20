@@ -1,11 +1,9 @@
 #ifndef PROJECTITEMMODEL_H
 #define PROJECTITEMMODEL_H
 
-#include "xmlfilehandler.h"
 
 #include <QStandardItemModel>
-#include <QStandardItem>
-#include <QFileSystemWatcher>
+
 
 class ProjectItemModel : public QStandardItemModel
 {
@@ -25,9 +23,6 @@ class ProjectItemModel : public QStandardItemModel
 		QStandardItem *rootItem;
 		QIcon dirIcon;
 		QIcon fileIcon;
-		void initSystemWatcher(QString path);
-
-
 };
 
 #endif // PROJECTITEMMODEL_H

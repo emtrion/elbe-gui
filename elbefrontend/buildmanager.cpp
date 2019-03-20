@@ -10,12 +10,12 @@ BuildManager::BuildManager()
 
 bool BuildManager::isLoadingFiles() const
 {
-	return m_loadingFiles;
+	return loadingFiles;
 }
 
 void BuildManager::setLoadingFiles(bool value)
 {
-	m_loadingFiles = value;
+	loadingFiles = value;
 }
 
 BuildProcessWorker *BuildManager::getProcessWorkerPointer() const
@@ -30,22 +30,22 @@ void BuildManager::setProcessWorkerPointer(BuildProcessWorker *value)
 
 QString BuildManager::getCurrentBuildDirectory() const
 {
-	return m_currentBuildDirectory;
+	return currentBuildDirectory;
 }
 
 void BuildManager::setCurrentBuildDirectory(const QString &value)
 {
-	m_currentBuildDirectory = value;
+	currentBuildDirectory = value;
 }
 
 bool BuildManager::isBuildRunning() const
 {
-	return m_buildRunning;
+	return buildRunning;
 }
 
 void BuildManager::setBuildRunning(bool value)
 {
-	m_buildRunning = value;
+	buildRunning = value;
 }
 
 BuildManager *BuildManager::getInstance()

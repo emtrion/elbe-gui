@@ -1,16 +1,16 @@
-#include "statusbarthread.h"
+#include "buildprocessstatusbarupdate.h"
 #include <QThread>
 #include <QDebug>
 #include "mainwindow.h"
 #include "helpers.h"
 #include <QStatusBar>
 
-StatusBarThread::StatusBarThread(QObject *parent) : QObject(parent)
+BuildProcessStatusBarUpdate::BuildProcessStatusBarUpdate(QObject *parent) : QObject(parent)
 {
 
 }
 
-void StatusBarThread::changeStatusBar()
+void BuildProcessStatusBarUpdate::changeStatusBar()
 {
 	connect(this, SIGNAL(statusBarHasChanged(QString)), this, SLOT(updateStatusBar(QString)));
 	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
@@ -28,7 +28,7 @@ void StatusBarThread::changeStatusBar()
 	}
 }
 
-void StatusBarThread::updateStatusBar(const QString &str)
+void BuildProcessStatusBarUpdate::updateStatusBar(const QString &str)
 {
 	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
 
@@ -39,7 +39,7 @@ void StatusBarThread::updateStatusBar(const QString &str)
 
 
 //runs in thread during the build
-void StatusBarThread::statusBarBuildRunning()
+void BuildProcessStatusBarUpdate::statusBarBuildRunning()
 {
 //	qDebug() << __func__<<" called which means signal came through";
 	list = {QStringList() << "build running" << "build running."<<"build running.."<< "build running..." };
@@ -48,7 +48,7 @@ void StatusBarThread::statusBarBuildRunning()
 
 
 //runs in thread during the files are loaded after the thread
-void StatusBarThread::statusBarLoadingFile()
+void BuildProcessStatusBarUpdate::statusBarLoadingFile()
 {
 //	qDebug() << __func__<<" called which means signal came through";
 	list = {QStringList()<<"loading files"<< "loading files."<< "loading files.."<< "loading files..." };

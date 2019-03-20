@@ -4,8 +4,9 @@
 #include <QXmlSchema>
 #include <QFile>
 #include "messagehandler.h"
-#include "mainwindow.h"
 #include "helpers.h"
+
+class MainWindow;
 
 class SchemaValidation
 {

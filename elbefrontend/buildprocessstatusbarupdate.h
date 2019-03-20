@@ -1,13 +1,13 @@
-#ifndef STATUSBARTHREAD_H
-#define STATUSBARTHREAD_H
+#ifndef BUILDPROCESSSTATUSBARUPDATE_H
+#define BUILDPROCESSSTATUSBARUPDATE_H
 
 #include <QObject>
 
-class StatusBarThread : public QObject
+class BuildProcessStatusBarUpdate : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit StatusBarThread(QObject *parent = 0);
+		explicit BuildProcessStatusBarUpdate(QObject *parent = 0);
 
 	private:
 		QStringList list;
@@ -23,4 +23,4 @@ class StatusBarThread : public QObject
 		void updateStatusBar(const QString &str);
 };
 
-#endif // STATUSBARTHREAD_H
+#endif // BUILDPROCESSSTATUSBARUPDATE_H

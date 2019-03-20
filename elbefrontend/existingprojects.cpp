@@ -71,7 +71,7 @@ void ExistingProjects::updateList() //is called from getExistingProjects
 		} else if ( file.exists() && !isInElbe ) { //...existend on filesystem but not in elbe
 			putItemInList(helpers::getProjectName(file.absoluteFilePath())+" (has no elbe instance)" ,file.absoluteFilePath());
 		} else if ( !file.exists() && isInElbe ) { //...existend in elbe but not on filesystem
-			putItemInList(helpers::getProjectName(file.absoluteFilePath())+" (only in elbe)", file.absoluteFilePath());
+			putItemInList(helpers::getProjectName(file.absoluteFilePath())+" (exists only in elbe)", file.absoluteFilePath());
 		} else {
 			putItemInList(helpers::getProjectName(file.absoluteFilePath()), file.absoluteFilePath());
 		}
@@ -128,6 +128,59 @@ QString ExistingProjects::removeBusyFlag(int index)
 	}
 
 	//return the projectPath without the busy flag
+	return strList.at(0);
+}
+
+void ExistingProjects::addOpenFlag(const QString &projectPath)
+{
+	int index = 0;
+	initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.compare(projectPath+" (busy)") == 0 || str.compare(projectPath) == 0 ) {
+			projectFileList.replace(index, str+" (open)");
+			break;
+		}
+		index++;
+	}
+
+	projectListFile->resize(0);
+
+	foreach (QString str, projectFileList) {
+		addNewProjectToList(str);
+	}
+}
+
+QString ExistingProjects::checkForOpenFlag()
+{
+	QString projectPath = "";
+	int index = 0;
+	initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.endsWith(" (open)") ) {
+			projectPath = removeOpenFlag(index);
+		}
+		index++;
+	}
+	return projectPath;
+}
+
+QString ExistingProjects::removeOpenFlag(int index)
+{
+	QStringList strList;
+	QString openedProject = projectFileList.at(index);
+	//split at space character to get the directory seperated
+	strList = openedProject.split(" ", QString::SkipEmptyParts);
+	//open is always at the end
+	strList.removeLast();
+	QString replacement = strList.join(" ");
+	projectFileList.replace(index, replacement);
+
+	projectListFile->resize(0);
+	foreach (QString s, projectFileList) {
+		addNewProjectToList(s);
+	}
+
+	//first entry of strList holds the file only without any flags
 	return strList.at(0);
 }
 

@@ -26,10 +26,6 @@ class BuildProcess : public QObject
 		void startBuild(bool sourceOptionChecked, bool binOptionChecked);
 
 		void waitBusyWithoutStartingBuild(QString id);
-	signals:
-
-
-	public slots:
 
 	private slots:
 		void cleanup();

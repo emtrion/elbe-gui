@@ -322,6 +322,7 @@
     <addaction name="separator"/>
     <addaction name="actionDelete"/>
     <addaction name="separator"/>
+    <addaction name="actionOpen_in_Explorer"/>
     <addaction name="actionExit_2"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -336,7 +337,7 @@
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
    </widget>
-   <widget class="QMenu" name="menuView">
+   <widget class="QMenu" name="menuElbe">
     <property name="title">
      <string>Elbe</string>
     </property>
@@ -354,7 +355,7 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuView"/>
+   <addaction name="menuElbe"/>
    <addaction name="menuHilfe"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -496,6 +497,9 @@
    <property name="text">
     <string>&amp;Validate</string>
    </property>
+   <property name="toolTip">
+    <string>validate your XML against elbe-schema </string>
+   </property>
   </action>
   <action name="actionClose">
    <property name="enabled">
@@ -522,6 +526,9 @@
    <property name="text">
     <string>&amp;Build project</string>
    </property>
+   <property name="toolTip">
+    <string>trigger building the project. Status will change to busy</string>
+   </property>
   </action>
   <action name="actionDownload_files">
    <property name="enabled">
@@ -529,6 +536,17 @@
    </property>
    <property name="text">
     <string>&amp;Download files</string>
+   </property>
+   <property name="toolTip">
+    <string>select files to download from initVM </string>
+   </property>
+  </action>
+  <action name="actionOpen_in_Explorer">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Open in Explorer</string>
    </property>
   </action>
  </widget>

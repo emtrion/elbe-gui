@@ -1,10 +1,10 @@
 #ifndef CHOOSEPROJECTTODELETEDIALOG_H
 #define CHOOSEPROJECTTODELETEDIALOG_H
 
-#include "existingprojects.h"
-#include "projectlistitem.h"
-
 #include <QDialog>
+
+class ProjectListItem;
+class ExistingProjects;
 
 namespace Ui {
 	class ChooseProjectToDeleteDialog;

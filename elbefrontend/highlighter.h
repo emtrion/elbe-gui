@@ -2,7 +2,8 @@
 #define HIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
-#include <QRegularExpression>
+
+class QRegularExpression;
 
 class Highlighter : public QSyntaxHighlighter
 {

@@ -4,8 +4,9 @@
  * see projectmanager.cpp for more info
 */
 
-#include <QFileSystemWatcher>
 #include <QString>
+
+class QFileSystemWatcher;
 
 class ProjectManager
 {

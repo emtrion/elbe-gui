@@ -3,6 +3,7 @@
 #include <iostream>
 #include <QString>
 #include <QProcessEnvironment>
+#include <QFileSystemWatcher>
 
 #include <QWidget>
 #include <QObject>
@@ -23,6 +24,7 @@
 
 
 #include "buildprocess.h"
+#include "elbehandler.h"
 #include "existingprojects.h"
 #include "filedownloaddialog.h"
 #include "projecthandler.h"
@@ -42,9 +44,13 @@ namespace helpers {
 		ElbeHandler *elbehandler = new ElbeHandler();
 		ProjectHandler *projecthandler = new ProjectHandler();
 
+		QString projectPath;
+		projectPath = existing->checkForOpenFlag();
+		if ( !projectPath.isEmpty() ) {
+			projecthandler->openProject(projectPath);
+		}
 
-		QString projectPath = existing->checkForBusyFlag();
-
+		projectPath = existing->checkForBusyFlag();
 		if ( !projectPath.isEmpty() ) {
 			id = helpers::getProjectID(projectPath);
 			if ( elbehandler->checkIfBusy(id) ) {

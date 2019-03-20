@@ -4,9 +4,9 @@
 
 #include <QString>
 
-#include "elbehandler.h"
-#include "projectmanager.h"
-#include "xmlfilemanager.h"
+class XmlFileManager;
+class ProjectManager;
+class ElbeHandler;
 
 class XmlFileHandler
 {

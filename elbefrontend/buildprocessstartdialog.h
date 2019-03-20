@@ -1,8 +1,9 @@
 #ifndef BUILDPROCESSSTARTDIALOG_H
 #define BUILDPROCESSSTARTDIALOG_H
 
-#include <QCheckBox>
 #include <QDialog>
+
+class QCheckBox;
 
 namespace Ui {
 	class BuildProcessStartDialog;
