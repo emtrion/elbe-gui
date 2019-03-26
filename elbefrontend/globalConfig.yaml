@@ -1,0 +1,8 @@
+#global configfile for elbefrontend
+#elbeSettings
+
+#elbe version
+elbe: ""
+#initVM
+initVM: ""
+

@@ -8,11 +8,11 @@ class QStringList;
 class QFile;
 class ProjectListItem;
 
-class ExistingProjects : public QObject
+class ExistingsProjects : public QObject
 {
 		Q_OBJECT
 	public:
-		explicit ExistingProjects(QObject *parent = 0);
+		explicit ExistingsProjects(QObject *parent = 0);
 		void addNewProjectToList(QString projectPath);
 
 		void removeProjectFromList(QString projectPath);

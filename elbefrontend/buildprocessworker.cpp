@@ -128,8 +128,12 @@ void BuildProcessWorker::updateMessageLog(const QString &str)
 
 void BuildProcessWorker::downloadFiles()
 {
+	qDebug() << __func__<<"start!";
+
 	//change statusbar message
 	showLoadingInStatusBar();
+
+	qDebug() << "almost there";
 
 //	qDebug() << "XMLPATH: "<<buildingXmlPath;
 	updateMessageLog("downloading files...");
@@ -195,7 +199,7 @@ void BuildProcessWorker::showLoadingInStatusBar()
 	BuildProcessStatusBarUpdate *statusBarLoadWorker = new BuildProcessStatusBarUpdate();
 	statusBarLoadThread = new QThread();
 	connect(statusBarLoadThread, SIGNAL(started()), statusBarLoadWorker, SLOT(statusBarLoadingFile()));
-	connect(statusBarBuildThread, SIGNAL(finished()), statusBarLoadWorker, SLOT(deleteLater()));
+	connect(statusBarLoadThread, SIGNAL(finished()), statusBarLoadWorker, SLOT(deleteLater()));
 	statusBarLoadWorker->moveToThread(statusBarLoadThread);
 	statusBarLoadThread->start();
 }

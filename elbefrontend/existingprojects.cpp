@@ -9,13 +9,14 @@
 #include <QDebug>
 #include "helpers.h"
 
-ExistingProjects::ExistingProjects(QObject *parent) : QObject(parent)
-{
-	projectListFile = new QFile("/home/hico/.elbefrontend");
 
+ExistingsProjects::ExistingsProjects(QObject *parent) : QObject(parent)
+{
+	projectListFile = new QFile(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/existingProjects");
 }
 
-void ExistingProjects::addNewProjectToList(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
+
+void ExistingsProjects::addNewProjectToList(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
 {
 	if ( !projectListFile->open(QIODevice::ReadWrite | QIODevice::Append) ) {
 		qDebug() << "ERROR from "<<__func__<<" Could not open/create file";
@@ -27,9 +28,9 @@ void ExistingProjects::addNewProjectToList(QString projectPath) //the applicatio
 	projectListFile->close();
 }
 
-void ExistingProjects::removeProjectFromList(QString projectPath)
+void ExistingsProjects::removeProjectFromList(QString projectPath)
 {
-	for (int i = 0; i < projectFileList.size(); ++i) {
+	for (auto i = 0; i < projectFileList.size(); ++i) {
 		QString pathToRemove = projectFileList.at(i);
 		if ( pathToRemove.compare(projectPath) == 0 ) {
 			projectFileList.removeAt(i);
@@ -45,14 +46,14 @@ void ExistingProjects::removeProjectFromList(QString projectPath)
 	}
 }
 
-QList<ProjectListItem *> ExistingProjects::getExistingProjects()
+QList<ProjectListItem *> ExistingsProjects::getExistingProjects()
 {
 	initFileList();
 	updateList();
 	return existingProjects;
 }
 
-void ExistingProjects::updateList() //is called from getExistingProjects
+void ExistingsProjects::updateList() //is called from getExistingProjects
 {
 	ElbeHandler *elbe = new ElbeHandler();
 	bool isInElbe;
@@ -79,7 +80,7 @@ void ExistingProjects::updateList() //is called from getExistingProjects
 }
 
 /*marks the project which was still building when the application was closed*/
-void ExistingProjects::addBusyFlag(const QString &projectPath)
+void ExistingsProjects::addBusyFlag(const QString &projectPath)
 {
 	int index = 0;
 	initFileList();
@@ -98,7 +99,7 @@ void ExistingProjects::addBusyFlag(const QString &projectPath)
 	}
 }
 
-QString ExistingProjects::checkForBusyFlag()
+QString ExistingsProjects::checkForBusyFlag()
 {
 	QString projectPath = "";
 	int index = 0;
@@ -113,7 +114,7 @@ QString ExistingProjects::checkForBusyFlag()
 	return projectPath;
 }
 
-QString ExistingProjects::removeBusyFlag(int index)
+QString ExistingsProjects::removeBusyFlag(int index)
 {
 	QStringList strList;
 	QString busyProject = projectFileList.at(index);
@@ -131,7 +132,7 @@ QString ExistingProjects::removeBusyFlag(int index)
 	return strList.at(0);
 }
 
-void ExistingProjects::addOpenFlag(const QString &projectPath)
+void ExistingsProjects::addOpenFlag(const QString &projectPath)
 {
 	int index = 0;
 	initFileList();
@@ -150,7 +151,7 @@ void ExistingProjects::addOpenFlag(const QString &projectPath)
 	}
 }
 
-QString ExistingProjects::checkForOpenFlag()
+QString ExistingsProjects::checkForOpenFlag()
 {
 	QString projectPath = "";
 	int index = 0;
@@ -164,7 +165,7 @@ QString ExistingProjects::checkForOpenFlag()
 	return projectPath;
 }
 
-QString ExistingProjects::removeOpenFlag(int index)
+QString ExistingsProjects::removeOpenFlag(int index)
 {
 	QStringList strList;
 	QString openedProject = projectFileList.at(index);
@@ -184,7 +185,7 @@ QString ExistingProjects::removeOpenFlag(int index)
 	return strList.at(0);
 }
 
-void ExistingProjects::initFileList()
+void ExistingsProjects::initFileList()
 {
 	if ( !projectListFile->exists() ) {
 		qDebug() << "ERROR from "<<__func__<<"file does not exist";
@@ -202,7 +203,7 @@ void ExistingProjects::initFileList()
 	projectFileList = contentString.split("\n", QString::SkipEmptyParts);
 }
 
-void ExistingProjects::putItemInList(QString name, QString path)
+void ExistingsProjects::putItemInList(QString name, QString path)
 {
 	existingProjects.append(new ProjectListItem(name, path));
 }

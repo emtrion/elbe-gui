@@ -9,7 +9,6 @@ class MainWindow;
 class QDomDocument;
 
 namespace helpers {
-	void doStartUpRoutine();
     QString getHomeDirectoryFromSystem();
 	bool setProjectMetadata(QString projectName, QString projectPath);
 //	void deleteFile(QString path);

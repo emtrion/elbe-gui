@@ -29,55 +29,15 @@
 #include "filedownloaddialog.h"
 #include "projecthandler.h"
 #include "projectlistitem.h"
+#include "applicationconfig.h"
+#include "buildmanager.h"
+#include "elbesettingsdialog.h"
 
 
 namespace helpers {
 
 
-	void doStartUpRoutine()
-	{
 
-		QString id;
-		ExistingProjects *existing = new ExistingProjects();
-		BuildProcess *process = new BuildProcess();
-		FileDownloadDialog *dialog = new FileDownloadDialog();
-		ElbeHandler *elbehandler = new ElbeHandler();
-		ProjectHandler *projecthandler = new ProjectHandler();
-
-		QString projectPath;
-		projectPath = existing->checkForOpenFlag();
-		if ( !projectPath.isEmpty() ) {
-			projecthandler->openProject(projectPath);
-		}
-
-		projectPath = existing->checkForBusyFlag();
-		if ( !projectPath.isEmpty() ) {
-			id = helpers::getProjectID(projectPath);
-			if ( elbehandler->checkIfBusy(id) ) {
-				process->waitBusyWithoutStartingBuild(id);
-				helpers::showMessageBox("Information", "The build you started in a previous session is still in progess",
-				QMessageBox::StandardButtons(QMessageBox::Ok), QMessageBox::Ok);
-			} else {
-				int ret = helpers::showMessageBox("The build you started in a previous session has finished",
-				"Couldn't download your selected files as the application was closed. Would you like to do that now?",
-				QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No), QMessageBox::Yes);
-				switch ( ret ) {
-					case QMessageBox::Yes :
-						projecthandler->openProject(projectPath);
-						dialog->show();
-						break;
-					case QMessageBox::No :
-						break;
-					default:
-						//shouldn't be reached
-						break;
-				}
-			}
-		} else {
-			qDebug() << "no busyflag found";
-			return;
-		}
-	}
 
 	QString getHomeDirectoryFromSystem()
 	{//get the homedirectory

@@ -8,6 +8,7 @@
 
 #include "helpers.h"
 #include "projectmanager.h"
+#include "buildmanager.h"
 
 ElbeHandler::ElbeHandler()
 {
@@ -15,18 +16,95 @@ ElbeHandler::ElbeHandler()
 }
 
 
-QString ElbeHandler::checkSystemForElbeVersion()
+//namespace {
+	bool ElbeHandler::getImages_p(QString buildXmlPath, QString outPath, QString elbeID)
+	{
+		//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
+		bool check;
+		QStringList imageList = helpers::getImageFiles(buildXmlPath);
+		foreach(QString filename, imageList) {
+
+	//		qDebug() << __func__<<": "<< filename;
+
+			if (!filename.endsWith(".gz") ) {
+				filename.append(".gz");
+			}
+
+			if( !getFile_p(filename, outPath, elbeID) ) {
+				removeFalseLoadedFiles(outPath, filename);
+				//adjust filename in case getFile failed
+				filename.chop(3);
+				//try a second time with adjusted filename, in case the file wasn't zipped with gz
+				if ( !getFile_p(filename, outPath, elbeID) ) {
+					removeFalseLoadedFiles(outPath, filename);
+					check = false;
+				} else {
+					check = true;
+				}
+	//			qDebug() << "ERROR from "<<__func__<<": didnt't get image file "<<filename;
+	//			check = false;
+
+			} else {
+				check = true; //set check=true because getFile succeeded
+			}
+		}
+		return check;
+	}
+
+	bool ElbeHandler::getFile_p(QString filename, QString outPath, QString elbeID)
+	{
+		auto buildmanager = BuildManager::getInstance();
+		QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
+	//	qDebug() << __func__<<" loading: "<<filename<<" in Thread: "<<QThread::currentThreadId();
+
+		QString out = execCommand(commandPrefix+"elbe control --output "+outPath+" get_file "+elbeID+" "+filename, -1/*causes the waitForFinished to wait without any timeout*/);
+		qDebug() << __func__<<" says: "<<outPath+filename+" saved\n";
+		if ( out.compare(outPath+filename+" saved\n" ) != 0 ) {
+			qDebug() << "ERROR from "<<__func__<<" while downloading "<<filename;
+			return false;
+		} else {
+	//		qDebug() << "saved!";
+			return true;
+		}
+	}
+
+	bool ElbeHandler::getFiles_p(QStringList filenames, QString outPath, QString elbeID)
+	{
+		bool check;
+		foreach( QString str, filenames) {
+			qDebug() << "filename: "<<str<<" in "<<__func__;
+			check = getFile_p(str, outPath, elbeID);
+		}
+		return check;
+	}
+//}
+
+bool ElbeHandler::isVersionSupported()
 {
-	return execCommand("./elbe").section("\n", 0, 0);
+	qDebug() << checkElbeVersion();
+	return true;
+}
+
+QString ElbeHandler::checkElbeVersion()
+{
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+	//returns the first section of the string which is always the version
+	return execCommand(commandPrefix+"elbe").section("\n", 0, 0);
 }
 
 QString ElbeHandler::createProjectElbeInstance()
 {
-	return execCommand("./elbe control create_project").section("\n", 0, 0);
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+	return execCommand(commandPrefix+"elbe control create_project").section("\n", 0, 0);
 }
 
 bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
 {
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
 
 	QString id = helpers::getProjectID(projectPath);
 	//check if project exists
@@ -35,7 +113,7 @@ bool ElbeHandler::deleteProjectElbeInstance(QString projectPath)
 		return false;
 	}
 
-	QString out = execCommand("./elbe control del_project "+id);
+	QString out = execCommand(commandPrefix+"elbe control del_project "+id);
 
 	if ( out.isEmpty() ) {
 		qDebug() << "Deleted.";
@@ -58,8 +136,11 @@ QStringList ElbeHandler::makeProjectList()
 {
 	QStringList list;
 
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
 	// returns a list of substrings, sectioned wherever the given seperator occurs
-	QStringList tempList = execCommand("./elbe control list_projects").split("\n", QString::SkipEmptyParts);
+	QStringList tempList = execCommand(commandPrefix+"elbe control list_projects").split("\n", QString::SkipEmptyParts);
 	foreach (QString str, tempList) {
 		list.append(str.section("\t", 0, 0));
 //		qDebug() << str;
@@ -69,6 +150,9 @@ QStringList ElbeHandler::makeProjectList()
 
 bool ElbeHandler::startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
 {
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
 	ProjectManager *projectmanager = ProjectManager::getInstance();
 
 	if ( !setXmlFile(projectmanager->getBuildXmlPath(), projectmanager->getElbeID()) ) {
@@ -78,22 +162,22 @@ bool ElbeHandler::startBuildProcess(bool sourceOptionChecked, bool binOptionChec
 
 	qDebug() << "now starting build process!";
 	if ( sourceOptionChecked && binOptionChecked ) {
-		if ( !execCommand("./elbe control --build-bin --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
+		if ( !execCommand(commandPrefix+"elbe control --build-bin --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 			return false;
 		}
 	} else if ( sourceOptionChecked && !binOptionChecked ) {
-		if ( !execCommand("./elbe control --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
+		if ( !execCommand(commandPrefix+"elbe control --build-sources build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 			return false;
 		}
 	} else if ( !sourceOptionChecked && binOptionChecked ) {
-		if ( !execCommand("./elbe control --build-bin build "+projectmanager->getElbeID()).isEmpty() ) {
+		if ( !execCommand(commandPrefix+"elbe control --build-bin build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 			return false;
 		}
 	} else {
-		if ( !execCommand("./elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
+		if ( !execCommand(commandPrefix+"elbe control build "+projectmanager->getElbeID()).isEmpty() ) {
 			qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 			return false;
 		}
@@ -112,70 +196,15 @@ void ElbeHandler::removeFalseLoadedFiles(QString outPath, QString filename)
 	dir.remove(filename);
 }
 
-bool ElbeHandler::getImages_p(QString buildXmlPath, QString outPath, QString elbeID)
-{
-	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
-	bool check;
-	QStringList imageList = helpers::getImageFiles(buildXmlPath);
-	foreach(QString filename, imageList) {
 
-//		qDebug() << __func__<<": "<< filename;
-
-		if (!filename.endsWith(".gz") ) {
-			filename.append(".gz");
-		}
-
-		if( !getFile_p(filename, outPath, elbeID) ) {
-			removeFalseLoadedFiles(outPath, filename);
-			//adjust filename in case getFile failed
-			filename.chop(3);
-			//try a second time with adjusted filename, in case the file wasn't zipped with gz
-			if ( !getFile_p(filename, outPath, elbeID) ) {
-				removeFalseLoadedFiles(outPath, filename);
-				check = false;
-			} else {
-				check = true;
-			}
-//			qDebug() << "ERROR from "<<__func__<<": didnt't get image file "<<filename;
-//			check = false;
-
-		} else {
-			check = true; //set check=true because getFile succeeded
-		}
-	}
-	return check;
-}
-
-bool ElbeHandler::getFile_p(QString filename, QString outPath, QString elbeID)
-{
-
-//	qDebug() << __func__<<" loading: "<<filename<<" in Thread: "<<QThread::currentThreadId();
-
-	QString out = execCommand("./elbe control --output "+outPath+" get_file "+elbeID+" "+filename, -1/*causes the waitForFinished to wait without any timeout*/);
-	qDebug() << __func__<<" says: "<<outPath+filename+" saved\n";
-	if ( out.compare(outPath+filename+" saved\n" ) != 0 ) {
-		qDebug() << "ERROR from "<<__func__<<" while downloading "<<filename;
-		return false;
-	} else {
-//		qDebug() << "saved!";
-		return true;
-	}
-}
-
-bool ElbeHandler::getFiles_p(QStringList filenames, QString outPath, QString elbeID)
-{
-	bool check;
-	foreach( QString str, filenames) {
-		qDebug() << "filename: "<<str<<" in "<<__func__;
-		check = getFile_p(str, outPath, elbeID);
-	}
-	return check;
-}
 
 bool ElbeHandler::setXmlFile(QString file, QString elbeID)
 {
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
 //	qDebug() << "./elbe control set_xml "+elbeID+" "+file;
-	QString out = execCommand("./elbe control set_xml "+elbeID+" "+file);
+	QString out = execCommand(commandPrefix+"elbe control set_xml "+elbeID+" "+file);
 
 //	qDebug() << __func__<<": "<<out;
 
@@ -223,10 +252,13 @@ bool ElbeHandler::getImages(QString buildXmlPath, QString outPath, QString elbeI
 
 bool ElbeHandler::checkIfBusy(QString id)
 {
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
 	QString out;
 	QStringList projects;
 	QStringList details;
-	out = execCommand("./elbe control list_projects");
+	out = execCommand(commandPrefix+"elbe control list_projects");
 
 	projects = out.split("\n", QString::SkipEmptyParts);
 //	qDebug() << "projects: ";
@@ -247,16 +279,40 @@ bool ElbeHandler::checkIfBusy(QString id)
 	return false;
 }
 
+bool ElbeHandler::restartInitVM(const QString &initVM)
+{
+	QString out;
+
+	auto buildmanager = BuildManager::getInstance();
+	QString commandPrefix = buildmanager->getElbeCommandPrefix();
+
+	execCommand(commandPrefix+"elbe initvm stop");
+	out = execCommand(commandPrefix+"elbe initvm --directory "+initVM+" start");
+
+	if ( !out.compare("*****") ) {
+		qDebug() << "an error occured while trying to start "<<initVM;
+		return false;
+	} else {
+		return true;
+	}
+
+}
+
 
 QString ElbeHandler::execCommand(QString command, int timeout)
 {
+	auto buildmanager = BuildManager::getInstance();
 	QProcess p;
-	p.setWorkingDirectory("/home/hico/elbe");
+	p.setWorkingDirectory(buildmanager->getElbeWorkingDir());
+
+	//all output is directed to stdOut
 	p.setProcessChannelMode(QProcess::MergedChannels);
 	QByteArray outputByteArray;
 	QString outputString;
 
 //	qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
+
+	qDebug() << "Exec: "<<command;
 
 	p.start(command);
 	if ( p.waitForFinished(timeout) ) {

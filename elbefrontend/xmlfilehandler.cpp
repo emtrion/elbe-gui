@@ -34,7 +34,7 @@ XmlFileHandler::XmlFileHandler(QString path, QString name)
 	this->fileName = name+".xml";
 	this->filemanager = XmlFileManager::getInstance();
 
-	qDebug() << fileName << filePath;
+//	qDebug() << fileName << filePath;
 }
 
 XmlFileHandler::XmlFileHandler(QString file)

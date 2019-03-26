@@ -9,7 +9,7 @@ class ElbeHandler
 	public:
 		ElbeHandler();
 		QString createProjectElbeInstance();
-		QString checkSystemForElbeVersion();
+		QString checkElbeVersion();
 		bool deleteProjectElbeInstance(QString projectID);
 
 		bool projectIsInElbe(QString projectPath);
@@ -27,6 +27,8 @@ class ElbeHandler
 
 		void removeFalseLoadedFiles(QString outPath, QString filename);
 		bool checkIfBusy(QString id);
+		bool restartInitVM(const QString &initVM);
+		bool isVersionSupported();
 	private:
 		QStringList makeProjectList();
 		QString execCommand(QString command, int timeout = 30000);

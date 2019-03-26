@@ -24,6 +24,8 @@ class BuildManager
 		QString currentBuildDirectory;
 		//pointer to the worker in which the build happens
 		BuildProcessWorker *processWorkerPointer;
+		QString elbeWorkingDir;
+		QString elbeCommandPrefix;
 
 
    public:
@@ -38,6 +40,10 @@ class BuildManager
 		void setProcessWorkerPointer(BuildProcessWorker *value);
 		bool isLoadingFiles() const;
 		void setLoadingFiles(bool value);
+		QString getElbeWorkingDir() const;
+		void setElbeWorkingDir(const QString &value);
+		QString getElbeCommandPrefix() const;
+		void setElbeCommandPrefix(const QString &value);
 };
 
 #endif // BUILDMANAGER_H

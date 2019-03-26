@@ -26,7 +26,7 @@
 #include "schemavalidation.h"
 #include "projecthandler.h"
 #include "openprojectfiledialog.h"
-#include "chooseprojecttodeletedialog.h"
+#include "deletedialog.h"
 #include "buildprocessstartdialog.h"
 #include "filedownloaddialog.h"
 #include "buildmanager.h"
@@ -35,6 +35,7 @@
 #include "xmlfilehandler.h"
 #include "projectitemmodel.h"
 #include "elbehandler.h"
+#include "elbesettingsdialog.h"
 
 
 
@@ -139,7 +140,7 @@ void MainWindow::on_actionClose_triggered()
 void MainWindow::on_actionDelete_triggered()
 {
 	//open project selection
-	ChooseProjectToDeleteDialog *projectChooser = new ChooseProjectToDeleteDialog();
+	DeleteDialog *projectChooser = new DeleteDialog();
 	projectChooser->show();
 }
 
@@ -183,6 +184,12 @@ void MainWindow::on_actionAbout_triggered()
 void MainWindow::on_actionAbout_elbe_triggered()
 {
 	aboutElbeMessageBox->show();
+}
+
+void MainWindow::on_actionSettings_triggered()
+{
+	auto settings = new ElbeSettingsDialog();
+	settings->show();
 }
 
 /************************************************************************************/
@@ -490,7 +497,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 	QString openedProject;
 	if ( projectmanager->isProjectOpened() ) {
 		openedProject = projectmanager->getProjectPath();
-		qDebug() << "Open project is: "<<openedProject;
+//		qDebug() << "Open project is: "<<openedProject;
 	}
 
 	//check if there are unsafed changes and handle them
@@ -581,7 +588,7 @@ bool MainWindow::saveOnClose()
 void MainWindow::handleCloseDuringBuild()
 {
 	BuildManager *buildmanager = BuildManager::getInstance();
-	ExistingProjects *exist = new ExistingProjects();
+	ExistingsProjects *exist = new ExistingsProjects();
 
 	//set flag in .elbefrontend
 	exist->addBusyFlag(buildmanager->getProcessWorkerPointer()->getBuildingProjectPath());
@@ -596,11 +603,13 @@ void MainWindow::handleCloseDuringBuild()
 
 void MainWindow::rememberOpenedProject(QString project)
 {
-	ExistingProjects *exist = new ExistingProjects();
-	qDebug() << "adding openflag";
+	ExistingsProjects *exist = new ExistingsProjects();
+//	qDebug() << "adding openflag";
 	exist->addOpenFlag(project);
 }
 
 /************************************************************************************/
+
+
 
 

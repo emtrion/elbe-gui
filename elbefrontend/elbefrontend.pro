@@ -28,7 +28,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     codeeditor.cpp \
-    userdata.cpp \
     helpers.cpp \
     newprojectwizard.cpp \
     newprojectwizardfirstpage.cpp \
@@ -46,18 +45,19 @@ SOURCES += main.cpp\
     openprojectfiledialog.cpp \
     projectlistitem.cpp \
     elbehandler.cpp \
-    existingprojects.cpp \
     buildprocess.cpp \
     buildprocessworker.cpp \
     buildprocessstartdialog.cpp \
     filedownloaddialog.cpp \
     buildmanager.cpp \
-    chooseprojecttodeletedialog.cpp \
-    buildprocessstatusbarupdate.cpp
+    buildprocessstatusbarupdate.cpp \
+    elbesettingsdialog.cpp \
+    existingprojects.cpp \
+    applicationconfig.cpp \
+    deletedialog.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
-    userdata.h \
     helpers.h \
     newprojectwizard.h \
     newprojectwizardfirstpage.h \
@@ -75,14 +75,16 @@ HEADERS  += mainwindow.h \
     openprojectfiledialog.h \
     projectlistitem.h \
     elbehandler.h \
-    existingprojects.h \
     buildprocess.h \
     buildprocessworker.h \
     buildprocessstartdialog.h \
     filedownloaddialog.h \
     buildmanager.h \
-    chooseprojecttodeletedialog.h \
-    buildprocessstatusbarupdate.h
+    buildprocessstatusbarupdate.h \
+    elbesettingsdialog.h \
+    existingprojects.h \
+    applicationconfig.h \
+    deletedialog.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \
@@ -90,7 +92,8 @@ FORMS    += mainwindow.ui \
     importfiledialog.ui \
     buildprocessstartdialog.ui \
     filedownloaddialog.ui \
-    chooseprojecttodeletedialog.ui
+    elbesettingsdialog.ui \
+    deletedialog.ui
 
 RESOURCES += style.qrc \
     filetemplates.qrc
@@ -99,3 +102,5 @@ unix|win32: LIBS += -lqtermwidget5
 
 DISTFILES +=
 
+
+unix:!macx: LIBS += -lyaml-cpp

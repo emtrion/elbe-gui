@@ -344,6 +344,7 @@
     <addaction name="actionBuild"/>
     <addaction name="actionValidate"/>
     <addaction name="actionDownload_files"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">
     <property name="title">
@@ -546,7 +547,12 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Open in Explorer</string>
+    <string>O&amp;pen in Explorer</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

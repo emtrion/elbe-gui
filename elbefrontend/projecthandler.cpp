@@ -9,7 +9,7 @@
 #include "xmlfilehandler.h"
 
 
-#include "chooseprojecttodeletedialog.h"
+#include "deletedialog.h"
 #include "elbehandler.h"
 #include "existingprojects.h"
 #include "mainwindow.h"
@@ -49,7 +49,7 @@ void ProjectHandler::createProject()
 
 	QFile::copy(":/projectconfig.xml", newProjectPath+"/.project"); //copy conf-file template to directory
 	QFile confFile(newProjectPath+"/.project");
-	if ( !helpers::setProjectMetadata(newProjectName, newProjectPath) ) {//add project specific data to
+	if ( !helpers::setProjectMetadata(newProjectName, newProjectPath) ) {//add project specific data
 		confFile.remove(); //if an error occurs while creating ".project", it will be removed from the directory
 		qDebug() << "ERROR from "<<__func__<<" problem while creating config file";
 		return;
@@ -63,7 +63,7 @@ void ProjectHandler::createProject()
 	}
 
 	QFileInfo fi(confFile);
-	ExistingProjects().addNewProjectToList(fi.absoluteFilePath());
+	ExistingsProjects().addNewProjectToList(fi.absoluteFilePath());
 	projectmanager->setProjectHasFile(false);
 	openProject(fi.absoluteFilePath());
 }
@@ -152,9 +152,9 @@ void ProjectHandler::deleteProject(QString path)
 
 	//deleteElbeInstance
 	if ( !elbehandler->deleteProjectElbeInstance(path) ) {
-		qDebug() << "delet from elbe failed! It may be already deleted.";
+		qDebug() << "delete from elbe failed! It may be already deleted.";
 	}
-	ExistingProjects().removeProjectFromList(path);
+	ExistingsProjects().removeProjectFromList(path);
 	//delete Project from src Directory
 	QDir projectDir(path);
 	projectDir.cdUp(); //move one up because path = .../.project

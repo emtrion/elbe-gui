@@ -99,6 +99,8 @@ public:
 
 	void on_actionOpen_in_Explorer_triggered();
 
+	void on_actionSettings_triggered();
+
 	private:
     Ui::MainWindow *ui;
 	ProjectItemModel *model;
