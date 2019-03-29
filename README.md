@@ -12,7 +12,7 @@ Features:
 
 
 First Steps:
-* At first you are asked to specify an elbe and an initVM 
+* At first you are asked to specify a path to elbe and to an existing initVM 
 * to create a new project go to *File->New->New Project*, fill the wizard and confirm
 * to add a xml file to your project you can either import one by going to *File->Import* or create a new one by going to *File->New->New* XML
 * you can now edit the xml in the editor
@@ -28,6 +28,7 @@ Todo:
 * create an initVM  from frontend
 * right-click context menu
 * multi-selection in delete dialog
+* creation of update-packages for elbe-updated
 
 
 
