@@ -24,7 +24,7 @@ SchemaValidation::SchemaValidation(QString fileContent)
 bool SchemaValidation::loadSchema()
 {
 
-//	QFile file(":/schema.xsd");
+//	QFile file(":/schema/schema.xsd");
 
 	//"msdoshd" section is commented out due to errors caused by this section during the validation process
 	//QSchemaValidator says schema is invalid because it has non-deterministic content at this section
