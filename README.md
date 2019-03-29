@@ -3,12 +3,13 @@
 elbeFrontend is a desktop application to manage and use elbe-rfs. The idea is to make things easier when using elbe, especially for people who are not comfortable using a terminal.
 
 Features:
-	•create projects (in initVM and as elbefrontend Project) 
-	•create, import and edit elbe XML files
-	•validate XML files against the dbsfed.xsd from elbe
-	•build projects (using elbe as outside process)
-	•download files from initVM
-	•delete projects (from initVM and filesystem)
+* create projects (in initVM and as elbefrontend Project) 
+* create, import and edit elbe XML files
+* validate XML files against the dbsfed.xsd from elbe
+* build projects (using elbe as outside process)
+* download files from initVM
+* delete projects (from initVM and filesystem)
+
 
 First Steps:
 * At first you are asked to specify an elbe and an initVM 
