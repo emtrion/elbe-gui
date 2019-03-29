@@ -22,7 +22,8 @@ class ExistingProjects : public QObject
 		void addOpenFlag(const QString &projectPath);
 		QString checkForBusyFlag();
 		QString checkForOpenFlag();
-
+		bool exists();
+		void createprojectListFile();
 	private:
 		QFile *projectListFile;
 

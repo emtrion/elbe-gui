@@ -2,7 +2,7 @@
 #elbeSettings
 
 #elbe version
-elbe: ""
+elbe: "default"
 #initVM
 initVM: ""
 

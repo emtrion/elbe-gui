@@ -14,7 +14,10 @@ ApplicationConfig::ApplicationConfig()
 {
 	dir = new QDir(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend");
 	file = new QFile(dir->absolutePath()+"/config.yaml");
-	parseFile();
+
+	if (file->exists() ) {
+		parseFile();
+	}
 }
 
 bool ApplicationConfig::exists()
@@ -39,6 +42,8 @@ void ApplicationConfig::createFile()
 {
 	QFile::copy(":/globalConfig.yaml", this->filePath());
 	file->setPermissions(QFileDevice::WriteUser | QFileDevice::ReadUser);
+
+	parseFile();
 }
 
 YAML::Node ApplicationConfig::loadFile()

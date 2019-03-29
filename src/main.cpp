@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QDebug>
 
 #include "elbe/elbehandler.h"
 #include "projects/existingprojects.h"
@@ -15,6 +16,8 @@
 #include "app/helpers.h"
 #include "xml/xmlutilities.h"
 #include "app/filesystemwatcher.h"
+
+
 
 int main(int argc, char *argv[])
 {
@@ -42,6 +45,9 @@ int main(int argc, char *argv[])
 
 	filesystemWatcher::init();
 
+	//open mainwindow. First time to see the actual application
+	w.show();
+
 	if ( !applicationConfig->exists() ) {
 		applicationConfig->createDirectory();
 		applicationConfig->createFile();
@@ -62,6 +68,10 @@ int main(int argc, char *argv[])
 	}
 
 	//open the project which was still open when prior session was closed
+	if ( !existing->exists() ) {
+		existing->createprojectListFile();
+	}
+
 	QString openProject = existing->checkForOpenFlag();
 	if ( !openProject.isEmpty() ) {
 		ProjectHandler::openProject(openProject);
@@ -96,12 +106,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	//open mainwindow. First time to see the actual application
-	w.show();
-
 	//check if version is supported
 	ElbeHandler::isVersionSupported();
-	//retrieve elbe version and show it in statusbar
+//	//retrieve elbe version and show it in statusbar
 	w.setElbeVersion(ElbeHandler::checkElbeVersion());
 
     return a.exec();

@@ -20,10 +20,25 @@ ExistingProjects::ExistingProjects(QObject *parent) :
 
 /*----------------------- interaction with the file ------------------------*/
 
+bool ExistingProjects::exists()
+{
+	return projectListFile->exists();
+}
+
+void ExistingProjects::createprojectListFile()
+{
+	if ( !projectListFile->open(QIODevice::ReadWrite) ) {
+		qDebug() << "ERROR from"<<__func__<<" Could not create file";
+		return;
+	} else {
+		projectListFile->close();
+	}
+}
+
 void ExistingProjects::addNewProjectToListFile(QString projectPath)
 {
 	if ( !projectListFile->open(QIODevice::ReadWrite | QIODevice::Append) ) {
-		qDebug() << "ERROR from "<<__func__<<" Could not open/create file";
+		qDebug() << "ERROR from "<<__func__<<" Could not open file";
 		return;
 	}
 	projectPath = projectPath+"\n";
