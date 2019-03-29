@@ -1,13 +1,14 @@
 #include "applicationconfig.h"
-#include "helpers.h"
+
 #include <QDir>
 #include <QFile>
 #include <QDebug>
-#include "yaml-cpp/yaml.h"
-
-
 #include <iostream>
 #include <fstream>
+
+#include "helpers.h"
+#include "yaml-cpp/yaml.h"
+
 
 ApplicationConfig::ApplicationConfig()
 {
@@ -57,13 +58,11 @@ void ApplicationConfig::saveInitVM(const QString &userInput)
 
 void ApplicationConfig::writeToFile(const QString &key, const QString &value)
 {
-//	qDebug() << __func__<<": "<<this->filePath();
-
 	YAML::Node config = loadFile();
 
 	config[key.toStdString()] = value.toStdString();
 
-	std::ofstream fout("/home/hico/.elbefrontend/config.yaml"/*this->filePath().toStdString()*/);
+	std::ofstream fout(this->filePath().toStdString());
 	fout << config;
 }
 
@@ -73,24 +72,19 @@ void ApplicationConfig::parseFile()
 
 	if ( config["elbe"] ) {
 		m_elbeExe = QString().fromStdString(config["elbe"].as<std::string>());
-//		qDebug() << "Got elbe: "<<m_elbeExe;
 	}
 
 	if (config["initVM"] ){
 		m_initVM = QString().fromStdString(config["initVM"].as<std::string>());
-//		qDebug() << "Got initVM: "<<m_initVM;
 	}
 }
 
 QString ApplicationConfig::elbeExe() const
 {
-//	qDebug() << __func__<<" is about to return elbeExe";
-//	parseFile();
 	return m_elbeExe;
 }
 
 QString ApplicationConfig::initVM() const
 {
-//	parseFile();
 	return m_initVM;
 }

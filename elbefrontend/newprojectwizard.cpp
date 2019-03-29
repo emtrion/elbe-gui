@@ -1,20 +1,15 @@
 #include "newprojectwizard.h"
 #include "ui_newprojectwizard.h"
-#include <iostream>
+
+#include <QFileDialog>
+
+#include "project.h"
+#include "projecthandler.h"
 #include "helpers.h"
 
-#include <QString>
-#include <QFile>
-#include <QDir>
-#include <QFileDialog>
-#include <QDebug>
-#include "newprojectwizardfirstpage.h"
-#include "projectmanager.h"
-#include "projecthandler.h"
-
 NewProjectWizard::NewProjectWizard(QWidget *parent) :
-QWizard(parent),
-ui(new Ui::NewProjectWizard)
+	QWizard(parent),
+	ui(new Ui::NewProjectWizard)
 {
 	ui->setupUi(this);
 
@@ -28,47 +23,35 @@ ui(new Ui::NewProjectWizard)
 	ui->Icon->setSizePolicy(sp);
 	ui->Icon->show();
 
-	/*pass the ui to wizardpages where the userinput can be validated*/
-
-	/*first page*/
+	//pass the ui to wizardpages where the userinput can be validated
+	//first page
 	ui->newProjectFirstPage->setFirstPageUiPointer(ui);
 	ui->newProjectFirstPage->connectSignals();
-
-	/*second page*/
-
+	//second page
 	ui->newProjectSecondPage->setDefaultPageUiPointer(ui);
-
-	/*third page*/
-
+	//third page
 	ui->newProjectThirdPage->setDefaultPageUiPointer(ui);
-
-
 }
-
 
 NewProjectWizard::~NewProjectWizard()
 {
 	delete ui;
 }
 
-
-
 void NewProjectWizard::displayDefaultPath()
 {
-
 	//defaultpath should only be altered here
-//    homeDirectory = helpers::getHomeDirectoryFromSystem();
-//    const_cast <QString&> (defaultPath) = homeDirectory.append("/elbeProjects/");
-//    ui->ProjectPathEntry->setText(defaultPath);
+	QString homeDirectory = helpers::getHomeDirectoryFromSystem();
+	const_cast <QString&> (defaultPath) = homeDirectory.append("/elbeProjects/");
+	ui->ProjectPathEntry->setText(defaultPath);
 
 	//this is the default path for testing only. The correct default path for this application is handled above
-	const_cast <QString&> (defaultPath) = "/home/hico/elbefrontFilehandlingTestFolder/";
-	ui->ProjectPathEntry->setText(defaultPath);
+//	const_cast <QString&> (defaultPath) = "/home/hico/elbefrontFilehandlingTestFolder/";
+//	ui->ProjectPathEntry->setText(defaultPath);
 }
 
-
 void NewProjectWizard::on_DefaultPathButton_toggled(bool checked)
-{//checkbox if the defautlpath is to be used or not
+{
 	QString tmp = defaultPath;
 	if ( checked ) {
 		ui->ProjectPathBrowsButton->hide();
@@ -83,10 +66,8 @@ void NewProjectWizard::on_DefaultPathButton_toggled(bool checked)
 	}
 }
 
-
-
 void NewProjectWizard::on_ProjectNameEntry_textChanged(const QString &arg1)
-{//invoked when the content was changed from user OR program
+{
 	QString tmp;
 	if ( ui->DefaultPathButton->isChecked() ) {
 		tmp = defaultPath;
@@ -96,12 +77,9 @@ void NewProjectWizard::on_ProjectNameEntry_textChanged(const QString &arg1)
 }
 
 
-
 void NewProjectWizard::on_ProjectPathEntry_editingFinished()
-{//invoked when the user (and only the user) changes the focus after editing
-
+{
 	QString path = ui->ProjectPathEntry->text();
-
 	if ( !path.isEmpty() && path.right(1).compare("/") != 0 ) {
 		//check if the first rightmost character is a "/". If not it'll be added to ensure it's a valid directory
 		path.append("/");
@@ -109,58 +87,11 @@ void NewProjectWizard::on_ProjectPathEntry_editingFinished()
 	}
 }
 
-void NewProjectWizard::on_ProjectPathBrowsButton_clicked()
-{//open a file chooser to select directoy
-
-	QFileDialog *fileChooser = new QFileDialog();
-	fileChooser->setDirectory("/home/hico/");
-	fileChooser->setOptions(QFileDialog::ShowDirsOnly);
-	fileChooser->setModal(true);
-
-	QString dir = fileChooser->getExistingDirectory();
-	ui->ProjectPathEntry->setText(dir+"/");
-
-}
-
-
-void NewProjectWizard::on_NewProjectWizard_accepted()
-{
-	ProjectHandler handler(ui->newProjectFirstPage->getNewProjectPath(), ui->newProjectFirstPage->getNewProjectName());
-
-	ProjectManager *projectmanager = handler.getProjectmanager();
-	ProjectManager::projectSettings set;
-	set.name = ui->nameEntry->text();
-	set.version = ui->versionEntry->text();
-	set.description = ui->descriptionEntry->text();
-	set.buildtype = ui->buildtypeDropDown->currentText();
-	set.suite = ui->suiteDropDown->currentText();
-	set.host = ui->hostEntry->text();
-	set.path = ui->pathEntry->text();
-	set.proto = ui->protoEntry->text();
-
-	projectmanager->setNewProjectSettings(set);
-
-//	qDebug() << set.name;
-//	qDebug() << set.version;
-//	qDebug() << set.description;
-//	qDebug() << set.buildtype;
-//	qDebug() << set.suite;
-//	qDebug() << set.host;
-//	qDebug() << set.path;
-//	qDebug() << set.proto;
-
-
-	handler.createProject();
-}
-
-
-
 void NewProjectWizard::on_ProjectPathEntry_textChanged(const QString &arg1)
 {
 	Q_UNUSED(arg1)
 
 	QString path = ui->ProjectPathEntry->text();
-
 	if ( !path.isEmpty() && path.right(1).compare("/") != 0 ) {
 		//check if the first rightmost character is a "/". If not it'll be added to ensure it's a valid directory
 		path.append("/");
@@ -169,14 +100,43 @@ void NewProjectWizard::on_ProjectPathEntry_textChanged(const QString &arg1)
 	}
 }
 
-void NewProjectWizard::on_DefaultSetButton_1_toggled(bool checked)
+void NewProjectWizard::on_ProjectPathBrowsButton_clicked()
 {
-	if (checked) {
+	QFileDialog *fileChooser = new QFileDialog();
+	fileChooser->setDirectory(helpers::getHomeDirectoryFromSystem());
+	fileChooser->setOptions(QFileDialog::ShowDirsOnly);
+	fileChooser->setModal(true);
+
+	QString dir = fileChooser->getExistingDirectory();
+	ui->ProjectPathEntry->setText(dir+"/");
+
+}
+
+void NewProjectWizard::on_NewProjectWizard_accepted()
+{
+	Project *project = Project::getInstance();
+	ProjectProperties *properties = project->newProjectProperties();
+
+	properties->setName(ui->nameEntry->text());
+	properties->setVersion(ui->versionEntry->text());
+	properties->setDescription(ui->descriptionEntry->text());
+	properties->setBuildtype(ui->buildtypeDropDown->currentText());
+	properties->setSuite(ui->suiteDropDown->currentText());
+	properties->setHost(ui->hostEntry->text());
+	properties->setPath(ui->pathEntry->text());
+	properties->setProto(ui->protoEntry->text());
+
+	ProjectHandler::createProject(ui->newProjectFirstPage->newProjectPath(), ui->newProjectFirstPage->newProjectName());
+}
+
+void NewProjectWizard::on_DefaultSetButton_Page2_toggled(bool checked)
+{
+	if ( checked ) {
 		ui->newProjectSecondPage->displayDefaultSettings();
 		ui->buildtypeDropDown->setEnabled(false);
 		ui->suiteDropDown->setEnabled(false);
 	} else {
-		foreach (QLineEdit* le, ui->newProjectSecondPage->projectSettingInputFields) {
+		foreach (QLineEdit* le, ui->newProjectSecondPage->projectSettingInputFields()) {
 			le->setEnabled(true);
 			le->clear();
 		}
@@ -185,65 +145,50 @@ void NewProjectWizard::on_DefaultSetButton_1_toggled(bool checked)
 	}
 }
 
-void NewProjectWizard::on_DefaultSetButton_2_toggled(bool checked)
+void NewProjectWizard::on_DefaultSetButton_Page3_toggled(bool checked)
 {
-	if (checked) {
+	if ( checked ) {
 		ui->newProjectThirdPage->displayDefaultSettings();
 	} else {
-		foreach (QLineEdit* le, ui->newProjectThirdPage->projectSettingInputFields) {
+		foreach (QLineEdit* le, ui->newProjectThirdPage->projectSettingInputFields()) {
 			le->setEnabled(true);
 			le->clear();
 		}
 	}
 }
 
-
 void NewProjectWizard::initSecondPageDefault()
-{//initialize default entries for second page
-	QList<QString> tmp = ui->newProjectSecondPage->defaultSettings;
-	tmp.clear();
-	tmp.append(ui->newProjectFirstPage->getNewProjectName());
-	tmp.append("1.0");
-	tmp.append("creates an nfsroot for "+ui->newProjectFirstPage->getNewProjectName());
+{
+	QList<QString> list = ui->newProjectSecondPage->defaultSettings();
+	list.clear();
+	list.append(ui->newProjectFirstPage->newProjectName());
+	list.append("1.0");
+	list.append("creates an rfs for "+ui->newProjectFirstPage->newProjectName());
 	ui->buildtypeDropDown->setCurrentIndex(0);
 	ui->suiteDropDown->setCurrentIndex(1);
-	ui->newProjectSecondPage->defaultSettings = tmp;
+	ui->newProjectSecondPage->setDefaultSettings(list);
 }
 
 void NewProjectWizard::initThirdPageDefault()
-{//initialize default entries for third page
-	QList<QString> tmp = ui->newProjectThirdPage->defaultSettings;
-	tmp.clear();
-	tmp.append("ftp.de.debian.org");
-	tmp.append("/debian");
-	tmp.append("http");
-	ui->newProjectThirdPage->defaultSettings = tmp;
-
+{
+	QList<QString> list = ui->newProjectThirdPage->defaultSettings();
+	list.clear();
+	list.append("ftp.de.debian.org");
+	list.append("/debian");
+	list.append("http");
+	ui->newProjectThirdPage->setDefaultSettings(list);
 }
 
 void NewProjectWizard::on_NewProjectWizard_currentIdChanged(int id)
-{//invoked when the page in the wizard changes
-//	qDebug() << "PageID: "<<id;
-
-	if (id == 1) {
-		ui->DefaultSetButton_1->setChecked(true);
+{
+	if ( id == 1 ) {
+		ui->DefaultSetButton_Page2->setChecked(true);
 		initSecondPageDefault();
 		ui->newProjectSecondPage->initializePage(id);
 
-	} else if (id == 2) {
-		ui->DefaultSetButton_2->setChecked(true);
+	} else if ( id == 2 ) {
+		ui->DefaultSetButton_Page3->setChecked(true);
 		initThirdPageDefault();
 		ui->newProjectThirdPage->initializePage(id);
 	}
 }
-
-//void NewProjectWizard::on_buildtypeDropDown_currentIndexChanged(const QString &arg1)
-//{//invoked when the selection in the dropdown is changed
-//	this->newProjectSettings.buildtype = arg1;
-//}
-
-
-//void NewProjectWizard::on_suiteDropDown_currentIndexChanged(const QString &arg1)
-//{//invoked when the selection in the dropdown is changed
-//	this->newProjectSettings.suite = arg1;
-//}

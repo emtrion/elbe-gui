@@ -3,7 +3,8 @@
 #include <QSyntaxHighlighter>
 #include <QTextDocument>
 
-Highlighter::Highlighter(QTextDocument *parent) : QSyntaxHighlighter(parent)
+Highlighter::Highlighter(QTextDocument *parent) :
+	QSyntaxHighlighter(parent)
 {
 	setRegexes();
 	setFormats();

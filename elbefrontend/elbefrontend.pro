@@ -34,14 +34,12 @@ SOURCES += main.cpp\
     newprojectwizarddefaultpage.cpp \
     newxmldialog.cpp \
     xmlfilehandler.cpp \
-    projectmanager.cpp \
     projecthandler.cpp \
     importfiledialog.cpp \
     schemavalidation.cpp \
     messagehandler.cpp \
     highlighter.cpp \
     projectitemmodel.cpp \
-    xmlfilemanager.cpp \
     openprojectfiledialog.cpp \
     projectlistitem.cpp \
     elbehandler.cpp \
@@ -54,7 +52,12 @@ SOURCES += main.cpp\
     elbesettingsdialog.cpp \
     existingprojects.cpp \
     applicationconfig.cpp \
-    deletedialog.cpp
+    deletedialog.cpp \
+    xmlfile.cpp \
+    project.cpp \
+    projectproperties.cpp \
+    xmlutilities.cpp \
+    filesystemwatcher.cpp
 
 HEADERS  += mainwindow.h \
     codeeditor.h \
@@ -64,14 +67,12 @@ HEADERS  += mainwindow.h \
     newprojectwizarddefaultpage.h \
     newxmldialog.h \
     xmlfilehandler.h \
-    projectmanager.h \
     projecthandler.h \
     importfiledialog.h \
     schemavalidation.h \
     messagehandler.h \
     highlighter.h \
     projectitemmodel.h \
-    xmlfilemanager.h \
     openprojectfiledialog.h \
     projectlistitem.h \
     elbehandler.h \
@@ -84,7 +85,12 @@ HEADERS  += mainwindow.h \
     elbesettingsdialog.h \
     existingprojects.h \
     applicationconfig.h \
-    deletedialog.h
+    deletedialog.h \
+    xmlfile.h \
+    project.h \
+    projectproperties.h \
+    xmlutilities.h \
+    filesystemwatcher.h
 
 FORMS    += mainwindow.ui \
     newprojectwizard.ui \

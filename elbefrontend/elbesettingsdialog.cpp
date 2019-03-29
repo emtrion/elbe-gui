@@ -1,38 +1,37 @@
-#include "applicationconfig.h"
-#include "elbehandler.h"
 #include "elbesettingsdialog.h"
 #include "ui_elbesettingsdialog.h"
-#include "buildmanager.h"
 
 #include <QPushButton>
 #include <QDebug>
 
+#include "applicationconfig.h"
+#include "elbehandler.h"
+#include "buildmanager.h"
+#include "mainwindow.h"
+#include "helpers.h"
 
 ElbeSettingsDialog::ElbeSettingsDialog(QWidget *parent) :
-QDialog(parent),
-ui(new Ui::ElbeSettingsDialog)
+	QDialog(parent),
+	ui(new Ui::ElbeSettingsDialog)
 {
 	ui->setupUi(this);
 
-	yesIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
+	acceptIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
 	errorIcon = QPixmap(":/qss_icons/rc/ErrorIcon.png");
 
 	QSizePolicy sp = ui->ErrorIcon->sizePolicy();
 	sp.setRetainSizeWhenHidden(true);
 	ui->ErrorIcon->setSizePolicy(sp);
 
-
 	appConfig = new ApplicationConfig();
-
-	qDebug() << appConfig->elbeExe();
-
+	//the current settings are shown in the entryfiels
 	if ( appConfig->elbeExe().isEmpty() || appConfig->elbeExe().compare("default") == 0 ) {
 		on_defaultCheckbox_toggled(true);
 	} else {
 		ui->defaultCheckbox->setChecked(false);
 		ui->elbeEntry->setText(appConfig->elbeExe());
 	}
-
+	//remember the current initVM to compare it later
 	oldInitVM = appConfig->initVM();
 	ui->initVMEntry->setText(oldInitVM);
 }
@@ -55,12 +54,11 @@ void ElbeSettingsDialog::on_defaultCheckbox_toggled(bool checked)
 void ElbeSettingsDialog::on_buttonBox_accepted()
 {
 	QString newInitVM = ui->initVMEntry->text();
-
-	auto elbe = new ElbeHandler();
 	auto buildmanager = BuildManager::getInstance();
 
 	if ( ui->defaultCheckbox->isChecked() ) {
 		appConfig->saveElbe("default");
+		//setElbeWorkingDir() changes "default" to system home directory
 		buildmanager->setElbeWorkingDir("default");
 		buildmanager->setElbeCommandPrefix("");
 	} else {
@@ -70,14 +68,16 @@ void ElbeSettingsDialog::on_buttonBox_accepted()
 		buildmanager->setElbeCommandPrefix("./");
 	}
 
-
 	if ( oldInitVM.compare(newInitVM) != 0 ) {
-		elbe->restartInitVM(newInitVM);
+		ElbeHandler::restartInitVM(newInitVM);
 	} else {
-		qDebug() << "no changes on init therefore no restart necessary";
+		//no changes, therefor no action necessary
 	}
 
-	elbe->isVersionSupported();
+	ElbeHandler::isVersionSupported();
+	MainWindow *mainwindow = helpers::getMainWindow();
+	//update the statusBar and the information window "about elbe"
+	mainwindow->changeElbeVersion(ElbeHandler::checkElbeVersion());
 }
 
 void ElbeSettingsDialog::on_elbeEntry_textChanged(const QString &arg1)
@@ -88,15 +88,15 @@ void ElbeSettingsDialog::on_elbeEntry_textChanged(const QString &arg1)
 void ElbeSettingsDialog::on_initVMEntry_textChanged(const QString &arg1)
 {
 	Q_UNUSED(arg1)
-
 	updateButtonBox(fieldsFilled());
 }
 
 bool ElbeSettingsDialog::validElbe(const QString &elbe)
 {
-	QFileInfo info(elbe);
+	QFileInfo file(elbe);
 	if ( !ui->defaultCheckbox->isChecked() ) {
-		if ( info.exists() && info.isFile() && info.isExecutable() && info.fileName().compare("elbe") == 0 ) {
+		//checks whether the path directs to a valid elbe exectuable
+		if ( file.exists() && file.isFile() && file.isExecutable() && file.fileName().compare("elbe") == 0 ) {
 			updateInformation(Icon::ACCEPT, "specify elbe and initVM for all projects");
 			return true;
 		} else {
@@ -107,8 +107,6 @@ bool ElbeSettingsDialog::validElbe(const QString &elbe)
 		updateInformation(Icon::ACCEPT, "specify elbe and initVM for all projects");
 		return true;
 	}
-
-
 }
 
 bool ElbeSettingsDialog::fieldsFilled()
@@ -127,13 +125,12 @@ void ElbeSettingsDialog::updateInformation(Icon value, const QString &text)
 	switch (value) {
 		case Icon::DECLINE: ui->ErrorIcon->setPixmap(errorIcon);
 			break;
-		case Icon::ACCEPT: ui->ErrorIcon->setPixmap(yesIcon);
+		case Icon::ACCEPT: ui->ErrorIcon->setPixmap(acceptIcon);
 			break;
 		default:
 			//should not be reached
 			break;
 	}
-
 	ui->Information->setText(text);
 }
 

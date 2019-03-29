@@ -1,32 +1,32 @@
 #include "deletedialog.h"
-#include "existingprojects.h"
-#include "projecthandler.h"
 #include "ui_chooseprojecttodeletedialog.h"
 
-#include "projectlistitem.h"
-#include "helpers.h"
 #include <QPushButton>
 #include <QDebug>
 
+#include "existingprojects.h"
+#include "projecthandler.h"
+#include "projectlistitem.h"
+#include "helpers.h"
+
+
 DeleteDialog::DeleteDialog(QWidget *parent) :
-QDialog(parent),
-ui(new Ui::DeleteDialog)
+	QDialog(parent),
+	ui(new Ui::DeleteDialog)
 {
 	ui->setupUi(this);
-
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Delete");
 
-	existingProjectsHandler = new ExistingsProjects();
-
-	//getLookupList returns a Qlist<ProjectListItem>
-	addItems(existingProjectsHandler->getExistingProjects());
+	existingProjectsHandler = new ExistingProjects();
+	addItems(existingProjectsHandler->existingProjects());
 
 	QSizePolicy sp = ui->projectList->sizePolicy();
 	sp.setRetainSizeWhenHidden(true);
 	ui->projectList->setSizePolicy(sp);
 
 	ui->Information->hide();
-	if ( listIsEmpty() ) {//if list is empty there are no existing projects
+
+	if ( listIsEmpty() ) {//if list is empty, there are no existing projects
 		ui->projectList->hide();
 		ui->Information->show();
 		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
@@ -63,12 +63,10 @@ void DeleteDialog::on_buttonBox_accepted()
 	QList<QListWidgetItem*> list = ui->projectList->selectedItems();
 
 	if ( list.isEmpty() ) {
-		qDebug() << "nothing selected";
 		this->close();
 	} else {
+		//list contains QListWidgetItems but we need a ProjectListItem to get the projectPath
 		ProjectListItem *listItem = dynamic_cast<ProjectListItem*>(list.first());
-		ProjectHandler *handler = new ProjectHandler();
-//		qDebug() << listItem->getProjectPath();
-		handler->deleteProject(listItem->getProjectPath());
+		ProjectHandler::deleteProject(listItem->projectPath());
 	}
 }

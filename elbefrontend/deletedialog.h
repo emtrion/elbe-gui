@@ -4,7 +4,7 @@
 #include <QDialog>
 
 class ProjectListItem;
-class ExistingsProjects;
+class ExistingProjects;
 
 namespace Ui {
 	class DeleteDialog;
@@ -23,10 +23,12 @@ class DeleteDialog : public QDialog
 
 	private:
 		Ui::DeleteDialog *ui;
+		ExistingProjects *existingProjectsHandler;
+
+	private:
 		bool listIsEmpty();
 		void addListItem(QString item);
 		void addItems(QList<ProjectListItem*> itemList);
-		ExistingsProjects *existingProjectsHandler;
 };
 
 #endif // DELETEDIALOG_H

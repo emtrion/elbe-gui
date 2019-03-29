@@ -3,15 +3,15 @@
 ProjectListItem::ProjectListItem(QString text, QString path)
 {
 	this->setText(text);
-	this->projectPath = path;
+	this->m_projectPath = path;
 }
 
-QString ProjectListItem::getProjectPath() const
+QString ProjectListItem::projectPath() const
 {
-	return projectPath;
+	return m_projectPath;
 }
 
 void ProjectListItem::setProjectPath(const QString &value)
 {
-	projectPath = value;
+	m_projectPath = value;
 }

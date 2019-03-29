@@ -1,8 +1,7 @@
 #include "messagehandler.h"
 
-#include <QDebug>
-
-MessageHandler::MessageHandler() : QAbstractMessageHandler(0)
+MessageHandler::MessageHandler() :
+	QAbstractMessageHandler(0)
 {
 
 }

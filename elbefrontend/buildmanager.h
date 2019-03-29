@@ -4,46 +4,42 @@
 
 #include <QString>
 #include <QThread>
-//#include "buildprocessworker.h"
 
 class BuildProcessWorker;
 
 class BuildManager
 {
-	private:
-		/* The instance will be stored here. */
-		static BuildManager* instance;
+	public:
+		 /* Static access method. */
+		 static BuildManager* getInstance();
 
-		/* Private constructor to prevent instantiation. From outside*/
+		 bool isBuildRunning() const;
+		 void setBuildRunning(bool value);
+		 QString currentBuildDirectory() const;
+		 void setCurrentBuildDirectory(const QString &value);
+		 BuildProcessWorker *processWorkerPointer() const;
+		 void setProcessWorkerPointer(BuildProcessWorker *value);
+		 bool isLoadingFiles() const;
+		 void setLoadingFiles(bool value);
+		 QString elbeWorkingDir() const;
+		 void setElbeWorkingDir(const QString &value);
+		 QString elbeCommandPrefix() const;
+		 void setElbeCommandPrefix(const QString &value);
+		 QStringList outputFiles() const;
+		 void setOutputFiles(const QStringList &outputFiles);
+
+	private:
+		static BuildManager* instance;
+		//Private constructor to prevent instantiation from outside
 		BuildManager();
 
-		bool buildRunning = false;
-		//is true if the build is finished and the files are loading
-		bool loadingFiles = false;
-		//the ID of the project currently building
-		QString currentBuildDirectory;
-		//pointer to the worker in which the build happens
-		BuildProcessWorker *processWorkerPointer;
-		QString elbeWorkingDir;
-		QString elbeCommandPrefix;
-
-
-   public:
-		/* Static access method. */
-		static BuildManager* getInstance();
-
-		bool isBuildRunning() const;
-		void setBuildRunning(bool value);
-		QString getCurrentBuildDirectory() const;
-		void setCurrentBuildDirectory(const QString &value);
-		BuildProcessWorker *getProcessWorkerPointer() const;
-		void setProcessWorkerPointer(BuildProcessWorker *value);
-		bool isLoadingFiles() const;
-		void setLoadingFiles(bool value);
-		QString getElbeWorkingDir() const;
-		void setElbeWorkingDir(const QString &value);
-		QString getElbeCommandPrefix() const;
-		void setElbeCommandPrefix(const QString &value);
+		bool m_buildRunning = false;
+		bool m_loadingFiles = false;
+		QString m_currentBuildDirectory;
+		BuildProcessWorker *m_processWorkerPointer;
+		QString m_elbeWorkingDir;
+		QString m_elbeCommandPrefix;
+		QStringList m_outputFiles;
 };
 
 #endif // BUILDMANAGER_H

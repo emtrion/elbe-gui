@@ -1,32 +1,28 @@
 #ifndef BUILDPROCESSWORKER_H
 #define BUILDPROCESSWORKER_H
 
+
 #include <QObject>
 
 class QProcess;
 class QThread;
 class BuildProcessStatusBarUpdate;
-class ProjectManager;
-class ElbeHandler;
+class Project;
+class BuildManager;
 
 class BuildProcessWorker : public QObject
 {
 		Q_OBJECT
+
 	public:
 		explicit BuildProcessWorker(QStringList outputFiles);
 		~BuildProcessWorker();
-		QProcess *process;
-		QString output;
 
-		QString getBuildingProjectPath() const;
-
+		QString buildingProjectPath() const;
 		void setSkipDownload(bool value);
-
-		QThread *getStatusBarBuildThread() const;
-
+		QThread *statusBarBuildThread() const;
 		void setBuildingElbeID(const QString &value);
-
-		QString getBuildingElbeID() const;
+		QString buildingElbeID() const;
 
 	signals:
 		void resultReady();
@@ -36,7 +32,6 @@ class BuildProcessWorker : public QObject
 		void startStatusBarLoad();
 		void done();
 
-
 	public slots:
 		void doWork();
 		void printLog();
@@ -44,23 +39,29 @@ class BuildProcessWorker : public QObject
 		void downloadFiles();
 
 	private:
+		QProcess *process;
+		QString output;
 		QStringList outputFiles;
-		ElbeHandler *elbehandler;
-		QString buildingProjectPath;
-		QString buildingElbeID;
+		QString m_buildingProjectPath;
+		QString m_buildingElbeID;
 		QString buildingXmlPath;
 		QString buildingOutPath;
-		ProjectManager *projectmanager;
+		Project *projectmanager;
+		BuildManager *buildmanager;
 		BuildProcessStatusBarUpdate *statusBarWorker;
-
-		QThread *statusBarBuildThread;
+		bool skipDownload;
+		QThread *m_statusBarBuildThread;
 		QThread *statusBarLoadThread;
 
+	private:
 		void showLoadingInStatusBar();
 		void showBuildingInStatusBar();
 		void waitBusy();
 
-		bool skipDownload;
+
+
+
+
 };
 
 #endif // BUILDPROCESSWORKER_H

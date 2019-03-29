@@ -1,22 +1,26 @@
-#include "elbehandler.h"
 #include "existingprojects.h"
-#include "projectlistitem.h"
 
 #include <QString>
 #include <QFileInfo>
 #include <QFileSystemWatcher>
 #include <QList>
 #include <QDebug>
+
 #include "helpers.h"
+#include "xmlutilities.h"
+#include "projectlistitem.h"
+#include "elbehandler.h"
 
-
-ExistingsProjects::ExistingsProjects(QObject *parent) : QObject(parent)
+ExistingProjects::ExistingProjects(QObject *parent) :
+	QObject(parent)
 {
+	//the application holds a file where all existing projects on the system are listed
 	projectListFile = new QFile(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/existingProjects");
 }
 
+/*----------------------- interaction with the file ------------------------*/
 
-void ExistingsProjects::addNewProjectToList(QString projectPath) //the application holds a ".elbefrontend" file where all existing projects on the system are listed
+void ExistingProjects::addNewProjectToListFile(QString projectPath)
 {
 	if ( !projectListFile->open(QIODevice::ReadWrite | QIODevice::Append) ) {
 		qDebug() << "ERROR from "<<__func__<<" Could not open/create file";
@@ -28,114 +32,52 @@ void ExistingsProjects::addNewProjectToList(QString projectPath) //the applicati
 	projectListFile->close();
 }
 
-void ExistingsProjects::removeProjectFromList(QString projectPath)
+void ExistingProjects::removeProjectFromListFile(QString projectPath)
 {
-	for (auto i = 0; i < projectFileList.size(); ++i) {
+	QStringList projectFileList = initFileList();
+	for (int i = 0; i < projectFileList.size(); ++i) {
 		QString pathToRemove = projectFileList.at(i);
 		if ( pathToRemove.compare(projectPath) == 0 ) {
 			projectFileList.removeAt(i);
 		}
 	}
-
-	projectListFile->resize(0); //clear file to avoid doubled content
-
-
-	foreach (QString str, projectFileList) {
-//		qDebug() << str;
-		addNewProjectToList(str);
-	}
+	updateListFile(projectFileList);
 }
 
-QList<ProjectListItem *> ExistingsProjects::getExistingProjects()
+void ExistingProjects::updateListFile(const QStringList &projectFileList)
 {
-	initFileList();
-	updateList();
-	return existingProjects;
-}
-
-void ExistingsProjects::updateList() //is called from getExistingProjects
-{
-	ElbeHandler *elbe = new ElbeHandler();
-	bool isInElbe;
-	existingProjects.clear(); //clear the list to avoid doubled items
-	for (int i = 0; i < projectFileList.size(); ++i) {
-		QFileInfo file(projectFileList.at(i));
-
-//		qDebug() << "absoluteFilePath: "<<file.absoluteFilePath();
-		isInElbe = elbe->projectIsInElbe(file.absoluteFilePath());
-//		qDebug() << "isInElbe = "<<isInElbe;
-//		qDebug() << file.absolutePath();
-		//check if the projects are in any unwanted state, i.e. ...
-		if ( !file.exists() && !isInElbe ) {//...not being existend at all
-//			qDebug() <<__func__<<": "<<file.absoluteFilePath()<<" doesn't exist";
-			removeProjectFromList(file.absoluteFilePath());
-		} else if ( file.exists() && !isInElbe ) { //...existend on filesystem but not in elbe
-			putItemInList(helpers::getProjectName(file.absoluteFilePath())+" (has no elbe instance)" ,file.absoluteFilePath());
-		} else if ( !file.exists() && isInElbe ) { //...existend in elbe but not on filesystem
-			putItemInList(helpers::getProjectName(file.absoluteFilePath())+" (exists only in elbe)", file.absoluteFilePath());
-		} else {
-			putItemInList(helpers::getProjectName(file.absoluteFilePath()), file.absoluteFilePath());
-		}
-	}
-}
-
-/*marks the project which was still building when the application was closed*/
-void ExistingsProjects::addBusyFlag(const QString &projectPath)
-{
-	int index = 0;
-	initFileList();
-	foreach (QString str, projectFileList) {
-		if ( str.compare(projectPath) == 0 ) {
-			projectFileList.replace(index, str+" (busy)");
-			break;
-		}
-		index++;
-	}
-
+	//clear the file to avoid doubled content
 	projectListFile->resize(0);
-
 	foreach (QString str, projectFileList) {
-		addNewProjectToList(str);
+		addNewProjectToListFile(str);
 	}
 }
 
-QString ExistingsProjects::checkForBusyFlag()
+/*--------------- copy file change content and write it back ----------------*/
+
+//creates a representation of the existing projects file to work with
+QStringList ExistingProjects::initFileList()
 {
-	QString projectPath = "";
-	int index = 0;
-	initFileList();
-	foreach (QString str, projectFileList) {
-		if ( str.endsWith(" (busy)") ) {
-			projectPath = removeBusyFlag(index);
-		}
-		index++;
+	QStringList emptyList;
+	if ( !projectListFile->exists() ) {
+		qDebug() << "ERROR from "<<__func__<<"file does not exist";
+		return emptyList;
 	}
-	//if no busyFlag was found it returns an empty string
-	return projectPath;
+	if ( !projectListFile->open(QIODevice::ReadOnly) ) {
+		qDebug() << "ERROR from "<<__func__<<" Could not open file";
+		return emptyList;
+	}
+	QByteArray contentByteArray = projectListFile->readAll();
+	projectListFile->close();
+
+	QString contentString = QString().fromUtf8(contentByteArray);
+	return contentString.split("\n", QString::SkipEmptyParts);
 }
 
-QString ExistingsProjects::removeBusyFlag(int index)
-{
-	QStringList strList;
-	QString busyProject = projectFileList.at(index);
-	//split at space character to get the directory seperated
-	strList = busyProject.split(QRegExp("\\s"), QString::SkipEmptyParts);
-	//there can be only two entries and the first one (index = 0) has to be the directory
-	projectFileList.replace(index, strList.at(0));
-
-	projectListFile->resize(0);
-	foreach (QString s, projectFileList) {
-		addNewProjectToList(s);
-	}
-
-	//return the projectPath without the busy flag
-	return strList.at(0);
-}
-
-void ExistingsProjects::addOpenFlag(const QString &projectPath)
+void ExistingProjects::addOpenFlag(const QString &projectPath)
 {
 	int index = 0;
-	initFileList();
+	QStringList projectFileList = initFileList();
 	foreach (QString str, projectFileList) {
 		if ( str.compare(projectPath+" (busy)") == 0 || str.compare(projectPath) == 0 ) {
 			projectFileList.replace(index, str+" (open)");
@@ -143,29 +85,24 @@ void ExistingsProjects::addOpenFlag(const QString &projectPath)
 		}
 		index++;
 	}
-
-	projectListFile->resize(0);
-
-	foreach (QString str, projectFileList) {
-		addNewProjectToList(str);
-	}
+	updateListFile(projectFileList);
 }
 
-QString ExistingsProjects::checkForOpenFlag()
+QString ExistingProjects::checkForOpenFlag()
 {
 	QString projectPath = "";
 	int index = 0;
-	initFileList();
+	QStringList projectFileList = initFileList();
 	foreach (QString str, projectFileList) {
 		if ( str.endsWith(" (open)") ) {
-			projectPath = removeOpenFlag(index);
+			projectPath = removeOpenFlag(index, projectFileList);
 		}
 		index++;
 	}
 	return projectPath;
 }
 
-QString ExistingsProjects::removeOpenFlag(int index)
+QString ExistingProjects::removeOpenFlag(int index, QStringList projectFileList)
 {
 	QStringList strList;
 	QString openedProject = projectFileList.at(index);
@@ -173,40 +110,104 @@ QString ExistingsProjects::removeOpenFlag(int index)
 	strList = openedProject.split(" ", QString::SkipEmptyParts);
 	//open is always at the end
 	strList.removeLast();
-	QString replacement = strList.join(" ");
-	projectFileList.replace(index, replacement);
+	//replace entry at index with joined strList
+	//strList is joined to one string seperated with a space
+	projectFileList.replace(index, strList.join(" "));
 
+	//clear the file to avoid doubled content
 	projectListFile->resize(0);
+
 	foreach (QString s, projectFileList) {
-		addNewProjectToList(s);
+		addNewProjectToListFile(s);
 	}
 
-	//first entry of strList holds the file only without any flags
+	//first entry of strList holds the file only, without any flags
 	return strList.at(0);
 }
 
-void ExistingsProjects::initFileList()
+//marks the project which was still building when the application was closed
+void ExistingProjects::addBusyFlag(const QString &projectPath)
 {
-	if ( !projectListFile->exists() ) {
-		qDebug() << "ERROR from "<<__func__<<"file does not exist";
-		return;
+	int index = 0;
+	QStringList projectFileList = initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.compare(projectPath) == 0 ) {
+			projectFileList.replace(index, str+" (busy)");
+			break;
+		}
+		index++;
 	}
-	if ( !projectListFile->open(QIODevice::ReadOnly) ) {
-		qDebug() << "ERROR from "<<__func__<<" Could not open file";
-		return;
-	}
-	QByteArray contentByteArray = projectListFile->readAll();
-	projectListFile->close();
-
-	QString contentString = QString().fromUtf8(contentByteArray);
-
-	projectFileList = contentString.split("\n", QString::SkipEmptyParts);
+	updateListFile(projectFileList);
 }
 
-void ExistingsProjects::putItemInList(QString name, QString path)
+QString ExistingProjects::checkForBusyFlag()
 {
-	existingProjects.append(new ProjectListItem(name, path));
+	QString projectPath = "";
+	int index = 0;
+	QStringList projectFileList = initFileList();
+	foreach (QString str, projectFileList) {
+		if ( str.endsWith(" (busy)") ) {
+			projectPath = removeBusyFlag(index, projectFileList);
+		}
+		index++;
+	}
+	//if no busyFlag was found it returns an empty string
+	return projectPath;
 }
+
+QString ExistingProjects::removeBusyFlag(int index, QStringList projectFileList)
+{
+	QStringList strList;
+	QString busyProject = projectFileList.at(index);
+	//split at space character to get the directory seperated
+	strList = busyProject.split(" ", QString::SkipEmptyParts);
+	//there can be only two entries and the first one (index = 0) has to be the directory
+	projectFileList.replace(index, strList.at(0));
+
+	updateListFile(projectFileList);
+
+	//return the projectPath without the busy flag
+	return strList.at(0);
+}
+
+/*----------- create and return a equal list but with ProjectListItems ----------*/
+
+//creates a list of ProjectListItems so it can be used in a QListWidget later
+QList<ProjectListItem *> ExistingProjects::createExistingProjectsList()
+{
+	QStringList projectFileList = initFileList();
+	bool isInElbe;
+	QList<ProjectListItem *> existingProjects;
+
+	for (auto i = 0; i < projectFileList.size(); ++i) {
+		QFileInfo file(projectFileList.at(i));
+		isInElbe = ElbeHandler::projectIsInElbe(file.absoluteFilePath());
+
+		//check if the projects are in any unwanted state, i.e. ...
+		if ( !file.exists() && !isInElbe ) {//...not being existend at all
+			removeProjectFromListFile(file.absoluteFilePath());
+		} else if ( file.exists() && !isInElbe ) { //...existend on filesystem but not in elbe
+			existingProjects.append(new ProjectListItem(
+										xmlUtilities::getProjectName(file.absoluteFilePath())+" (has no elbe instance)" ,file.absoluteFilePath())
+									);
+		} else if ( !file.exists() && isInElbe ) { //...existend in elbe but not on filesystem
+			existingProjects.append(new ProjectListItem(
+										xmlUtilities::getProjectName(file.absoluteFilePath())+" (exists only in elbe)", file.absoluteFilePath())
+									);
+		} else {
+			existingProjects.append(new ProjectListItem(
+										xmlUtilities::getProjectName(file.absoluteFilePath()), file.absoluteFilePath())
+									);
+		}
+	}
+	return existingProjects;
+}
+
+QList<ProjectListItem *> ExistingProjects::existingProjects()
+{
+	return createExistingProjectsList();
+}
+
 
 
 

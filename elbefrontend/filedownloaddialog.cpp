@@ -1,22 +1,22 @@
-#include "buildprocessworker.h"
-#include "elbehandler.h"
 #include "filedownloaddialog.h"
 #include "ui_filedownloaddialog.h"
+
 #include <QPushButton>
 #include <QThread>
 
+#include "buildprocessworker.h"
+#include "elbehandler.h"
+
 FileDownloadDialog::FileDownloadDialog(QWidget *parent) :
-QDialog(parent),
-ui(new Ui::FileDownloadDialog)
+	QDialog(parent),
+	ui(new Ui::FileDownloadDialog)
 {
 	ui->setupUi(this);
-
 
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Load");
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	checkboxes = this->findChildren<QCheckBox*>();
-
 }
 
 FileDownloadDialog::~FileDownloadDialog()
@@ -31,13 +31,10 @@ void FileDownloadDialog::on_buttonBox_accepted()
 			selectedFiles.append(box->text());
 		}
 	}
-//	 ElbeHandler *elbeHandler = new ElbeHandler();
-//	 ProjectManager *projectmanager = ProjectManager::getInstance();
-//	 elbeHandler->getFiles(selectedFiles, projectmanager->getOutPath(), projectmanager->getElbeID());
-
 
 	QThread *loadingThread = new QThread();
-	//use downloadFile method from buildprocessworker
+
+	//use the downloadFiles method from the buildProcessWorker
 	BuildProcessWorker *fileLoader = new BuildProcessWorker(selectedFiles);
 
 	connect(loadingThread, SIGNAL(started()), fileLoader, SLOT(downloadFiles()));
@@ -47,21 +44,19 @@ void FileDownloadDialog::on_buttonBox_accepted()
 	loadingThread->start();
 }
 
-bool FileDownloadDialog::anythingSelected()
+void FileDownloadDialog::anythingSelected()
 {
-	bool selected = false;
-
+	bool status = false;
 	foreach (QCheckBox *box, checkboxes) {
 		if ( box->isChecked() ) {
-			selected = true;
+			status = true;
 			break;
 		}
 	}
-
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(selected);
-
-	return selected;
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(status);
 }
+
+//everytime a checkbox is clicked we need to ensure if the Ok button can be enabled
 
 void FileDownloadDialog::on_LogCheck_clicked()
 {
@@ -73,12 +68,10 @@ void FileDownloadDialog::on_ReportCheck_clicked()
 	anythingSelected();
 }
 
-
 void FileDownloadDialog::on_ValidationCheck_clicked()
 {
 	anythingSelected();
 }
-
 
 void FileDownloadDialog::on_LicenseXmlCheck_clicked()
 {

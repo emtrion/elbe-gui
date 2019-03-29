@@ -14,20 +14,19 @@ class NewXMLDialog : public QDialog
 	public:
 		explicit NewXMLDialog(QWidget *parent = 0);
 		~NewXMLDialog();
+
 		bool isValid();
 		void updateUI(bool valid);
+
 	private slots:
-//		void on_ProjectBrowseButton_clicked();
-
 		void on_FileNameEntry_textChanged(const QString &arg1);
-
 		void on_buttonBox_accepted();
 
 	private:
 		Ui::NewXMLDialog *ui;
 		QString fileName;
 		QString projectPath;
-		QPixmap yesIcon;
+		QPixmap acceptIcon;
 		QPixmap errorIcon;
 };
 

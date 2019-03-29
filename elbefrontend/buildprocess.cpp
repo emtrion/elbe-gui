@@ -1,18 +1,19 @@
 #include "buildprocess.h"
+
+#include <QThread>
+#include <QDebug>
+
 #include "elbehandler.h"
 #include "buildmanager.h"
 #include "buildprocessworker.h"
-#include <QThread>
-#include <QDebug>
 #include "buildprocessstatusbarupdate.h"
 #include "mainwindow.h"
 #include "helpers.h"
 
 BuildProcess::BuildProcess(QObject *parent) : QObject(parent)
 {
-	elbehandler = new ElbeHandler();
 	buildmanager = BuildManager::getInstance();
-	buildWorker = new BuildProcessWorker(outputFiles);
+	buildWorker = new BuildProcessWorker(buildmanager->outputFiles());
 }
 
 BuildProcess::~BuildProcess()
@@ -23,20 +24,24 @@ void BuildProcess::startBuild(bool sourceOptionChecked, bool binOptionChecked)
 {
 	MainWindow *mw = helpers::getMainWindow();
 
-	if ( elbehandler->checkIfBusy(buildWorker->getBuildingElbeID()) ) {
+	mw->setWindowTitle("elbeFrontend (build running)");
+
+	if ( ElbeHandler::checkIfBusy(buildWorker->buildingElbeID()) ) {
 		buildWorker->updateMessageLog("The project is busy right now");
 		return;
 	}
 
 	buildmanager->setBuildRunning(true);
 	mw->changeElbeActionsEnabledStatus(false);
-//	if ( !elbehandler->startBuildProcess(sourceOptionChecked, binOptionChecked) ) {
-//		buildmanager->setBuildRunning(false);
-//		buildWorker->updateMessageLog("Couldn't start build. Most likely there is a problem with your initVM");
-//		return;
-//	}
+	if ( !ElbeHandler::startBuildProcess(sourceOptionChecked, binOptionChecked) ) {
+		buildmanager->setBuildRunning(false);
+		mw->changeElbeActionsEnabledStatus(true);
+		buildWorker->updateMessageLog("Couldn't start build. Most likely there is a problem with your initVM");
+		return;
+	}
 	buildWorker->setSkipDownload(false);
 	buildThreadInit();
+
 }
 
 
@@ -66,7 +71,6 @@ void BuildProcess::buildThreadInit()
 	buildWorker->moveToThread(buildThread);
 	buildThread->start();
 
-//	qDebug() << QThread::currentThreadId();
 }
 
 
@@ -74,18 +78,9 @@ void BuildProcess::cleanup()
 {
 	MainWindow *mw = helpers::getMainWindow();
 	mw->changeElbeActionsEnabledStatus(true);
+	mw->setWindowTitle("elbeFrontend");
 	buildThread->quit();
 	buildThread->wait();
-}
-
-QStringList BuildProcess::getOutputFiles() const
-{
-	return outputFiles;
-}
-
-void BuildProcess::setOutputFiles(const QStringList &value)
-{
-	outputFiles = value;
 }
 
 

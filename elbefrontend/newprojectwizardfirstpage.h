@@ -19,23 +19,16 @@ class NewProjectWizardFirstPage : public QWizardPage
 
 		void setFirstPageUiPointer(Ui::NewProjectWizard *ui_pointer);
 		void connectSignals();
-
-		// QWizardPage interface
-	public:
-		 bool isComplete() const; //re-implemented from QWizardPage
-		 /*decides weather to enable or disable the Next/Finish-Button*/
-
-		 QString getNewProjectName() const;
-
-		 QString getNewProjectPath() const;
+		bool isComplete() const;
+		QString newProjectName() const;
+		QString newProjectPath() const;
 
 	private:
 		 Ui::NewProjectWizard *ui_pointer;
-		 QString newProjectPath;
-		 QString newProjectName;
-		 QPixmap yesIcon;
+		 QString m_newProjectPath;
+		 QString m_newProjectName;
+		 QPixmap acceptIcon;
 		 QPixmap errorIcon;
-
 };
 
 #endif // NEWPROJECTWIZARDFIRSTPAGE_H

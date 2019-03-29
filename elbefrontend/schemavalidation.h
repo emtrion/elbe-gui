@@ -3,6 +3,7 @@
 
 #include <QXmlSchema>
 #include <QFile>
+
 #include "messagehandler.h"
 #include "helpers.h"
 
@@ -18,11 +19,13 @@ class SchemaValidation
 	private:
 		QXmlSchema schema;
 		QByteArray instanceFile;
-		bool loadSchema();
 		MessageHandler messageHandler;
+
+	private:
 		void moveCursor(int line, int column);
 		void displayValidationMessage(bool errorOccured);
 		const MainWindow *mainwindow = helpers::getMainWindow();
+		bool loadSchema();
 
 };
 

@@ -119,7 +119,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="FileNameEntry">
+           <widget class="QLineEdit" name="FilePathEntry">
             <property name="enabled">
              <bool>true</bool>
             </property>

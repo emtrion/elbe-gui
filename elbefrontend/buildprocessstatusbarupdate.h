@@ -6,12 +6,9 @@
 class BuildProcessStatusBarUpdate : public QObject
 {
 		Q_OBJECT
+
 	public:
 		explicit BuildProcessStatusBarUpdate(QObject *parent = 0);
-
-	private:
-		QStringList list;
-		void changeStatusBar();
 
 	signals:
 		void statusBarHasChanged(const QString &str);
@@ -19,8 +16,15 @@ class BuildProcessStatusBarUpdate : public QObject
 	public slots:
 		void statusBarLoadingFile();
 		void statusBarBuildRunning();
+
 	private slots:
 		void updateStatusBar(const QString &str);
+
+	private:
+		QStringList list;
+
+	private:
+		void changeStatusBar();
 };
 
 #endif // BUILDPROCESSSTATUSBARUPDATE_H

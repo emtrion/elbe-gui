@@ -1,6 +1,6 @@
+#include "codeeditor.h"
 
 #include <QtWidgets>
-#include "codeeditor.h"
 #include <QFontMetrics>
 
 #include "highlighter.h"
@@ -34,8 +34,8 @@ int CodeEditor::lineNumberAreaWidth()
 {
     int digits = 1;
     int max = qMax(1, blockCount());
-    while (max >= 10) {
-        max /= 10;
+	while ( max >= 10 ) {
+		max /= 10;
         ++digits;
     }
 
@@ -55,13 +55,14 @@ void CodeEditor::updateLineNumberAreaWidth(int /* newBlockCount */)
 
 void CodeEditor::updateLineNumberArea(const QRect &rect, int dy)
 {
-    if (dy)
-        lineNumberArea->scroll(0, dy);
-    else
+	if ( dy ) {
+		lineNumberArea->scroll(0, dy);
+	} else {
         lineNumberArea->update(0, rect.y(), lineNumberArea->width(), rect.height());
-
-    if (rect.contains(viewport()->rect()))
-        updateLineNumberAreaWidth(0);
+	}
+	if ( rect.contains(viewport()->rect()) ) {
+		updateLineNumberAreaWidth(0);
+	}
 }
 
 
@@ -80,11 +81,9 @@ void CodeEditor::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    if (!isReadOnly()) {
-        QTextEdit::ExtraSelection selection;
-
-        QColor lineColor = QColor(Qt::gray).lighter(50);
-
+	if ( !isReadOnly() ) {
+		QTextEdit::ExtraSelection selection;
+		QColor lineColor = QColor(Qt::gray).lighter(50);
         selection.format.setBackground(lineColor);
         selection.format.setProperty(QTextFormat::FullWidthSelection, true);
         selection.cursor = textCursor();
@@ -112,13 +111,13 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
     int bottom = top + (int) blockBoundingRect(block).height();
 
 
-    while (block.isValid() && top <= event->rect().bottom()) {
-        if (block.isVisible() && bottom >= event->rect().top()) {
+	while ( block.isValid() && top <= event->rect().bottom() ) {
+		if ( block.isVisible() && bottom >= event->rect().top() ) {
            QString number = QString::number(blockNumber + 1);
 
            //lineNumberHighlighting
            int selectedBlock = cursor.blockNumber();
-           if(selectedBlock == blockNumber){
+		   if ( selectedBlock == blockNumber ) {
 			   color.setNamedColor("#C3B541"); //yellowish
 			   painter.setPen(color);
            } else {
@@ -133,11 +132,8 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event)
         top = bottom;
         bottom = top + (int) blockBoundingRect(block).height();
         ++blockNumber;
-
-
     }
 }
-
 
 void CodeEditor::setLineNumberAreaVisible(bool visible)
 {

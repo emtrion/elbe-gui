@@ -8,7 +8,9 @@
 #include <QKeyEvent>
 #include <QToolButton>
 
-OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) : QFileDialog(parent, "Open file", startdir),myOpenButton(0)
+OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) :
+	QFileDialog(parent, "Open file", startdir),
+	myOpenButton(0)
 {
 	this->setFileMode(QFileDialog::Directory);
 	this->setAcceptMode(QFileDialog::AcceptOpen);
@@ -17,7 +19,6 @@ OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) 
 		QDialogButtonBox *button_box = findChild<QDialogButtonBox*>();
 		if (button_box) {
 			myOpenButton = (QPushButton *)button_box->button(QDialogButtonBox::Open);
-//			qDebug() << myOpenButton->text();
 		}
 	}
 
@@ -35,11 +36,8 @@ OpenProjectFileDialog::OpenProjectFileDialog(QWidget* parent, QString startdir) 
 	myOpenButton->installEventFilter(this);
 }
 
-
 void OpenProjectFileDialog::backOrForClicked()
-{//connected to the navigation buttons in the filedialog
-//	qDebug() << directory().absolutePath();
-
+{
 	QFileInfo file(directory().absolutePath());
 	updateCurrentSelection(file.absoluteFilePath());
 
@@ -57,9 +55,6 @@ void OpenProjectFileDialog::backOrForClicked()
 void OpenProjectFileDialog::fileSelectionChanged(const QString &file)
 {
 	updateCurrentSelection(file);
-
-//	qDebug() << "signal received!";
-
 	if ( !file.isEmpty() ) {
 		if ( checkIfProject(file) ) {
 			myOpenButton->setEnabled(true);
@@ -74,8 +69,6 @@ void OpenProjectFileDialog::fileSelectionChanged(const QString &file)
 bool OpenProjectFileDialog::checkIfProject(const QString &file)
 {
 	QFileInfo fileInfo(file+"/.project");
-//	qDebug() << fileInfo.filePath();
-
 	if ( fileInfo.exists() ) {
 		return true;
 	} else {
@@ -83,11 +76,9 @@ bool OpenProjectFileDialog::checkIfProject(const QString &file)
 	}
 }
 
-
 void OpenProjectFileDialog::updateCurrentSelection(QString file)
 {
 	if ( !file.isEmpty() ) {
-//		qDebug() << "File received from "<< __func__<<": "<<file;
 		currentSelection = QFileInfo(file+"/.project");
 	}
 }
@@ -98,20 +89,20 @@ bool OpenProjectFileDialog::isSelectionValid()
 	return currentSelection.exists() && file.exists();
 }
 
+//catch events which alter the enabled state of the open button
 bool OpenProjectFileDialog::eventFilter(QObject *obj, QEvent *event)
-{//catch events which alter the enabled state of the open button
+{
 	if ( obj == myOpenButton ) {
-		if( event->type() == QEvent::EnabledChange && !isSelectionValid() && myOpenButton->isEnabled()) {//if the change was not on purpose...
-			myOpenButton->setEnabled(false);//...it's reset
-//			qDebug() << "filtered: "<<event->type();
+		//if a signal changed the status but the selection is not valid...
+		if( event->type() == QEvent::EnabledChange && !isSelectionValid() && myOpenButton->isEnabled()) {
+			//...it's reset
+			myOpenButton->setEnabled(false);
 			return true;
 		} else {
 			return false;
 		}
 	} else {
-		//if the event didn't came from myOpenButton it's passed down to the default eventfilter which will know what to do with it
+		//if the event didn't come from myOpenButton it's passed down to the default eventfilter which will know what to do with it
 		return QFileDialog::eventFilter(obj, event);
 	}
 }
-
-

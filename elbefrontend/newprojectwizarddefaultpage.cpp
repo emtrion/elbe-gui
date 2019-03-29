@@ -1,36 +1,31 @@
-#include <QWizardPage>
-#include <QWidget>
-#include <QObjectList>
-#include <QObject>
-#include <QDebug>
-#include <QLineEdit>
 #include "newprojectwizarddefaultpage.h"
-#include "newprojectwizard.h"
 #include "ui_newprojectwizard.h"
+
+#include <QDebug>
 
 NewProjectWizardDefaultpage::NewProjectWizardDefaultpage()
 {
 	this->ui_pointer = NULL;
-	this->projectSettingInputFields.clear();
+	this->m_projectSettingInputFields.clear();
 }
 
 NewProjectWizardDefaultpage::~NewProjectWizardDefaultpage(){}
 
 
 void NewProjectWizardDefaultpage::setDefaultPageUiPointer(Ui::NewProjectWizard *ui_pointer)
-{//set the dafault
+{
 	this->ui_pointer = ui_pointer;
 }
 
 
 void NewProjectWizardDefaultpage::initializePage(int PageId)
-{//check which page is shown and put the relevant QLineEdits in list
+{
 	if ( PageId == 1) {
-		projectSettingInputFields = ui_pointer->MainWidget_2->findChildren<QLineEdit*>();
+		m_projectSettingInputFields = ui_pointer->MainWidget_2->findChildren<QLineEdit*>();
 	}
 
 	if ( PageId == 2 ) {
-		projectSettingInputFields = ui_pointer->MainWidget_3->findChildren<QLineEdit*>();
+		m_projectSettingInputFields = ui_pointer->MainWidget_3->findChildren<QLineEdit*>();
 	}
 
 	connectFields();
@@ -39,17 +34,17 @@ void NewProjectWizardDefaultpage::initializePage(int PageId)
 
 void NewProjectWizardDefaultpage::displayDefaultSettings()
 {
-	for (int i = 0; i < projectSettingInputFields.size(); i++) {
-		projectSettingInputFields.at(i)->setText(defaultSettings.at(i));
-		projectSettingInputFields.at(i)->setEnabled(false);
+	for (auto i = 0; i < m_projectSettingInputFields.size(); ++i) {
+		m_projectSettingInputFields.at(i)->setText(m_defaultSettings.at(i));
+		m_projectSettingInputFields.at(i)->setEnabled(false);
 	}
 }
 
 void NewProjectWizardDefaultpage::connectFields()
 {
-	QMutableListIterator<QLineEdit*> i(projectSettingInputFields);
-	while (i.hasNext()) {
-		connect(i.next(), &QLineEdit::textChanged, this, &NewProjectWizardDefaultpage::completeChanged);
+	QMutableListIterator<QLineEdit*> iter(m_projectSettingInputFields);
+	while ( iter.hasNext() ) {
+		connect(iter.next(), &QLineEdit::textChanged, this, &NewProjectWizardDefaultpage::completeChanged);
 	}
 
 }
@@ -57,9 +52,8 @@ void NewProjectWizardDefaultpage::connectFields()
 bool NewProjectWizardDefaultpage::isComplete() const
 {
 	bool retVal;
-
-	foreach (QLineEdit* var, projectSettingInputFields) {
-		if ( var->text().isEmpty() ) {
+	foreach (QLineEdit* line, m_projectSettingInputFields) {
+		if ( line->text().isEmpty() ) {
 			retVal = false;
 			break;
 		} else {
@@ -67,4 +61,19 @@ bool NewProjectWizardDefaultpage::isComplete() const
 		}
 	}
 	return retVal;
+}
+
+QList<QLineEdit *> NewProjectWizardDefaultpage::projectSettingInputFields() const
+{
+	return m_projectSettingInputFields;
+}
+
+QList<QString> NewProjectWizardDefaultpage::defaultSettings() const
+{
+	return m_defaultSettings;
+}
+
+void NewProjectWizardDefaultpage::setDefaultSettings(const QList<QString> &defaultSettings)
+{
+	m_defaultSettings = defaultSettings;
 }

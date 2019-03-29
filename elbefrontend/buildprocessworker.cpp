@@ -3,7 +3,7 @@
 #include <QProcess>
 #include <QDebug>
 
-#include "projectmanager.h"
+#include "project.h"
 #include "helpers.h"
 #include "buildmanager.h"
 #include "mainwindow.h"
@@ -15,31 +15,22 @@ BuildProcessWorker::BuildProcessWorker(QStringList outputFiles)
 	//outputfiles which are seleceted in buildprocessstartdialog
 	this->outputFiles = outputFiles;
 
-	elbehandler = new ElbeHandler();
-
-	projectmanager = ProjectManager::getInstance();
-	buildingElbeID = projectmanager->getElbeID();
-	buildingXmlPath = projectmanager->getBuildXmlPath();
-	buildingOutPath = projectmanager->getOutPath();
-	buildingProjectPath = projectmanager->getProjectPath();
-
-
+	projectmanager = Project::getInstance();
+	buildmanager = BuildManager::getInstance();
+	m_buildingElbeID = projectmanager->elbeID();
+	buildingXmlPath = projectmanager->buildXmlPath();
+	buildingOutPath = projectmanager->outPath();
+	m_buildingProjectPath = projectmanager->projectPath();
 
 	MainWindow *mw = helpers::getMainWindow();
 	connect(this, SIGNAL(messageLogHasUpdate(QString,QString)), mw, SLOT(messageLogAppendText(QString,QString)));
 }
 
 BuildProcessWorker::~BuildProcessWorker()
-{
-
-}
-
+{}
 
 void BuildProcessWorker::doWork()
 {
-//	qDebug() << __func__<<"is in: "<<QThread::currentThreadId();
-
-	BuildManager *buildmanager = BuildManager::getInstance();
 	process = new QProcess(this);
 
 	//it's not allowed to communicate with the GUI directly from another thread but the mainthread
@@ -51,15 +42,17 @@ void BuildProcessWorker::doWork()
 	//was set before the actual build command in "buildmanager". After waitBusy returns we can be sure the build has finished
 	buildmanager->setBuildRunning(false);
 
-	//just for a better look
+
 	updateMessageLog(" ");
 
+	//
 	if ( !skipDownload ) {
-		//inidcates that a download is currently running...
+		//inidcates that a download is currently running
 		buildmanager->setLoadingFiles(true);
 		downloadFiles();
-		//...now it's done
 		buildmanager->setLoadingFiles(false);
+	} else {
+		updateMessageLog("skip download");
 	}
 
 	emit(done());
@@ -73,11 +66,8 @@ void BuildProcessWorker::waitBusy()
 
 	emit(outputReady("start elbe-build"));
 
-//	process->setWorkingDirectory("/home/hico/elbe");
-//	process->start("./elbe control wait_busy "+buildingElbeID); //change this. It depends on the opened project which is not itended
-
-	process->setWorkingDirectory("/home/hico/tmp");
-	process->start("./a.out");
+	process->setWorkingDirectory(buildmanager->elbeWorkingDir());
+	process->start("./elbe control wait_busy "+buildingElbeID());
 
 	//wait until build has finished. Events are still handled so messages are coming through
 	process->waitForFinished(-1);
@@ -85,11 +75,11 @@ void BuildProcessWorker::waitBusy()
 	updateMessageLog("finished");
 
 	//stop the loop inside the thread
-	statusBarBuildThread->requestInterruption();
+	m_statusBarBuildThread->requestInterruption();
 
 	//end the thread
-	statusBarBuildThread->quit();
-	statusBarBuildThread->wait();
+	m_statusBarBuildThread->quit();
+	m_statusBarBuildThread->wait();
 }
 
 void BuildProcessWorker::setSkipDownload(bool value)
@@ -106,62 +96,54 @@ void BuildProcessWorker::printLog()
 	if(!output.endsWith("\n")) { //check if last part is a complete line
 		list = output.split("\n");
 		tail = list.last();
-		list.removeLast(); //remove uncomplete part
+		list.removeLast(); //remove incomplete part
 	} else {
 		list = output.split("\n", QString::SkipEmptyParts);
 	}
 	foreach (QString str, list) {
-//		qDebug() << str;
 		emit(outputReady(str)); //connected to updateMessageLog
 	}
 
 	output = ""; //clear output to read new data
-	output.append(tail); //put the last part at the beginning of the new read data
+	output.append(tail); //put the last part at the beginning of the new data
 }
 
 
 void BuildProcessWorker::updateMessageLog(const QString &str)
 {
-	//qDebug() << __func__<<" is in: "<<QThread::currentThreadId();
-	emit(messageLogHasUpdate(str, "#F36363")); //calls mainwindow slot messageLogAppendText
+	//calls mainwindow slot messageLogAppendText
+	emit(messageLogHasUpdate(str, "#F36363"));
 }
 
 void BuildProcessWorker::downloadFiles()
 {
-	qDebug() << __func__<<"start!";
-
 	//change statusbar message
 	showLoadingInStatusBar();
-
-	qDebug() << "almost there";
-
-//	qDebug() << "XMLPATH: "<<buildingXmlPath;
 	updateMessageLog("downloading files...");
 
+	//check whether images are selected to download after build
 	if ( outputFiles.contains("Image")) {
-		if ( !elbehandler->getImages(buildingXmlPath, buildingOutPath, buildingElbeID ) ) {
-			qDebug() << "Could not load all images. Check Output directory and try again";
+		if ( !ElbeHandler::getImages(buildingXmlPath, buildingOutPath, m_buildingElbeID ) ) {
 			updateMessageLog("Could not load all images. Check Output directory and try again");
 		} else {
 			updateMessageLog("images loaded.");
 		}
+		//we don't want to get an error because image is not a filename
 		outputFiles.removeOne("Image");
 	}
+	//if nothing else was selected outputFiles should now be empty
 	if( !outputFiles.isEmpty() ) {
-		if ( !elbehandler->getFiles(outputFiles, buildingOutPath, buildingElbeID) ) {
-			qDebug() << "Could not load all files. Check Output directory and try again";
+		if ( !ElbeHandler::getFiles(outputFiles, buildingOutPath, m_buildingElbeID) ) {
 			updateMessageLog("Could not load all files. Check Output directory and try again");
 		} else {
 			updateMessageLog("files loaded.");
 		}
 	}
 
-	//stop the loop inside the thread
 	statusBarLoadThread->requestInterruption();
 
 	statusBarLoadThread->quit();
 	statusBarLoadThread->wait();
-
 
 	updateMessageLog(" ");
 	updateMessageLog("finished");
@@ -169,31 +151,18 @@ void BuildProcessWorker::downloadFiles()
 	return;
 }
 
-QString BuildProcessWorker::getBuildingElbeID() const
-{
-	return buildingElbeID;
-}
-
-void BuildProcessWorker::setBuildingElbeID(const QString &value)
-{
-	buildingElbeID = value;
-}
-
-QThread *BuildProcessWorker::getStatusBarBuildThread() const
-{
-	return statusBarBuildThread;
-}
-
+//initialize statusbar during the build
 void BuildProcessWorker::showBuildingInStatusBar()
 {
 	BuildProcessStatusBarUpdate *statusBarBuildWorker = new BuildProcessStatusBarUpdate();
-	statusBarBuildThread = new QThread();
-	connect(statusBarBuildThread, SIGNAL(started()), statusBarBuildWorker, SLOT(statusBarBuildRunning()));
-	connect(statusBarBuildThread, SIGNAL(finished()), statusBarBuildWorker, SLOT(deleteLater()));
-	statusBarBuildWorker->moveToThread(statusBarBuildThread);
-	statusBarBuildThread->start();
+	m_statusBarBuildThread = new QThread();
+	connect(m_statusBarBuildThread, SIGNAL(started()), statusBarBuildWorker, SLOT(statusBarBuildRunning()));
+	connect(m_statusBarBuildThread, SIGNAL(finished()), statusBarBuildWorker, SLOT(deleteLater()));
+	statusBarBuildWorker->moveToThread(m_statusBarBuildThread);
+	m_statusBarBuildThread->start();
 }
 
+//initialize statusbar during files are downloaded
 void BuildProcessWorker::showLoadingInStatusBar()
 {
 	BuildProcessStatusBarUpdate *statusBarLoadWorker = new BuildProcessStatusBarUpdate();
@@ -204,7 +173,23 @@ void BuildProcessWorker::showLoadingInStatusBar()
 	statusBarLoadThread->start();
 }
 
-QString BuildProcessWorker::getBuildingProjectPath() const
+
+QThread *BuildProcessWorker::statusBarBuildThread() const
 {
-	return buildingProjectPath;
+	return m_statusBarBuildThread;
+}
+
+QString BuildProcessWorker::buildingProjectPath() const
+{
+	return m_buildingProjectPath;
+}
+
+QString BuildProcessWorker::buildingElbeID() const
+{
+	return m_buildingElbeID;
+}
+
+void BuildProcessWorker::setBuildingElbeID(const QString &value)
+{
+	m_buildingElbeID = value;
 }

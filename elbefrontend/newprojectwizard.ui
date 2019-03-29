@@ -413,7 +413,7 @@
         <widget class="QWidget" name="CheckboxSection_2" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QCheckBox" name="DefaultSetButton_1">
+           <widget class="QCheckBox" name="DefaultSetButton_Page2">
             <property name="enabled">
              <bool>true</bool>
             </property>
@@ -579,7 +579,7 @@
         <widget class="QWidget" name="CheckboxSection_3" native="true">
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
-           <widget class="QCheckBox" name="DefaultSetButton_2">
+           <widget class="QCheckBox" name="DefaultSetButton_Page3">
             <property name="text">
              <string>&amp;Use default settings</string>
             </property>

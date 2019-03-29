@@ -3,31 +3,16 @@
 
 #include <QString>
 
-class ElbeHandler;
-class ProjectManager;
-class XmlFileManager;
+class Project;
+class XmlFile;
 
+namespace ProjectHandler {
 
-class ProjectHandler
-{
-	public:
-		ProjectHandler();
-		ProjectHandler(QString path, QString name);
-		void createProject();
-		void closeProject();
-		void openProject(QString path);
-		void deleteProject(QString path);
-
-		ProjectManager *getProjectmanager() const;
-
-
-	private:
-		QString newProjectPath;
-		QString newProjectName;
-		ProjectManager *projectmanager;
-		ElbeHandler *elbehandler;
-		bool checkIfProjectHasXML(QString path);
-		XmlFileManager *filemanager;
-};
+	void createProject(const QString newProjectPath, const QString newProjectName);
+	void closeProject();
+	void openProject(QString path);
+	void deleteProject(QString path);
+	bool checkIfProjectHasXML(QString path);
+}
 
 #endif // PROJECTHANDLER_H

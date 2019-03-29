@@ -11,15 +11,9 @@ class Highlighter : public QSyntaxHighlighter
 
 	public:
 		Highlighter(QTextDocument *parent = 0);
+
 	protected:
 		virtual void highlightBlock(const QString &text);
-
-	private:
-		void highlightByRegex(const QTextCharFormat & format,
-	   const QRegExp & regex, const QString & text);
-
-	   void setRegexes();
-	   void setFormats();
 
 	private:
 	   QTextCharFormat     m_xmlKeywordFormat;
@@ -33,6 +27,13 @@ class Highlighter : public QSyntaxHighlighter
 	   QRegExp             m_xmlAttributeRegex;
 	   QRegExp             m_xmlValueRegex;
 	   QRegExp             m_xmlCommentRegex;
+
+	private:
+		void highlightByRegex(const QTextCharFormat & format,
+							  const QRegExp & regex, const QString & text);
+
+	   void setRegexes();
+	   void setFormats();
 };
 
 #endif // HIGHLIGHTER_H

@@ -19,19 +19,16 @@ class ElbeSettingsDialog : public QDialog
 
 	private slots:
 		void on_defaultCheckbox_toggled(bool checked);
-
 		void on_buttonBox_accepted();
-
 		void on_elbeEntry_textChanged(const QString &arg1);
-
 		void on_initVMEntry_textChanged(const QString &arg1);
 
 	private:
 		Ui::ElbeSettingsDialog *ui;
-		bool fieldsFilled();
-		void updateButtonBox(const bool status);
 		ApplicationConfig *appConfig;
-		bool validElbe(const QString &elbe);
+		QString oldInitVM;
+		QPixmap acceptIcon;
+		QPixmap errorIcon;
 
 		//used as parameter in updateInformation()
 		enum Icon {
@@ -39,12 +36,11 @@ class ElbeSettingsDialog : public QDialog
 			DECLINE
 		};
 
+	private:
+		bool fieldsFilled();
+		void updateButtonBox(const bool status);
+		bool validElbe(const QString &elbe);
 		void updateInformation(Icon value, const QString &text);
-
-		QString oldInitVM;
-
-		QPixmap yesIcon;
-		QPixmap errorIcon;
 };
 
 #endif // ELBESETTINGSDIALOG_H

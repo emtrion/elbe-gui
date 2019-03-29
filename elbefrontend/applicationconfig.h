@@ -1,10 +1,10 @@
 #ifndef APPLICATIONCONFIG_H
 #define APPLICATIONCONFIG_H
 
-#include "yaml-cpp/yaml.h"
-
 #include <QDir>
 #include <QFile>
+
+#include "yaml-cpp/yaml.h"
 
 class ApplicationConfig
 {
@@ -18,11 +18,14 @@ class ApplicationConfig
 		QString initVM() const;
 		void saveElbe(const QString &userInput);
 		void saveInitVM(const QString &userInput);
+
 	private:
 		 const QDir *dir; //.elbefrontend
 		 QFile *file; //.elbefrontend/config.yaml
 		 QString m_elbeExe;
 		 QString m_initVM;
+
+	private:
 		 YAML::Node loadFile();
 		 void writeToFile(const QString &key, const QString &value);
 		 QString filePath() const;

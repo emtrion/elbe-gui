@@ -1,24 +1,24 @@
-#include <QString>
-#include <QFile>
-#include "newprojectwizard.h"
 #include "newprojectwizardfirstpage.h"
+
+#include <QFile>
+
 #include "ui_newprojectwizard.h"
-#include "helpers.h"
 
 NewProjectWizardFirstPage::NewProjectWizardFirstPage(){
 	this->ui_pointer = NULL;
-	yesIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
+	acceptIcon = QPixmap(":/qss_icons/rc/YesIcon.png");
 	errorIcon = QPixmap(":/qss_icons/rc/ErrorIcon.png");
 }
 
+NewProjectWizardFirstPage::~NewProjectWizardFirstPage()
+{
 
-NewProjectWizardFirstPage::~NewProjectWizardFirstPage(){}
+}
 
 void NewProjectWizardFirstPage::setFirstPageUiPointer(Ui::NewProjectWizard *ui_pointer)
 {
 	this->ui_pointer = ui_pointer;
 }
-
 
 void NewProjectWizardFirstPage::connectSignals()
 {
@@ -34,8 +34,7 @@ bool NewProjectWizardFirstPage::isComplete() const
 	QString path = ui_pointer->ProjectPathEntry->text();
 	QString name = ui_pointer->ProjectNameEntry->text();
 
-
-	if ( name.isEmpty() ) {//check if projectname was sepcified
+	if ( name.isEmpty() ) {
 		ui_pointer->Information->setText("Projectname must be specified.");
 		ui_pointer->Icon->setPixmap(errorIcon);
 		return false;
@@ -48,25 +47,26 @@ bool NewProjectWizardFirstPage::isComplete() const
 		ui_pointer->Information->setText("There is already a project in this directory.");
 		ui_pointer->Icon->setPixmap(errorIcon);
 		return false;
-	} else {//if nothing of the above occured we are good to go
+	} else {
+		//if nothing of the above occured we are good to go
 		ui_pointer->Information->setText("Create project at selected directory");
-		ui_pointer->Icon->setPixmap(yesIcon);
+		ui_pointer->Icon->setPixmap(acceptIcon);
 	}
 
-	/*the only time these should be changed*/
-	const_cast <QString&> (newProjectPath) = path;
-	const_cast <QString&> (newProjectName) = name;
+	//the only time these are changed
+	const_cast <QString&> (m_newProjectPath) = path;
+	const_cast <QString&> (m_newProjectName) = name;
 
 	return true;
 }
 
-QString NewProjectWizardFirstPage::getNewProjectName() const
+QString NewProjectWizardFirstPage::newProjectName() const
 {
-	return newProjectName;
+	return m_newProjectName;
 }
 
-QString NewProjectWizardFirstPage::getNewProjectPath() const
+QString NewProjectWizardFirstPage::newProjectPath() const
 {
-	return newProjectPath;
+	return m_newProjectPath;
 }
 

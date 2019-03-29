@@ -1,8 +1,9 @@
 #include "buildmanager.h"
-#include "buildprocessworker.h"
-#include "helpers.h"
 
 #include <QFileInfo>
+
+#include "buildprocessworker.h"
+#include "helpers.h"
 
 BuildManager* BuildManager::instance = NULL;
 
@@ -11,19 +12,29 @@ BuildManager::BuildManager()
 
 }
 
-QString BuildManager::getElbeCommandPrefix() const
+QStringList BuildManager::outputFiles() const
 {
-	return elbeCommandPrefix;
+	return m_outputFiles;
+}
+
+void BuildManager::setOutputFiles(const QStringList &outputFiles)
+{
+	m_outputFiles = outputFiles;
+}
+
+QString BuildManager::elbeCommandPrefix() const
+{
+	return m_elbeCommandPrefix;
 }
 
 void BuildManager::setElbeCommandPrefix(const QString &value)
 {
-	elbeCommandPrefix = value;
+	m_elbeCommandPrefix = value;
 }
 
-QString BuildManager::getElbeWorkingDir() const
+QString BuildManager::elbeWorkingDir() const
 {
-	return elbeWorkingDir;
+	return m_elbeWorkingDir;
 }
 
 void BuildManager::setElbeWorkingDir(const QString &value)
@@ -31,51 +42,51 @@ void BuildManager::setElbeWorkingDir(const QString &value)
 	QFileInfo file(value);
 
 	if ( value.compare("default") == 0 ) {
-			elbeWorkingDir = helpers::getHomeDirectoryFromSystem();
+			m_elbeWorkingDir = helpers::getHomeDirectoryFromSystem();
 	} else {
 		//absolutPath() returns the path excluding the filename
-		elbeWorkingDir = file.absolutePath();
+		m_elbeWorkingDir = file.absolutePath();
 	}
 }
 
 bool BuildManager::isLoadingFiles() const
 {
-	return loadingFiles;
+	return m_loadingFiles;
 }
 
 void BuildManager::setLoadingFiles(bool value)
 {
-	loadingFiles = value;
+	m_loadingFiles = value;
 }
 
-BuildProcessWorker *BuildManager::getProcessWorkerPointer() const
+BuildProcessWorker *BuildManager::processWorkerPointer() const
 {
-	return processWorkerPointer;
+	return m_processWorkerPointer;
 }
 
 void BuildManager::setProcessWorkerPointer(BuildProcessWorker *value)
 {
-	processWorkerPointer = value;
+	m_processWorkerPointer = value;
 }
 
-QString BuildManager::getCurrentBuildDirectory() const
+QString BuildManager::currentBuildDirectory() const
 {
-	return currentBuildDirectory;
+	return m_currentBuildDirectory;
 }
 
 void BuildManager::setCurrentBuildDirectory(const QString &value)
 {
-	currentBuildDirectory = value;
+	m_currentBuildDirectory = value;
 }
 
 bool BuildManager::isBuildRunning() const
 {
-	return buildRunning;
+	return m_buildRunning;
 }
 
 void BuildManager::setBuildRunning(bool value)
 {
-	buildRunning = value;
+	m_buildRunning = value;
 }
 
 BuildManager *BuildManager::getInstance()

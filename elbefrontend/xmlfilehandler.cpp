@@ -1,325 +1,274 @@
-#include "elbehandler.h"
-#include "mainwindow.h"
-#include "schemavalidation.h"
 #include "xmlfilehandler.h"
 
-#include <QString>
-#include <QFile>
 #include <QDebug>
 #include <QDir>
 #include <QDomDocument>
-#include <QMessageBox>
+
 #include "helpers.h"
-#include "projectmanager.h"
+#include "mainwindow.h"
+#include "schemavalidation.h"
+#include "filesystemwatcher.h"
+#include "project.h"
 #include "codeeditor.h"
-
-XmlFileHandler::XmlFileHandler() //default constructor
-{
-	this->filemanager = XmlFileManager::getInstance();
-	projectmanager = ProjectManager::getInstance();
-	elbeHandler = new ElbeHandler();
-}
-
-XmlFileHandler::XmlFileHandler(QString path, QString name)
-{
-
-	if ( QDir(path).exists() ) {
-		filePath = path+name+".xml";
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
-	}
-
-	projectmanager = ProjectManager::getInstance();
-	elbeHandler = new ElbeHandler();
-	this->fileName = name+".xml";
-	this->filemanager = XmlFileManager::getInstance();
-
-//	qDebug() << fileName << filePath;
-}
-
-XmlFileHandler::XmlFileHandler(QString file)
-{//alternative Constructor with complete file path as parameter
-	if ( !file.isNull() ) {
-		if ( QFile(file).exists() ) {
-			this->filePath = file;
-		} else {
-			qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
-		}
-	}
-
-	projectmanager = ProjectManager::getInstance();
-	elbeHandler = new ElbeHandler();
-	this->fileName = file.section("/", -1);
-	this->filemanager = XmlFileManager::getInstance();
-}
-
-XmlFileHandler::~XmlFileHandler()
-{}
-
-void XmlFileHandler::createFile()
-{
-	if ( projectmanager->getProjectHasFile() ) {
-		qDebug() << "There's already a XML specified for this project";
-		return;
-	}
-
-	QFile file(filePath);
-
-	if ( !file.exists() ) {
-		if ( !file.open(QIODevice::ReadWrite) ) {
-			qDebug() << "ERROR from "<<__func__<<" Could not create file";
-		}
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" File does already exist!";
-	}
-
-	file.close();
-
-	projectmanager->setProjectHasFile(true);
-	projectmanager->setBuildXmlPath(filePath);
-//	elbeHandler->setXmlFile(filePath, projectmanager->getElbeID());
-
-	MainWindow *mw = helpers::getMainWindow();
-	mw->changeNewXmlButtonEnabledStatus(false);
-
-	XMLautoGenerate();
-	openFile();
-}
+#include "xmlutilities.h"
 
 
-void XmlFileHandler::openFile()
-{ //openFile with member variable as parameter
-	openFile_p(filePath);
-}
-
-void XmlFileHandler::openFile(QString filePath)
-{ //openFile with extra parameter
-	openFile_p(filePath);
-}
-
-
-void XmlFileHandler::openFile_p(QString path)
-{ //the actual implementation of openFile only visible inside XmlFileHandler
-
-	if ( filemanager->getIsOpen() ) { //if another file is open, close it
-		closeFile();
-	}
-
-	QFile file(path);
-	QString content;
-	if ( file.exists() ) {
-		if ( !file.open(QIODevice::ReadWrite) ) {
-			qDebug() << "ERROR from "<<__func__<<" Could not open file";
+namespace XmlFileHandler {
+	void createFile(const QString projectPath, const QString fileName)
+	{
+		Project *project = Project::getInstance();
+		QString filePath;
+		if ( project->projectHasFile() ) {
+			//should not be reached because button should be disabled if xml already exists
+			qDebug() << "ERROR from"<<__func__<<"There's already a xml in this project";
 			return;
 		}
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" File does not exist";
+
+		if ( QDir(projectPath).exists() ) {
+			//the file path consists of projectpath + filename and xml fileextension
+			filePath = projectPath+fileName+".xml";
+		} else {
+			qDebug() << "ERROR from "<<__func__<<" Path does not exist!";
+			return;
+		}
+
+		QFile file(filePath);
+
+		if ( !file.exists() ) {
+			if ( !file.open(QIODevice::ReadWrite) ) {
+				qDebug() << "ERROR from "<<__func__<<" Could not create file";
+				return;
+			}
+		} else {
+			qDebug() << "ERROR from "<<__func__<<" File does already exist!";
+			return;
+		}
+
+		file.close();
+
+		project->setProjectHasFile(true);
+		project->setBuildXmlPath(projectPath);
+
+		MainWindow *mw = helpers::getMainWindow();
+		mw->changeNewXmlButtonEnabledStatus(false);
+
+		XMLautoGenerate(filePath);
+		openFile(filePath);
+	}
+
+	void openFile(const QString filePath)
+	{
+		XmlFile *filemanager = XmlFile::getInstance();
+
+		//if another file is still open, close it
+		if ( filemanager->isOpen() ) {
+			closeFile();
+		}
+
+		QFile file(filePath);
+		QFileInfo info(file);
+		QString content;
+		if ( file.exists() ) {
+			if ( !file.open(QIODevice::ReadWrite) ) {
+				qDebug() << "ERROR from "<<__func__<<" Could not open file";
+				return;
+			}
+		} else {
+			qDebug() << "ERROR from "<<__func__<<" File does not exist";
+			return;
+		}
+
+		content = QString::fromUtf8(file.readAll());
+		file.close();
+
+		MainWindow *mw = helpers::getMainWindow();
+		mw->editor()->setPlainText(content);
+		mw->editor()->setEnabled(true);
+		mw->editor()->setLineNumberAreaVisible(true);
+		mw->setEditorTabVisible(true);
+		mw->setOpenFileNameLabelText(info.fileName());
+
+		filemanager->setCurrentFilePath(filePath);
+		mw->enableActionsOnXMLOpen(true);
+
+		filesystemWatcher::addPath(filemanager->currentFilePath());
+		filemanager->setIsOpen(true);
+		filemanager->setIsSaved(true);
 		return;
 	}
 
-	content = QString::fromUtf8(file.readAll());
-	file.close();
+	void XMLautoGenerate(const QString filePath)
+	{
+		Project *project = Project::getInstance();
+		ProjectProperties *properties = project->newProjectProperties();
 
-	MainWindow *mw = helpers::getMainWindow();
-	mw->getEditor()->setPlainText(content);
-	mw->getEditor()->setEnabled(true);
-	mw->getEditor()->setLineNumberAreaVisible(true);
-	mw->setEditorTabVisible(true);
-	mw->setOpenFileNameLabelText(fileName);
+		QFile templateFile(":/autogeneratedXML.xml");
+		QDomDocument doc;
+		doc = xmlUtilities::parseXMLFile(&templateFile);
 
-	filemanager->setCurrentFilePath(path);
-	mw->enableActionsOnXMLOpen(true);
+		QDomElement root = doc.firstChildElement("ns0:RootFileSystem");
 
-	helpers::watcherAddPath(filemanager->getCurrentFilePath());
-	filemanager->setIsOpen(true);
-	filemanager->setIsSaved(true);
-	return;
-}
-
-void XmlFileHandler::XMLautoGenerate()
-{
-	ProjectManager::projectSettings set = projectmanager->getNewProjectSettings();
-
-	QFile templateFile(":/autogeneratedXML.xml");
-	QDomDocument doc;
-	doc = helpers::parseXMLFile(&templateFile);
-
-	QDomElement root = doc.firstChildElement("ns0:RootFileSystem");
-//	qDebug() << root.tagName();
-
-	QDomNode projectNode;
-	QDomNode targetNode;
-	QDomNode rootChildNode = root.firstChild();
-	while (!rootChildNode.isNull()) {
-		QDomElement childElement = rootChildNode.toElement();
-//		qDebug() << childElement.tagName();
-		if ( childElement.tagName().compare("project") == 0 ) {
-			projectNode = rootChildNode;
-		} else if (childElement.tagName().compare("target") == 0) {
-			targetNode = rootChildNode;
-		}
-		rootChildNode = rootChildNode.nextSibling();
-	}
-
-//	qDebug() << set.name;
-//	qDebug() << set.version;
-//	qDebug() << set.description;
-//	qDebug() << set.buildtype;
-//	qDebug() << set.suite;
-//	qDebug() << set.host;
-//	qDebug() << set.path;
-//	qDebug() << set.proto;
-
-	QDomNode mirrorNode;
-	QDomNode projectChildNode = projectNode.firstChild();
-	while( !projectChildNode.isNull() ) {
-		QDomElement projectChildElement = projectChildNode.toElement();
-//		qDebug() << projectChildElement.tagName();
-		if (projectChildElement.tagName().compare("name") == 0) {
-			projectChildNode.appendChild(doc.createTextNode(set.name));
-		} else if(projectChildElement.tagName().compare("version") == 0){
-			projectChildNode.appendChild(doc.createTextNode(set.version));
-		} else if(projectChildElement.tagName().compare("description") == 0){
-			projectChildNode.appendChild(doc.createTextNode(set.description));
-		} else if(projectChildElement.tagName().compare("buildtype") == 0){
-			projectChildNode.appendChild(doc.createTextNode(set.buildtype));
-		} else if(projectChildElement.tagName().compare("suite") == 0){
-			projectChildNode.appendChild(doc.createTextNode(set.suite));
-		} else if(projectChildElement.tagName().compare("mirror") == 0){
-			mirrorNode = projectChildNode;
+		QDomNode projectNode;
+		QDomNode targetNode;
+		QDomNode rootChildNode = root.firstChild();
+		while ( !rootChildNode.isNull() ) {
+			QDomElement childElement = rootChildNode.toElement();
+			if ( childElement.tagName().compare("project") == 0 ) {
+				projectNode = rootChildNode;
+			} else if (childElement.tagName().compare("target") == 0) {
+				targetNode = rootChildNode;
+			}
+			rootChildNode = rootChildNode.nextSibling();
 		}
 
-		projectChildNode = projectChildNode.nextSibling();
-	}
-
-	QDomNode mirrorChildNode = mirrorNode.firstChild();
-	while ( !mirrorChildNode.isNull() ) {
-		QDomElement mirrorChildElement = mirrorChildNode.toElement();
-//		qDebug() << mirrorChildElement.tagName();
-		if(mirrorChildElement.tagName().compare("primary_host") == 0){
-			mirrorChildNode.appendChild(doc.createTextNode(set.host));
-		} else if(mirrorChildElement.tagName().compare("primary_path") == 0 ){
-			mirrorChildNode.appendChild(doc.createTextNode(set.path));
-		} else if(mirrorChildElement.tagName().compare("primary_proto") == 0){
-			mirrorChildNode.appendChild(doc.createTextNode(set.proto));
+		QDomNode mirrorNode;
+		QDomNode projectChildNode = projectNode.firstChild();
+		while( !projectChildNode.isNull() ) {
+			QDomElement projectChildElement = projectChildNode.toElement();
+			if (projectChildElement.tagName().compare("name") == 0) {
+				projectChildNode.appendChild(doc.createTextNode(properties->name()));
+			} else if(projectChildElement.tagName().compare("version") == 0){
+				projectChildNode.appendChild(doc.createTextNode(properties->version()));
+			} else if(projectChildElement.tagName().compare("description") == 0){
+				projectChildNode.appendChild(doc.createTextNode(properties->description()));
+			} else if(projectChildElement.tagName().compare("buildtype") == 0){
+				projectChildNode.appendChild(doc.createTextNode(properties->buildtype()));
+			} else if(projectChildElement.tagName().compare("suite") == 0){
+				projectChildNode.appendChild(doc.createTextNode(properties->suite()));
+			} else if(projectChildElement.tagName().compare("mirror") == 0){
+				mirrorNode = projectChildNode;
+			}
+			projectChildNode = projectChildNode.nextSibling();
 		}
 
-		mirrorChildNode = mirrorChildNode.nextSibling();
-	}
-
-	/* Append empty values to nodes to avoid them being self-closing*/
-	QDomNode targetChildNode = targetNode.firstChild();
-	while (!targetChildNode.isNull()) {
-		targetChildNode.appendChild(doc.createTextNode(""));
-		targetChildNode = targetChildNode.nextSibling();
-	}
-
-
-	QByteArray xml = doc.toByteArray(4);
-
-	QFile file(filePath);
-	helpers::saveXMLChanges(&file, xml);
-}
-
-
-void XmlFileHandler::saveFile()
-{
-	if ( filemanager->getIsSaved()) {
-		return;
-	}
-
-	filemanager->setSaving(true); //tells that the app is currently saving
-	MainWindow *mw = helpers::getMainWindow();
-
-	QByteArray content = mw->getEditor()->toPlainText().toUtf8();
-	QFile file(filemanager->getCurrentFilePath());
-
-	if ( file.open(QIODevice::ReadWrite | QIODevice::Truncate) ) {
-		if ( file.write(content) < 0 ) {
-			qDebug() << "ERROR from "<<__func__<<" Cannot write to file";
+		QDomNode mirrorChildNode = mirrorNode.firstChild();
+		while ( !mirrorChildNode.isNull() ) {
+			QDomElement mirrorChildElement = mirrorChildNode.toElement();
+			if ( mirrorChildElement.tagName().compare("primary_host") == 0 ) {
+				mirrorChildNode.appendChild(doc.createTextNode(properties->host()));
+			} else if ( mirrorChildElement.tagName().compare("primary_path") == 0 ) {
+				mirrorChildNode.appendChild(doc.createTextNode(properties->path()));
+			} else if ( mirrorChildElement.tagName().compare("primary_proto") == 0 ) {
+				mirrorChildNode.appendChild(doc.createTextNode(properties->proto()));
+			}
+			mirrorChildNode = mirrorChildNode.nextSibling();
 		}
-	} else {
-		qDebug() << "ERROR from "<<__func__<<" Cannot open file";
-		return;
-	}
-	file.close();
 
-	SchemaValidation *sv = new SchemaValidation(mw->getEditor()->toPlainText());
-	sv->validate();
-
-	filemanager->setIsSaved(true);
-}
-
-void XmlFileHandler::closeFile()
-{
-	helpers::watcherRemovePath(filemanager->getCurrentFilePath());
-	MainWindow *mw = helpers::getMainWindow();
-	if ( filemanager->getIsSaved() ) { //if content is safed we are good to go
-		mw->getEditor()->clear();
-		mw->getEditor()->setEnabled(false);
-		mw->getEditor()->setLineNumberAreaVisible(false);
-		mw->setEditorTabVisible(false);
-	} else { //if not the user is asked what to do
-		QMessageBox msgBox;
-		msgBox.setText(filemanager->getCurrentFileName()+" has been modified.");
-		msgBox.setInformativeText("Do you want to save your changes?");
-		msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-		msgBox.setDefaultButton(QMessageBox::Save);
-		int ret = msgBox.exec();
-
-		switch (ret) {
-			case QMessageBox::Save:
-				this->saveFile();
-				this->closeFile();
-				break;
-			case QMessageBox::Discard:
-				filemanager->setIsSaved(true); //on discard, we pretend to save the file...
-				this->closeFile(); //...otherwise we would be stuck in a loop because: recursion
-				break;
-			case QMessageBox::Cancel:
-				//do nothing
-				msgBox.close();
-				break;
-			default:
-				// should never be reached
-				break;
+		//Append empty values to nodes to avoid them being self-closing
+		QDomNode targetChildNode = targetNode.firstChild();
+		while ( !targetChildNode.isNull() ) {
+			targetChildNode.appendChild(doc.createTextNode(""));
+			targetChildNode = targetChildNode.nextSibling();
 		}
+
+		QByteArray xml = doc.toByteArray(4);
+
+		QFile file(filePath);
+		xmlUtilities::saveXMLChanges(&file, xml);
 	}
-	filemanager->setToDefault();
-	mw->enableActionsOnXMLOpen(false);
-	return;
-}
 
-void XmlFileHandler::handleFileModification(QString file)
-{
+	void saveFile()
+	{
+		XmlFile *filemanager = XmlFile::getInstance();
+		if ( filemanager->isSaved()) {
+			return;
+		}
 
-	if ( file.compare(filemanager->getCurrentFilePath()) == 0 ) { //checking if the file which triggered the signal is open because if it isn't we don't bother
-		if ( !filemanager->getSaving() ) { //check if saveFile() was just called meaning it triggered the signal so we don't need to handle it
-			QMessageBox msgBox;
-			msgBox.setText(filemanager->getCurrentFileName()+" has been modified outside elbeFrontend");
-			msgBox.setInformativeText("Do you want to reload it?");
-			msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
-			msgBox.setDefaultButton(QMessageBox::Yes);
-			int ret = msgBox.exec();
+		//tells that the app is currently saving.
+		filemanager->setSaving(true);
+		MainWindow *mw = helpers::getMainWindow();
 
+		QByteArray content = mw->editor()->toPlainText().toUtf8();
+		QFile file(filemanager->currentFilePath());
+
+		if ( file.open(QIODevice::ReadWrite | QIODevice::Truncate) ) {
+			if ( file.write(content) < 0 ) {
+				qDebug() << "ERROR from "<<__func__<<" Cannot write to file";
+			}
+		} else {
+			qDebug() << "ERROR from "<<__func__<<" Cannot open file";
+			return;
+		}
+		file.close();
+
+		SchemaValidation *schemavalidation = new SchemaValidation(mw->editor()->toPlainText());
+		schemavalidation->validate();
+
+		filemanager->setIsSaved(true);
+	}
+
+	void closeFile()
+	{
+		XmlFile *file = XmlFile::getInstance();
+
+		MainWindow *mw = helpers::getMainWindow();
+		if ( file->isSaved() ) {
+			mw->editor()->clear();
+			mw->editor()->setEnabled(false);
+			mw->editor()->setLineNumberAreaVisible(false);
+			mw->setEditorTabVisible(false);
+		} else {
+			int ret = helpers::showMessageBox(file->currentFileName()+" has been modified.",
+											  "Do you want to save your changes?",
+											  QMessageBox::StandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel),
+											  QMessageBox::Save);
 			switch (ret) {
-				case QMessageBox::Yes:
-					this->closeFile(); //close and...
-					this->openFile(file); //...open it so the content updates itself
+				case QMessageBox::Save:
+					saveFile();
+					closeFile();
 					break;
-				case QMessageBox::No:
-					filemanager->setIsSaved(false); //just set state to unsafed to avoid conflicts with filesystem
+				case QMessageBox::Discard:
+					//on discard, we pretend to save the file...
+					file->setIsSaved(true);
+					//...otherwise we would be stuck in a loop
+					closeFile();
 					break;
 				case QMessageBox::Cancel:
-					msgBox.close();
-					break;
+					//do nothing
+					return;
 				default:
-					//should not be reached
+					// should never be reached
 					break;
-
 			}
 		}
+		//method returns when the action was canceld so the below is not executed
+		filesystemWatcher::removePath(file->currentFilePath());
+		file->setToDefault();
+		mw->enableActionsOnXMLOpen(false);
+		return;
 	}
-	filemanager->setSaving(false); //obviously reset the value
-}
 
+	void handleFileModification(QString file)
+	{
+		XmlFile *filemanager = XmlFile::getInstance();
+
+		//check if the file which triggered the signal is open because if it isn't we don't bother
+		if ( file.compare(filemanager->currentFilePath()) == 0 ) {
+			 //check if saveFile() was just called meaning it triggered the signal so we don't need to handle it
+			if ( !filemanager->saving() ) {
+				int ret = helpers::showMessageBox(filemanager->currentFileName()+" has been modified outside elbeFrontend",
+										"Do you want to reload it?",
+										QMessageBox::StandardButtons(QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel),
+										QMessageBox::Yes);
+				switch (ret) {
+					case QMessageBox::Yes:
+						//force update by close and re-open
+						closeFile();
+						openFile(file);
+						break;
+					case QMessageBox::No:
+						//just set state to unsafed to avoid conflicts with filesystem
+						filemanager->setIsSaved(false);
+						break;
+					case QMessageBox::Cancel:
+						//do nothing
+						break;
+					default:
+						//should not be reached
+						break;
+				}
+			}
+		}
+		filemanager->setSaving(false);
+	}
+}

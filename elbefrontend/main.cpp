@@ -1,15 +1,8 @@
-#include <iostream>
 #include "mainwindow.h"
 
-#include <QDebug>
 #include <QApplication>
-#include <QFile>
 #include <QTextStream>
-#include <QProcessEnvironment>
-#include <QRect>
-#include <QScreen>
-#include "projectmanager.h"
-#include "helpers.h"
+
 #include "elbehandler.h"
 #include "existingprojects.h"
 #include "buildmanager.h"
@@ -19,7 +12,9 @@
 #include "filedownloaddialog.h"
 #include "elbesettingsdialog.h"
 #include "helpers.h"
+#include "xmlutilities.h"
 #include <QMessageBox>
+#include "filesystemwatcher.h"
 
 int main(int argc, char *argv[])
 {
@@ -27,41 +22,29 @@ int main(int argc, char *argv[])
 	MainWindow w;
 
 	QString id;
-	auto existing = new ExistingsProjects();
+	auto existing = new ExistingProjects();
 	auto process = new BuildProcess();
 	auto dialog = new FileDownloadDialog();
-	auto elbehandler = new ElbeHandler();
-	auto projecthandler = new ProjectHandler();
-	auto appConf = new ApplicationConfig();
+	auto applicationConfig = new ApplicationConfig();
 	auto buildmanager = BuildManager::getInstance();
 
-	QFile f(":qdarkstyle/style.qss");
-	if (!f.exists())
+
+	//load stylesheet
+	QFile stylesheet(":qdarkstyle/style.qss");
+	if ( !stylesheet.exists() )
 	{
 		printf("Unable to set stylesheet, file not found\n");
-	}
-	else
-	{
-		f.open(QFile::ReadOnly | QFile::Text);
-		QTextStream ts(&f);
+	} else {
+		stylesheet.open(QFile::ReadOnly | QFile::Text);
+		QTextStream ts(&stylesheet);
 		qApp->setStyleSheet(ts.readAll());
 	}
 
-	//set the starting position of mainwindow
-	QRect screenrect = a.primaryScreen()->geometry();
-	w.move(screenrect.left(), screenrect.top());
+	filesystemWatcher::init();
 
-	ProjectManager *pm = ProjectManager::getInstance();
-	pm->setProjectOpened(false);
-
-	w.show();
-	helpers::initSystemWatcher();
-
-
-
-	if ( !appConf->exists() ) {
-		appConf->createDirectory();
-		appConf->createFile();
+	if ( !applicationConfig->exists() ) {
+		applicationConfig->createDirectory();
+		applicationConfig->createFile();
 		helpers::showMessageBox("Warning",
 							   "There is no initVM selected. Please set the initVM you would like to use.",
 							   QMessageBox::StandardButtons(QMessageBox::Ok),
@@ -69,27 +52,26 @@ int main(int argc, char *argv[])
 		auto elbeSettingsDialog = new ElbeSettingsDialog();
 		elbeSettingsDialog->show();
 	}
-
-//		qDebug() << buildmanager->getElbeWorkingDir() << appConf->elbeExe();
-
-	if ( appConf->elbeExe().compare("default") == 0 ) {
-		buildmanager->setElbeWorkingDir("home/hico/");
+	if ( applicationConfig->elbeExe().compare("default") == 0 ) {
+		//setElbeWorkingDirectory changes "default" to system home directory
+		buildmanager->setElbeWorkingDir("default");
 		buildmanager->setElbeCommandPrefix("");
 	} else {
-		buildmanager->setElbeWorkingDir(appConf->elbeExe());
+		buildmanager->setElbeWorkingDir(applicationConfig->elbeExe());
 		buildmanager->setElbeCommandPrefix("./");
 	}
 
-	QString projectPath;
-	projectPath = existing->checkForOpenFlag();
-	if ( !projectPath.isEmpty() ) {
-		projecthandler->openProject(projectPath);
+	//open the project which was still open when prior session was closed
+	QString openProject = existing->checkForOpenFlag();
+	if ( !openProject.isEmpty() ) {
+		ProjectHandler::openProject(openProject);
 	}
 
-	projectPath = existing->checkForBusyFlag();
-	if ( !projectPath.isEmpty() ) {
-		id = helpers::getProjectID(projectPath);
-		if ( elbehandler->checkIfBusy(id) ) {
+	//checks if there was a build running when prior session was closed
+	QString busyProject = existing->checkForBusyFlag();
+	if ( !busyProject.isEmpty() ) {
+		id = xmlUtilities::getProjectID(busyProject);
+		if ( ElbeHandler::checkIfBusy(id) ) {
 			process->waitBusyWithoutStartingBuild(id);
 			helpers::showMessageBox("Information",
 									"The build you started in a previous session is still in progess",
@@ -102,7 +84,7 @@ int main(int argc, char *argv[])
 											  QMessageBox::Yes);
 			switch ( ret ) {
 				case QMessageBox::Yes :
-					projecthandler->openProject(projectPath);
+					ProjectHandler::openProject(busyProject);
 					dialog->show();
 					break;
 				case QMessageBox::No :
@@ -112,14 +94,15 @@ int main(int argc, char *argv[])
 					break;
 			}
 		}
-	} else {
-		qDebug() << "no busyflag found";
 	}
 
+	//open mainwindow. First time to see the actual application
+	w.show();
+
+	//check if version is supported
+	ElbeHandler::isVersionSupported();
 	//retrieve elbe version and show it in statusbar
-	w.setElbeVersion(elbehandler->checkElbeVersion());
-
-
+	w.setElbeVersion(ElbeHandler::checkElbeVersion());
 
     return a.exec();
 }

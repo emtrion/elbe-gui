@@ -1,13 +1,15 @@
-#include "buildprocess.h"
 #include "buildprocessstartdialog.h"
 #include "ui_buildprocessstartdialog.h"
 
 #include <QPushButton>
 #include <QDebug>
 
+#include "buildmanager.h"
+#include "buildprocess.h"
+
 BuildProcessStartDialog::BuildProcessStartDialog(QWidget *parent) :
-QDialog(parent),
-ui(new Ui::BuildProcessStartDialog)
+	QDialog(parent),
+	ui(new Ui::BuildProcessStartDialog)
 {
 	ui->setupUi(this);
 
@@ -29,15 +31,14 @@ void BuildProcessStartDialog::on_buttonBox_accepted()
 {
 	//store all checked boxes
 	foreach (QCheckBox *box, checkBoxList) {
-//		qDebug() << box->text();
 		if ( box->isChecked() ) {
 			checkedBoxes.append(box->text());
 		}
 	}
-
-	BuildProcess *buildProcess = new BuildProcess();
 	//pass the selected output files
-	buildProcess->setOutputFiles(checkedBoxes);
-	//start the build
+	BuildManager *buildmanager = BuildManager::getInstance();
+	buildmanager->setOutputFiles(checkedBoxes);
+	//start build
+	BuildProcess *buildProcess = new BuildProcess();
 	buildProcess->startBuild(ui->sourceCdCheck->isChecked(), ui->binCdCheck->isChecked());
 }

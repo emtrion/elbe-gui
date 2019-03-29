@@ -17,21 +17,19 @@ class ImportFileDialog : public QDialog
 
 	private slots:
 		void on_buttonBox_accepted();
-
-		void on_FileNameEntry_textChanged(const QString &arg1);
-
+		void on_FilePathEntry_textChanged(const QString &arg1);
 		void on_BrowseButton_clicked();
 
 	private:
 		Ui::ImportFileDialog *ui;
 		QString filePath;
-		QString fileName;
 		QString srcFolder;
+		QPixmap acceptIcon;
+		QPixmap errorIcon;
+
+	private:
 		void updateUI(bool valid);
 		bool isValid();
-		void chopNameFromPath();
-		QPixmap yesIcon;
-		QPixmap errorIcon;
 };
 
 #endif // IMPORTFILEDIALOG_H

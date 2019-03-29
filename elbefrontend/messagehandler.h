@@ -11,6 +11,7 @@ class MessageHandler : public QAbstractMessageHandler
 {
 	public:
 		MessageHandler();
+
 		QString statusMessage() const;
 		int line() const;
 		int column() const;

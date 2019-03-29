@@ -7,11 +7,12 @@ class ProjectListItem : public QListWidgetItem
 {
 	public:
 		ProjectListItem(QString text, QString path);
-		QString getProjectPath() const;
+
+		QString projectPath() const;
 		void setProjectPath(const QString &value);
 
 	private:
-		QString projectPath;
+		QString m_projectPath;
 };
 
 #endif // PROJECTLISTITEM_H

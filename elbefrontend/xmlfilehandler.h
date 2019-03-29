@@ -4,33 +4,18 @@
 
 #include <QString>
 
-class XmlFileManager;
-class ProjectManager;
-class ElbeHandler;
+class XmlFile;
+class Project;
 
-class XmlFileHandler
-{
-	public:
-		XmlFileHandler();
-		XmlFileHandler(QString path, QString name);
-		XmlFileHandler(QString file);
-		~XmlFileHandler();
-		void openFile();
-		void createFile();
-		void XMLautoGenerate();
-		void saveFile();
-		void closeFile();
+namespace XmlFileHandler {
 
-		void handleFileModification(QString file);
+	void openFile(const QString filePath);
+	void createFile(const QString projectPath, const QString fileName);
+	void XMLautoGenerate(const QString filePath);
+	void saveFile();
+	void closeFile();
+	void handleFileModification(QString file);
+}
 
-		void openFile(QString filePath);
 
-	private:
-		QString filePath;
-		QString fileName;
-		XmlFileManager *filemanager;
-		void openFile_p(QString path);
-		ProjectManager *projectmanager;
-		ElbeHandler *elbeHandler;
-};
 #endif // XMLFILEHANDLER_H

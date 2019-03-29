@@ -8,36 +8,30 @@ class QStringList;
 class QFile;
 class ProjectListItem;
 
-class ExistingsProjects : public QObject
+class ExistingProjects : public QObject
 {
 		Q_OBJECT
+
 	public:
-		explicit ExistingsProjects(QObject *parent = 0);
-		void addNewProjectToList(QString projectPath);
+		explicit ExistingProjects(QObject *parent = 0);
 
-		void removeProjectFromList(QString projectPath);
-
-		QList<ProjectListItem *> getExistingProjects();
-
+		void addNewProjectToListFile(QString projectPath);
+		void removeProjectFromListFile(QString projectPath);
+		QList<ProjectListItem *> existingProjects();
 		void addBusyFlag(const QString &projectPath);
-
-		QString checkForBusyFlag();
 		void addOpenFlag(const QString &projectPath);
+		QString checkForBusyFlag();
 		QString checkForOpenFlag();
-	signals:
-
-	public slots:
 
 	private:
 		QFile *projectListFile;
-		QList<ProjectListItem*> existingProjects;
-		QStringList projectFileList;
-		QStringList projectDirectoryList;
-		void updateList();
-		void initFileList();
-		void putItemInList(QString name, QString path);
-		QString removeBusyFlag(int index);
-		QString removeOpenFlag(int index);
+
+	private:
+		QStringList initFileList();
+		QList<ProjectListItem *> createExistingProjectsList();
+		QString removeBusyFlag(int index, QStringList list);
+		QString removeOpenFlag(int index, QStringList list);
+		void updateListFile(const QStringList &projectFileList);
 };
 
 #endif // EXISTINGPROJECTS_H

@@ -78,6 +78,9 @@
           <property name="handleWidth">
            <number>0</number>
           </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
           <widget class="QTreeView" name="ProjektStructure">
            <property name="enabled">
             <bool>true</bool>
@@ -359,21 +362,6 @@
    <addaction name="menuElbe"/>
    <addaction name="menuHilfe"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionBuild"/>
-   <addaction name="action_ChangeView"/>
-  </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionNew">
    <property name="text">
@@ -552,7 +540,7 @@
   </action>
   <action name="actionSettings">
    <property name="text">
-    <string>Settings</string>
+    <string>&amp;Settings</string>
    </property>
   </action>
  </widget>
