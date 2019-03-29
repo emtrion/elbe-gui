@@ -30,5 +30,7 @@ Todo:
 * multi-selection in delete dialog
 * creation of update-packages for elbe-updated
 
+**Note:**
 
+Qt 5.11 required
 
