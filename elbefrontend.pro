@@ -102,7 +102,7 @@ FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/deletedialog.ui
 
 RESOURCES += style/style.qrc \
-	templates/filetemplates.qrc
+	templates/filetemplates.qrc \
 
 #unix|win32: LIBS += -lqtermwidget5
 

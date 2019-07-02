@@ -353,6 +353,9 @@ void MainWindow::setElbeVersion(const QString &version)
 {
 	elbeVersion = version;
 
+	if ( elbeVersion.isEmpty() ) {
+		elbeVersion = "No elbe found";
+	}
 	showPermStatusOnStatusBar(elbeVersion);
 	initAboutElbeMessageBox();
 }
@@ -360,6 +363,10 @@ void MainWindow::setElbeVersion(const QString &version)
 void MainWindow::changeElbeVersion(const QString &version)
 {
 	elbeVersion = version;
+
+	if ( elbeVersion.isEmpty() ) {
+		elbeVersion = "No elbe found";
+	}
 	permStatus->setText(elbeVersion);
 	initAboutElbeMessageBox();
 }

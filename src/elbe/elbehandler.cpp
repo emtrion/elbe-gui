@@ -12,6 +12,8 @@
 #include "src/xml/xmlutilities.h"
 #include "src/mainwindow/mainwindow.h"
 
+#include <src/dialogs/elbesettingsdialog.h>
+
 
 namespace ElbeHandler {
 	namespace { //unnamed namespace
@@ -144,6 +146,16 @@ namespace ElbeHandler {
 	{
 		QString version = checkElbeVersion();
 
+		if ( version.isEmpty() ) {
+			helpers::showMessageBox("Information", "It seems there is no elbe installed on the system.\n"
+												   "Please set an elbe executable",
+									QMessageBox::StandardButton(QMessageBox::Ok),
+									QMessageBox::Ok
+									);
+			return;
+		}
+
+
 //		first: cut the "elbe v"-part
 		version = version.split("v", QString::SkipEmptyParts).last();
 //		second: split the number
@@ -163,7 +175,7 @@ namespace ElbeHandler {
 			informationIsNeeded = true;
 
 		} else if ( QString(numbers.first()).toInt() > 2 ) {
-			informativeText = "Version v3 might work but is not yet supported";
+			informativeText = "Version v3 or higher might work but is not yet supported";
 			informationIsNeeded = true;
 		} else {
 			if ( QString(numbers.at(1)).toInt() > 4 ) {

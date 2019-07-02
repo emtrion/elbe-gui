@@ -1,5 +1,5 @@
 #include "deletedialog.h"
-#include "ui_chooseprojecttodeletedialog.h"
+#include "ui_deletedialog.h"
 
 #include <QPushButton>
 #include <QDebug>

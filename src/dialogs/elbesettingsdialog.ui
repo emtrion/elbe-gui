@@ -47,7 +47,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
+        <pixmap resource="../../style/style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
        </property>
       </widget>
      </item>
@@ -212,7 +212,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="style.qrc"/>
+  <include location="../../style/style.qrc"/>
  </resources>
  <connections>
   <connection>

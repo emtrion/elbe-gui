@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 		auto elbeSettingsDialog = new ElbeSettingsDialog();
 		elbeSettingsDialog->show();
 	}
+
 	if ( applicationConfig->elbeExe().compare("default") == 0 ) {
 		//setElbeWorkingDirectory changes "default" to system home directory
 		buildmanager->setElbeWorkingDir("default");
@@ -106,10 +107,12 @@ int main(int argc, char *argv[])
 		}
 	}
 
+
 	//check if version is supported
 	ElbeHandler::isVersionSupported();
-//	//retrieve elbe version and show it in statusbar
+	//retrieve elbe version and show it in statusbar
 	w.setElbeVersion(ElbeHandler::checkElbeVersion());
+
 
     return a.exec();
 }

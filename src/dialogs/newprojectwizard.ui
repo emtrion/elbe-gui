@@ -85,7 +85,7 @@
              </sizepolicy>
             </property>
             <property name="pixmap">
-             <pixmap resource="style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
+             <pixmap resource="../../style/style.qrc">:/qss_icons/rc/ErrorIcon.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -604,18 +604,18 @@
   <customwidget>
    <class>NewProjectWizardFirstPage</class>
    <extends>QWizardPage</extends>
-   <header>newprojectwizardfirstpage.h</header>
+   <header>src/dialogs/newprojectwizardfirstpage.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>NewProjectWizardDefaultpage</class>
    <extends>QWizardPage</extends>
-   <header>newprojectwizarddefaultpage.h</header>
+   <header>src/dialogs/newprojectwizarddefaultpage.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="style.qrc"/>
+  <include location="../../style/style.qrc"/>
  </resources>
  <connections/>
 </ui>
