@@ -15,6 +15,7 @@ namespace XmlFileHandler {
 	void saveFile();
 	void closeFile();
 	void handleFileModification(QString file);
+	void handleRemotelyDeletedFile();
 }
 
 

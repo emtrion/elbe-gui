@@ -203,10 +203,7 @@ namespace XmlFileHandler {
 
 		MainWindow *mw = helpers::getMainWindow();
 		if ( file->isSaved() ) {
-			mw->editor()->clear();
-			mw->editor()->setEnabled(false);
-			mw->editor()->setLineNumberAreaVisible(false);
-			mw->setEditorTabVisible(false);
+			mw->closeEditorWindow();
 		} else {
 			int ret = helpers::showMessageBox(file->currentFileName()+" has been modified.",
 											  "Do you want to save your changes?",
@@ -270,5 +267,17 @@ namespace XmlFileHandler {
 			}
 		}
 		filemanager->setSaving(false);
+	}
+
+	void handleRemotelyDeletedFile() {
+		MainWindow *mw = helpers::getMainWindow();
+		Project *project = Project::getInstance();
+
+		mw->closeEditorWindow();
+		//set file to saved because it doesn't exist anymore
+		XmlFile *file = XmlFile::getInstance();
+		file->setIsSaved(true);
+		project->setProjectHasFile(false);
+		mw->changeNewXmlButtonEnabledStatus(true);
 	}
 }

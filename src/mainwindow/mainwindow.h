@@ -45,7 +45,7 @@ class MainWindow : public QMainWindow
 		void changeImportButtonEnabledStatus(bool status);
 		void changeElbeActionsEnabledStatus(bool status);
 		void changeElbeVersion(const QString &value);
-
+		void closeEditorWindow();
 	public slots:
 		void updateCurrentFile(QString path);
 		void updateItemModel(QString dir);

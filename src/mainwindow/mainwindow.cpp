@@ -263,8 +263,17 @@ void MainWindow::updateItemModel(QString dir)
 
 void MainWindow::updateCurrentFile(QString path)
 {
+	//QFileSystemWatcher identifies removing a file as a modification of the file
+	//so if the "modified" file was actually removed we can return here
+	if ( !QFile(path).exists() ) {
+		XmlFileHandler::handleRemotelyDeletedFile();
+		return;
+	}
+
 	XmlFileHandler::handleFileModification(path);
 }
+
+
 
 /************************************************************************************/
 
@@ -397,6 +406,15 @@ void MainWindow::changeElbeActionsEnabledStatus(bool status)
 	ui->actionBuild->setEnabled(status);
 	ui->actionDownload_files->setEnabled(status);
 }
+
+void MainWindow::closeEditorWindow() {
+	this->editor()->clear();
+	this->editor()->setEnabled(false);
+	this->editor()->setLineNumberAreaVisible(false);
+	this->setEditorTabVisible(false);
+}
+
+
 
 /************************************************************************************/
 
