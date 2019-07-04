@@ -26,7 +26,6 @@ int main(int argc, char *argv[])
 
 	QString id;
 	auto existing = new ExistingProjects();
-	auto process = new BuildProcess();
 	auto dialog = new FileDownloadDialog();
 	auto applicationConfig = new ApplicationConfig();
 	auto buildmanager = BuildManager::getInstance();
@@ -83,6 +82,7 @@ int main(int argc, char *argv[])
 	if ( !busyProject.isEmpty() ) {
 		id = xmlUtilities::getProjectID(busyProject);
 		if ( ElbeHandler::checkIfBusy(id) ) {
+			auto process = new BuildProcess();
 			process->waitBusyWithoutStartingBuild(id);
 			helpers::showMessageBox("Information",
 									"The build you started in a previous session is still in progess",

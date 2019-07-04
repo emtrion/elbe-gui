@@ -7,6 +7,8 @@
 #include "src/xml/xmlfilehandler.h"
 #include "src/projects/project.h"
 
+#include <QDebug>
+
 NewXMLDialog::NewXMLDialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::NewXMLDialog)

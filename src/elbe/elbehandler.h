@@ -12,6 +12,7 @@ namespace ElbeHandler {
 	QString createProjectElbeInstance();
 	bool deleteProjectElbeInstance(QString projectID);
 	bool projectIsInElbe(QString projectPath);
+	bool projectIsBuilding(QString projectPath);
 
 	bool startBuildProcess(bool sourceOptionChecked, bool binOptionChecked);
 	bool setXmlFile(QString file, QString elbeID);

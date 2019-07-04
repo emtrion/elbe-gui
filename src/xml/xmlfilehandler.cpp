@@ -47,7 +47,7 @@ namespace XmlFileHandler {
 		file.close();
 
 		project->setProjectHasFile(true);
-		project->setBuildXmlPath(projectPath);
+		project->setBuildXmlPath(filePath);
 
 		MainWindow *mw = helpers::getMainWindow();
 		mw->changeNewXmlButtonEnabledStatus(false);

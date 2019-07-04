@@ -37,11 +37,11 @@ void BuildProcess::startBuild(bool sourceOptionChecked, bool binOptionChecked)
 		buildmanager->setBuildRunning(false);
 		mw->changeElbeActionsEnabledStatus(true);
 		buildWorker->updateMessageLog("Couldn't start build. Most likely there is a problem with your initVM");
+		mw->setWindowTitle("elbeFrontend");
 		return;
 	}
 	buildWorker->setSkipDownload(false);
 	buildThreadInit();
-
 }
 
 

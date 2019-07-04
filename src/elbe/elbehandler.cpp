@@ -11,6 +11,7 @@
 #include "buildmanager.h"
 #include "src/xml/xmlutilities.h"
 #include "src/mainwindow/mainwindow.h"
+#include  "buildprocessworker.h"
 
 #include <src/dialogs/elbesettingsdialog.h>
 
@@ -240,9 +241,18 @@ namespace ElbeHandler {
 	}
 
 
+	bool projectIsBuilding(QString projectPath)
+	{
+		BuildManager *buildmanager = BuildManager::getInstance();
+		if ( buildmanager->isBuildRunning() ) {
+			return projectPath.compare(buildmanager->processWorkerPointer()->buildingProjectPath()) == 0;
+		}
+		return false;
+	}
+
 	bool startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
 	{
-		auto buildmanager = BuildManager::getInstance();
+		BuildManager *buildmanager = BuildManager::getInstance();
 		QString commandPrefix = buildmanager->elbeCommandPrefix();
 
 		Project *projectmanager = Project::getInstance();

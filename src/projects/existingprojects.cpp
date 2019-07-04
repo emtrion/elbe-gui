@@ -155,6 +155,7 @@ void ExistingProjects::addBusyFlag(const QString &projectPath)
 	updateListFile(projectFileList);
 }
 
+
 QString ExistingProjects::checkForBusyFlag()
 {
 	QString projectPath = "";
@@ -192,12 +193,13 @@ QList<ProjectListItem *> ExistingProjects::createExistingProjectsList()
 {
 	QStringList projectFileList = initFileList();
 	bool isInElbe;
+	bool isBusy;
 	QList<ProjectListItem *> existingProjects;
 
 	for (auto i = 0; i < projectFileList.size(); ++i) {
 		QFileInfo file(projectFileList.at(i));
 		isInElbe = ElbeHandler::projectIsInElbe(file.absoluteFilePath());
-
+		isBusy = ElbeHandler::projectIsBuilding(file.absoluteFilePath());
 		//check if the projects are in any unwanted state, i.e. ...
 		if ( !file.exists() && !isInElbe ) {//...not being existend at all
 			removeProjectFromListFile(file.absoluteFilePath());
@@ -209,6 +211,9 @@ QList<ProjectListItem *> ExistingProjects::createExistingProjectsList()
 			existingProjects.append(new ProjectListItem(
 										xmlUtilities::getProjectName(file.absoluteFilePath())+" (exists only in elbe)", file.absoluteFilePath())
 									);
+		} else if ( file.exists() && isBusy ) { //...existend but busy
+			//skip this one
+			//we don't want to delete a busy project
 		} else {
 			existingProjects.append(new ProjectListItem(
 										xmlUtilities::getProjectName(file.absoluteFilePath()), file.absoluteFilePath())

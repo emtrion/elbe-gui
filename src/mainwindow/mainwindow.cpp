@@ -21,6 +21,7 @@
 #include "src/elbe/elbehandler.h"
 #include "src/dialogs/elbesettingsdialog.h"
 
+#include <QDebug>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)

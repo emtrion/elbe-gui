@@ -67,7 +67,7 @@ void BuildProcessWorker::waitBusy()
 	emit(outputReady("start elbe-build"));
 
 	process->setWorkingDirectory(buildmanager->elbeWorkingDir());
-	process->start("./elbe control wait_busy "+buildingElbeID());
+	process->start(buildmanager->elbeCommandPrefix()+"elbe control wait_busy "+buildingElbeID());
 
 	//wait until build has finished. Events are still handled so messages are coming through
 	process->waitForFinished(-1);
