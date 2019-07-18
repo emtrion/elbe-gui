@@ -16,6 +16,8 @@ namespace helpers {
         return homeDir;
     }
 
+
+
 	MainWindow* getMainWindow()
 	{
 		foreach( QWidget *widget, qApp->topLevelWidgets()){

@@ -61,6 +61,16 @@ void ApplicationConfig::saveInitVM(const QString &userInput)
 	writeToFile("initVM", userInput);
 }
 
+void ApplicationConfig::saveSchemaFile(const QString &filename)
+{
+	writeToFile("schemaFile", filename);
+}
+
+QString ApplicationConfig::schemaFile() const
+{
+	return m_schemaFile;
+}
+
 void ApplicationConfig::writeToFile(const QString &key, const QString &value)
 {
 	YAML::Node config = loadFile();
@@ -81,6 +91,10 @@ void ApplicationConfig::parseFile()
 
 	if (config["initVM"] ){
 		m_initVM = QString().fromStdString(config["initVM"].as<std::string>());
+	}
+
+	if (config["schemaFile"] ){
+		m_schemaFile = QString().fromStdString(config["schemaFile"].as<std::string>());
 	}
 }
 

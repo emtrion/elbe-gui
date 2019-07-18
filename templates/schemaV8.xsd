@@ -23,7 +23,7 @@
 	  includes all subelements to define the elbe project
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="initvm" type="rfs:initvm" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -113,7 +113,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute name="created" type="dateTime">
 	  <annotation>
 		<documentation>
@@ -176,7 +176,7 @@
 	  links to one additional debian mirror
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="binary" type="rfs:binary-url" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -198,7 +198,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -226,7 +226,7 @@
 	  specify main and additional debian mirrors
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="primary_host" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -273,7 +273,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -283,7 +283,7 @@
 		describes settings that apply to the creation of the initvm
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="buildtype" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -342,6 +342,33 @@
 		  </documentation>
 		</annotation>
 	  </element>
+	  <element name="mem" type="rfs:memory" minOccurs="0" maxOccurs="1">
+		<annotation>
+		  <documentation>
+			amount of memory mapped into the virtual build environment
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="swap-size" type="rfs:memory" minOccurs="0" maxOccurs="1">
+		<annotation>
+		  <documentation>
+			size of the virtual swap partition used in the build environment.
+			this size is subtracted from the size of the virtual harddisk.
+		Supports unit prefixes like GiB, GB, and G.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="max-cpus" type="integer" minOccurs="0" maxOccurs="1">
+		<annotation>
+		  <documentation>
+		The number of cpus used by the initvm is clamped to this value.
+		This shall protect the initvm from running out of memory, when
+		running on machines with large numbers of cores.
+		When increasing this value, be sure to also increase mem and
+		maybe add some swap.
+		  </documentation>
+		</annotation>
+	  </element>
 	  <element name="img" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -357,7 +384,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -368,7 +395,7 @@
 		rootfilesystem and include the definition of the build environment
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="name" type="rfs:string" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -419,7 +446,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <element name="raw-preference" type="rfs:raw-preference" minOccurs="0" maxOccurs="unbounded">
+	  <element name="raw-preference" type="rfs:raw-preference" minOccurs="0">
 		<annotation>
 		  <documentation>
 			gets dedented and striped and is then written to /etc/apt/preferences
@@ -451,7 +478,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -491,7 +518,7 @@
 		definition of the build environment
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="arch" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -503,13 +530,6 @@
 		<annotation>
 		  <documentation>
 			size of the virtual harddisk used to run the build environment
-		  </documentation>
-		</annotation>
-	  </element>
-	  <element name="mem" type="rfs:memory" minOccurs="0" maxOccurs="1">
-		<annotation>
-		  <documentation>
-			amount of memory mapped into the virtual build environment
 		  </documentation>
 		</annotation>
 	  </element>
@@ -530,7 +550,7 @@
 	  <element name="kinitrd" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
-			pkg name of the initrd/kernel package.
+			pkg name of the initrd/kernel package. (obsolete and ignored)
 		  </documentation>
 		</annotation>
 	  </element>
@@ -581,7 +601,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -601,11 +621,12 @@
   <simpleType name="memory_restriction">
 	<annotation>
 	  <documentation>
-		at least 128 MB of memory are needed to run the debian-installer
+		Memory can be specified using binary unit prefixes like MiB and GiB,
+		or SI prefixes like GB,MB or simply G or M.
 	  </documentation>
 	</annotation>
-	<restriction base="integer">
-	  <minInclusive value="128" />
+	<restriction base="string">
+	  <pattern value="(\d+(k|M|G|kB|MB|GB|kiB|MiB|GiB)?)" />
 	</restriction>
   </simpleType>
 
@@ -615,7 +636,7 @@
 		 describes a virtual network interface
 	   </documentation>
 	 </annotation>
-	<sequence>
+	<all>
 	  <element name="model" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -630,7 +651,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -665,7 +686,7 @@
 		 forward a network port from the build environment to the host machine
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="proto" type="rfs:fw_proto" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -687,7 +708,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -715,7 +736,7 @@
 		 configuration of the target rootfilesystem
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="hostname" type="rfs:string" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -723,7 +744,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <element name="domain" type="rfs:string" minOccurs="1" maxOccurs="1">
+	  <element name="domain" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
 			domainname of the network the target system is part of
@@ -737,10 +758,25 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <element name="console" type="rfs:string" minOccurs="1" maxOccurs="1">
+	  <element name="console" type="rfs:string" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
 			serial console for getty
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="debootstrapvariant" type="rfs:debootstrapvarianttype" minOccurs="0" maxOccurs="1">
+		<annotation>
+		  <documentation>
+		Name of the bootstrap script variant to use. Currently, the
+		variants supported are minbase, which only includes essential
+		packages and apt; buildd, which installs the buildessential
+		packages into TARGET; and fakechroot, which installs the packages
+		without root privileges. The default, with no --variant=X
+		argument, is to create a base Debian installation in TARGET.
+			Some documentation mentioned the variant scratchbox too, but this
+		variant is not supported by the debootstrap used and therefore
+		not allowed.
 		  </documentation>
 		</annotation>
 	  </element>
@@ -791,10 +827,10 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <element name="norecommend" type="rfs:string" minOccurs="0">
+	  <element name="install-recommends" type="rfs:string" minOccurs="0">
 		<annotation>
 		  <documentation>
-			Turn off the installation of recommended Packages.
+			Activate the installation of recommended Packages.
 		  </documentation>
 		</annotation>
 	  </element>
@@ -805,6 +841,17 @@
 		  </documentation>
 		</annotation>
 	  </element>
+	  <element name="project-finetuning" type="rfs:project-finetuning" minOccurs="0">
+		<annotation>
+		  <documentation>
+			apply the given commands to the project directory, after images have
+			been generated. Currently supported use-cases are:
+			  * extract partition from image and mark as build artifact.
+			  * mark files as build artifacts
+			  * mv files from target directory to project directory
+		  </documentation>
+		</annotation>
+	  </element>
 	  <element name="pbuilder" type="rfs:pbuilder" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -812,7 +859,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <element name="pkg-list" type="rfs:pkg-list">
+	  <element name="pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
 		<annotation>
 		  <documentation>
 			install the given packages into the rootfilesystem
@@ -826,9 +873,51 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	  <element name="hostsdk-pkg-list" type="rfs:pkg-list" minOccurs="0" maxOccurs="1">
+		<annotation>
+		  <documentation>
+		install the given packages into the hostsdk. (ignores pin and versions,
+		with the current implementation)
+		  </documentation>
+		</annotation>
+	  </element>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
+
+  <complexType name="debootstrapvarianttype">
+	<annotation>
+	  <documentation>
+		Enhanced restriction type specifying debootstrap variants.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:debootstrapvarianttype_restriction">
+		<attribute name="includepkgs" type="string" use="optional">
+		  <annotation>
+			<documentation>
+			  A comma-separated list of additional packages at debootstrap runtime.
+			</documentation>
+		  </annotation>
+		</attribute>
+	  </extension>
+	</simpleContent>
+  </complexType>
+
+  <simpleType name="debootstrapvarianttype_restriction">
+	<annotation>
+	  <documentation>
+	Restriction type specifying debootstrap variants.
+		Supported debootstrap variants are minbase, buildd and fakechroot.
+	The variant scratchbox is not supported by th used debootstrap.
+	  </documentation>
+	</annotation>
+	<restriction base="string">
+	  <enumeration value="minbase" />
+	  <enumeration value="buildd" />
+	  <enumeration value="fakechroot" />
+	</restriction>
+  </simpleType>
 
   <complexType name="ubi_type">
 	<annotation>
@@ -861,7 +950,7 @@
 		describes a ubi volume
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="type" type="rfs:ubi_type" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -908,7 +997,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -981,7 +1070,7 @@
 		 describes a mtd device
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="name" type="rfs:string" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -1020,7 +1109,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1062,7 +1151,7 @@
 		</annotation>
 	  </element>
 	</sequence>
-<attribute ref="xml:base"/>
+	<attribute ref="xml:base"/>
   </complexType>
 
   <complexType name="binaryblob">
@@ -1091,7 +1180,7 @@
 	</simpleContent>
   </complexType>
 
-<!--  <complexType name="msdoshd">
+  <complexType name="msdoshd">
 	<annotation>
 	  <documentation>
 		 describes a harddisk
@@ -1150,8 +1239,9 @@
 		</annotation>
 	  </element>
 	</sequence>
-	  <attribute ref="xml:base"/>
-  </complexType>-->
+	<attribute ref="xml:base"/>
+
+  </complexType>
 
   <complexType name="images">
 	<annotation>
@@ -1167,16 +1257,16 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	  <!--<element name="msdoshd" type="rfs:msdoshd" minOccurs="0" maxOccurs="unbounded">
+	 <element name="msdoshd" type="rfs:msdoshd" minOccurs="0" maxOccurs="unbounded">
 		<annotation>
 		  <documentation>
 			container for Harddisks with msdos Partitionlabel.
 		  </documentation>
 		</annotation>
-	  </element>-->
+	  </element>
 	  <element name="gpthd" type="rfs:gpthd" minOccurs="0" maxOccurs="unbounded">
 		<annotation>
-		  <documentation>l
+		  <documentation>
 			container for Harddisks with GPT Partitionlabel
 		  </documentation>
 		</annotation>
@@ -1198,7 +1288,7 @@
 		 description of a linux filesystem
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="type" type="rfs:fs_type" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -1227,7 +1317,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1237,7 +1327,7 @@
 		 mount storage by the label of the partition or volume
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="label" type="rfs:string" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -1275,7 +1365,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1285,7 +1375,7 @@
 		 mount virtual filesystems or other storage devices device-node
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="source" type="rfs:string" minOccurs="1" maxOccurs="1">
 		<annotation>
 		  <documentation>
@@ -1315,7 +1405,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1351,7 +1441,7 @@
 		 list of packages, each contains the hole rootfilesystem
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="tar" type="rfs:tar" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -1373,7 +1463,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1383,7 +1473,7 @@
 		 describes a tar package
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="name" type="rfs:string" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -1398,7 +1488,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1408,7 +1498,7 @@
 		 describes a cpio package
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="name" type="rfs:string" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -1416,7 +1506,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1426,7 +1516,7 @@
 		 describes a squashfs image
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="name" type="rfs:string" minOccurs="0">
 		<annotation>
 		  <documentation>
@@ -1434,7 +1524,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1444,7 +1534,7 @@
 		 describes a partition of a harddisk
 	  </documentation>
 	</annotation>
-	<sequence>
+	<all>
 	  <element name="size" type="rfs:part_size">
 		<annotation>
 		  <documentation>
@@ -1474,7 +1564,7 @@
 		  </documentation>
 		</annotation>
 	  </element>
-	</sequence>
+	</all>
 	<attribute ref="xml:base"/>
   </complexType>
 
@@ -1610,6 +1700,7 @@
 	  <enumeration value="sysfs" />
 	  <enumeration value="vfat" />
 	  <enumeration value="btrfs" />
+	  <enumeration value="devtmpfs" />
 	</restriction>
   </simpleType>
 
@@ -1633,7 +1724,7 @@
 	  </documentation>
 	</annotation>
 	<choice>
-	  <element name="addgroup" type="rfs:string" minOccurs="0">
+	  <element name="addgroup" type="rfs:addgroup" minOccurs="0">
 		<annotation>
 		  <documentation>
 			add a group by name
@@ -1767,24 +1858,262 @@
 		  </documentation>
 		</annotation>
 	  </element>
+	  <element name="artifact" type="rfs:string" minOccurs="0">
+		<annotation>
+		  <documentation>
+			make the named file an artifact. The path is relative to the
+			target root.
+		  </documentation>
+		</annotation>
+	  </element>
 	</choice>
   </group>
 
-  <complexType name="adduser">
+  <complexType name="project-finetuning">
 	<annotation>
 	  <documentation>
-		describes an additional user account, the following parameters are
-		available: 'shell' - the login shell for the user, 'passwd' - the
-		password for the user and 'groups' - a comma separated list of groups
-		the user is member of. The value of the tag describes the login name
+		 container for project-finetuning commands; these commands are executed in the
+		 project directory, after the images have been generated.
+	  </documentation>
+	</annotation>
+	<sequence>
+	  <group ref="rfs:project-action" minOccurs="0" maxOccurs="unbounded" />
+	</sequence>
+	<attribute ref="xml:base"/>
+  </complexType>
+
+  <group name="project-action">
+	<annotation>
+	  <documentation>
+		definition of finetuning commands
+	  </documentation>
+	</annotation>
+	<choice>
+	  <element name="t2p_mv" type="rfs:cpmv" minOccurs="0">
+		<annotation>
+		  <documentation>
+			move a file from the target to the project directory
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="artifact" type="rfs:string" minOccurs="0">
+		<annotation>
+		  <documentation>
+			make the named file an artifact. The path is relative
+			to the project directory.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="rm_artifact" type="rfs:string" minOccurs="0">
+		<annotation>
+		  <documentation>
+			remove a project artifact from the list of artifacts.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="losetup" type="rfs:losetup" minOccurs="0">
+		<annotation>
+		  <documentation>
+			Setup the loop device with an image file. This node wraps image_finetuning
+			Actions, which access the loop device then.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="img_convert" type="rfs:img_convert" minOccurs="0">
+		<annotation>
+		  <documentation>
+		Convert a Partitionimage to another format. The new Image is added to
+		the list of artifacts.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="set_packer" type="rfs:set_packer" minOccurs="0">
+		<annotation>
+		  <documentation>
+		Specify the packer to use for an artifact.
+		  </documentation>
+		</annotation>
+	  </element>
+	</choice>
+  </group>
+
+  <complexType name="losetup">
+	<annotation>
+	  <documentation>
+		 Container for image_finetuning commands; these commands are executed in the
+		 project directory, while a drive image is setup as a loop device.
+		 The loop device id is passed to the individual actions.
+	  </documentation>
+	</annotation>
+	<sequence>
+	  <group ref="rfs:image_action" minOccurs="0" maxOccurs="unbounded" />
+	</sequence>
+	<attribute ref="xml:base"/>
+	<attribute name="img" type="string" use="required" />
+  </complexType>
+
+  <group name="image_action">
+	<annotation>
+	  <documentation>
+		definition of image finetuning commands
+	  </documentation>
+	</annotation>
+	<choice>
+	  <element name="extract_partition" type="rfs:extract_partition" minOccurs="0">
+		<annotation>
+		  <documentation>
+			Extract a Partition from the currently mounted loop device.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="copy_from_partition" type="rfs:copy_from_partition" minOccurs="0">
+		<annotation>
+		  <documentation>
+		Copy a file from a partition. The partition is mounted, and the file is then
+		copied from the mounted filesystem into the builddir. Its marked as an Artifact.
+		  </documentation>
+		</annotation>
+	  </element>
+	  <element name="copy_to_partition" type="rfs:copy_to_partition" minOccurs="0">
+		<annotation>
+		  <documentation>
+		Copy an artifact onto a partition. The partition is mounted, and the file is then
+		copied into the mounted filesystem.
+		  </documentation>
+		</annotation>
+	  </element>
+	</choice>
+  </group>
+
+  <complexType name="extract_partition">
+	<annotation>
+	  <documentation>
+		Describe the partition to be extracted (nr) and the destination filename.
+	The value of the tag describes the filename of the generated Imagefile.
+	The Image is per default compressed with gzip afterwards.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
+		<attribute name="part" type="integer" use="required" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+
+  <complexType name="copy_from_partition">
+	<annotation>
+	  <documentation>
+		Attribute 'part' describes the partition to be mounted (nr).
+	The value of the tag describes the filename to be copied from the
+	Filesystem, after it has been mounted.
+	Attribute 'artifact' is the artifact name.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
+		<attribute name="part" type="integer" use="required" />
+		<attribute name="artifact" type="string" use="required" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+  <complexType name="copy_to_partition">
+	<annotation>
+	  <documentation>
+		Attribute 'part' describes the partition to be mounted (nr).
+	The value of the tag describes the filename where the artifact shall
+	be copied to, onto the filesystem, after it has been mounted.
+	Attribute 'artifact' is the artifact name.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
+		<attribute name="part" type="integer" use="required" />
+		<attribute name="artifact" type="string" use="required" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+  <complexType name="addgroup">
+	<annotation>
+	  <documentation>
+		describes an additional user group to be created. the following parameters are
+	available:
+	'gid' - group id.
+	'system = "True" - system group.
+	The value of the tag describes the group name name
 		for the account.
 	  </documentation>
 	</annotation>
 	<simpleContent>
 	  <extension base="rfs:string">
+		<attribute name="gid" type="string" use="optional" />
+		<attribute name="system" type="boolean" use="optional" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+
+  <complexType name="img_convert">
+	<annotation>
+	  <documentation>
+		Describe the Image to be converted.
+	The value of the tag describes the filename of the source Imagefile.
+	The dst attribute the destination filename, and the fmt attribute is
+	the format. (See 'qemu-img --help' for a list of possible formats)
+	The Image is per default compressed with gzip afterwards.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
+		<attribute name="dst" type="string" use="required" />
+		<attribute name="fmt" type="string" use="required" />
+		<attribute name="keep_src" type="boolean" use="optional" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+
+  <complexType name="set_packer">
+	<annotation>
+	  <documentation>
+		Set the packer to use for an artifaxct.
+	The value of the tag describes the filename of the Imagefile.
+	The packer attribute may take the following values:
+	(none, gzip, tar, targz, tarxz)
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
+		<attribute name="packer" type="string" use="required" />
+	  </extension>
+	</simpleContent>
+  </complexType>
+
+  <complexType name="adduser">
+	<annotation>
+	  <documentation>
+		describes an additional user account, the following parameters are
+	available:
+	'shell' - the login shell for the user.
+	'passwd' - the (optional) password for the user.
+	'groups' - a comma separated list of groups the user is member of.
+	'uid' - (optional) user of the user.
+	'gid' - (optional) primary group, may be numeric or a name.
+	'home' - home directory.
+	'system="True"' - system user.
+	'create_home="False"' - do not create the home directory.
+	'create_group = "False"' - Do not create the primary group.
+	The value of the tag describes the login name for the account.
+	  </documentation>
+	</annotation>
+	<simpleContent>
+	  <extension base="rfs:string">
 		<attribute name="shell" type="string" use="required" />
-		<attribute name="passwd" type="string" use="required" />
+		<attribute name="passwd" type="string" use="optional" />
 		<attribute name="groups" type="string" use="optional" />
+		<attribute name="uid" type="string" use="optional" />
+		<attribute name="gid" type="string" use="optional" />
+		<attribute name="home" type="string" use="optional" />
+		<attribute name="system" type="boolean" use="optional" />
+		<attribute name="create_home" type="boolean" use="optional" />
+		<attribute name="create_group" type="boolean" use="optional" />
 	  </extension>
 	</simpleContent>
   </complexType>
@@ -2062,7 +2391,7 @@
 	</annotation>
 	<simpleContent>
 	  <extension base="string">
-<!--		 <attribute ref="xml:base"/>-->
+		 <attribute ref="xml:base"/>
 	  </extension>
 	</simpleContent>
   </complexType>

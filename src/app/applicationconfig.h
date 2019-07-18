@@ -18,12 +18,16 @@ class ApplicationConfig
 		QString initVM() const;
 		void saveElbe(const QString &userInput);
 		void saveInitVM(const QString &userInput);
+		void saveSchemaFile(const QString &filename);
+
+		QString schemaFile() const;
 
 	private:
-		 const QDir *dir; //.elbefrontend
+		const QDir *dir; //.elbefrontend
 		 QFile *file; //.elbefrontend/config.yaml
 		 QString m_elbeExe;
 		 QString m_initVM;
+		 QString m_schemaFile;
 
 	private:
 		 YAML::Node loadFile();

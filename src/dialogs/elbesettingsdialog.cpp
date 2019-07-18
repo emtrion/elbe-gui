@@ -58,6 +58,7 @@ void ElbeSettingsDialog::on_buttonBox_accepted()
 
 	if ( ui->defaultCheckbox->isChecked() ) {
 		appConfig->saveElbe("default");
+		appConfig->saveSchemaFile("/usr/share/xml/elbe-common/dbsfed.xsd");
 		//setElbeWorkingDir() changes "default" to system home directory
 		buildmanager->setElbeWorkingDir("default");
 		buildmanager->setElbeCommandPrefix("");
@@ -65,6 +66,7 @@ void ElbeSettingsDialog::on_buttonBox_accepted()
 		appConfig->saveElbe( ui->elbeEntry->text() );
 		appConfig->saveInitVM(ui->initVMEntry->text());
 		buildmanager->setElbeWorkingDir(ui->elbeEntry->text());
+		appConfig->saveSchemaFile(buildmanager->elbeWorkingDir()+"/schema/dbsfed.xsd");
 		buildmanager->setElbeCommandPrefix("./");
 	}
 

@@ -27,6 +27,8 @@ class SchemaValidation
 		const MainWindow *mainwindow = helpers::getMainWindow();
 		bool loadSchema();
 
+		void displaySchemaError();
+		QByteArray modifySchema(QFile *file);
 };
 
 #endif // SCHEMAVALIDATION_H

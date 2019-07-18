@@ -88,6 +88,11 @@ namespace XmlFileHandler {
 		mw->setEditorTabVisible(true);
 		mw->setOpenFileNameLabelText(info.fileName());
 
+		qDebug() << info.absolutePath();
+		if ( info.absolutePath().endsWith("/out")) {
+			mw->editor()->setEnabled(false);
+		}
+
 		filemanager->setCurrentFilePath(filePath);
 		mw->enableActionsOnXMLOpen(true);
 
