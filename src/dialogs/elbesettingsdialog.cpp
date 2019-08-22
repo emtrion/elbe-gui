@@ -24,7 +24,7 @@ ElbeSettingsDialog::ElbeSettingsDialog(QWidget *parent) :
 	ui->ErrorIcon->setSizePolicy(sp);
 
 	appConfig = new ApplicationConfig();
-	//the current settings are shown in the entryfiels
+	//the current settings are shown in the entryfields
 	if ( appConfig->elbeExe().isEmpty() || appConfig->elbeExe().compare("default") == 0 ) {
 		on_defaultCheckbox_toggled(true);
 	} else {

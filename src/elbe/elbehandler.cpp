@@ -40,9 +40,9 @@ namespace ElbeHandler {
 		}
 
 		//executes the given command as a QProcess
-		QString execCommand(QString command, int timeout = 30000)
+		QString execCommand(QString command, int timeout = 30000, bool forceWithoutPrefix = false)
 		{
-			auto buildmanager = BuildManager::getInstance();
+			BuildManager *buildmanager = BuildManager::getInstance();
 			QProcess process;
 			process.setWorkingDirectory(buildmanager->elbeWorkingDir());
 
@@ -51,7 +51,13 @@ namespace ElbeHandler {
 			QByteArray outputByteArray;
 			QString outputString;
 
-			process.start(command);
+			QString commandPrefix;
+			if ( !forceWithoutPrefix ) {
+				commandPrefix = buildmanager->elbeCommandPrefix();
+			}
+
+			qDebug() << commandPrefix+command;
+			process.start(commandPrefix+command);
 			if ( process.waitForFinished(timeout) ) {
 				outputByteArray = process.readAll();
 			} else {
@@ -70,11 +76,8 @@ namespace ElbeHandler {
 		{
 			QStringList list;
 
-			auto buildmanager = BuildManager::getInstance();
-			QString commandPrefix = buildmanager->elbeCommandPrefix();
-
 			// returns a list of substrings, sectioned wherever the given seperator occurs
-			QStringList tempList = execCommand(commandPrefix+"elbe control list_projects").split("\n", QString::SkipEmptyParts);
+			QStringList tempList = execCommand("elbe control list_projects").split("\n", QString::SkipEmptyParts);
 			foreach (QString str, tempList) {
 				list.append(str.section("\t", 0, 0));
 			}
@@ -84,10 +87,11 @@ namespace ElbeHandler {
 		//loads a file specified by filename from initvm
 		bool getFile_p(QString filename, QString outPath, QString elbeID)
 		{
-			auto buildmanager = BuildManager::getInstance();
-			QString commandPrefix = buildmanager->elbeCommandPrefix();
 
-			QString out = execCommand(commandPrefix+"elbe control --output "+outPath+" get_file "+elbeID+" "+filename, -1/*causes the waitForFinished to wait without timeout*/);
+
+			qDebug() << outPath;
+			QString out = execCommand("elbe control --output "+outPath+" get_file "+elbeID+" "+filename, -1/*causes the waitForFinished to wait without timeout*/);
+			qDebug() << out;
 			if ( out.compare(outPath+filename+" saved\n" ) != 0 ) {
 				qDebug() << "ERROR from "<<__func__<<" while downloading "<<filename;
 				return false;
@@ -195,26 +199,20 @@ namespace ElbeHandler {
 	//returns elbe version as string like this "elbe vX.Y"
 	QString checkElbeVersion()
 	{
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
 		//returns the first section of the string which is always the version
-		return execCommand(commandPrefix+"elbe").section("\n", 0, 0);
+		return execCommand("elbe").section("\n", 0, 0);
 	}
 
 	//creates a project in initvm
+	//returns elbeID
 	QString createProjectElbeInstance()
 	{
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
-		return execCommand(commandPrefix+"elbe control create_project").section("\n", 0, 0);
+		return execCommand("elbe control create_project").section("\n", 0, 0);
 	}
 
 	//deletes project in initvm
 	bool deleteProjectElbeInstance(QString projectPath)
 	{
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
-
 		QString id = xmlUtilities::getProjectID(projectPath);
 		//check if project exists
 		if ( !makeProjectList().contains(id) ) {
@@ -222,7 +220,7 @@ namespace ElbeHandler {
 			return false;
 		}
 
-		QString out = execCommand(commandPrefix+"elbe control del_project "+id);
+		QString out = execCommand("elbe control del_project "+id);
 
 		if ( out.isEmpty() ) {
 			return true;
@@ -252,8 +250,6 @@ namespace ElbeHandler {
 
 	bool startBuildProcess(bool sourceOptionChecked, bool binOptionChecked)
 	{
-		BuildManager *buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
 
 		Project *projectmanager = Project::getInstance();
 
@@ -264,22 +260,22 @@ namespace ElbeHandler {
 
 		//adding optional paramters if selected
 		if ( sourceOptionChecked && binOptionChecked ) {
-			if ( !execCommand(commandPrefix+"elbe control --build-bin --build-sources build "+projectmanager->elbeID()).isEmpty() ) {
+			if ( !execCommand("elbe control --build-bin --build-sources build "+projectmanager->elbeID()).isEmpty() ) {
 				qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 				return false;
 			}
 		} else if ( sourceOptionChecked && !binOptionChecked ) {
-			if ( !execCommand(commandPrefix+"elbe control --build-sources build "+projectmanager->elbeID()).isEmpty() ) {
+			if ( !execCommand("elbe control --build-sources build "+projectmanager->elbeID()).isEmpty() ) {
 				qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 				return false;
 			}
 		} else if ( !sourceOptionChecked && binOptionChecked ) {
-			if ( !execCommand(commandPrefix+"elbe control --build-bin build "+projectmanager->elbeID()).isEmpty() ) {
+			if ( !execCommand("elbe control --build-bin build "+projectmanager->elbeID()).isEmpty() ) {
 				qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 				return false;
 			}
 		} else {
-			if ( !execCommand(commandPrefix+"elbe control build "+projectmanager->elbeID()).isEmpty() ) {
+			if ( !execCommand("elbe control build "+projectmanager->elbeID()).isEmpty() ) {
 				qDebug() << "ERROR from "<<__func__<<". "<<"Build failed.";
 				return false;
 			}
@@ -290,10 +286,8 @@ namespace ElbeHandler {
 
 	bool setXmlFile(QString file, QString elbeID)
 	{
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
 
-		QString out = execCommand(commandPrefix+"elbe control set_xml "+elbeID+" "+file);
+		QString out = execCommand("elbe control set_xml "+elbeID+" "+file);
 		if ( out.compare("upload of xml finished\n") != 0 ) {
 			qDebug() << "ERROR from "<<__func__;
 			return false;
@@ -339,13 +333,10 @@ namespace ElbeHandler {
 	//checks in list_projects if status is busy
 	bool checkIfBusy(QString id)
 	{
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
-
 		QString out;
 		QStringList projects;
 		QStringList details;
-		out = execCommand(commandPrefix+"elbe control list_projects");
+		out = execCommand("elbe control list_projects");
 
 		//split the lines to get each project alone
 		projects = out.split("\n", QString::SkipEmptyParts);
@@ -371,11 +362,9 @@ namespace ElbeHandler {
 	bool restartInitVM(const QString &initVM)
 	{
 		QString out;
-		auto buildmanager = BuildManager::getInstance();
-		QString commandPrefix = buildmanager->elbeCommandPrefix();
 
-		execCommand(commandPrefix+"elbe initvm stop");
-		out = execCommand(commandPrefix+"elbe initvm --directory "+initVM+" start");
+		execCommand("elbe initvm stop");
+		out = execCommand("elbe initvm --directory "+initVM+" start");
 
 		//initvm start prints "*****" on success
 		if ( !out.compare("*****") ) {
@@ -384,10 +373,142 @@ namespace ElbeHandler {
 		} else {
 			return true;
 		}
+	}
+
+	QStringList buildUpdate()
+	{ //called from updateThread. All actions invoked here are outside the main thread
+
+
+		QString referenceProject = buildReferenceProject();
+
+		//take the updateScript from ressources, adapt parameters to system and project, put the script on system for execution
+		//returns updateScriptFile
+		QFile file(prepareUpdateScript(referenceProject));
+
+		QString out;
+
+		out = execCommand(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/updateScript.exp", -1, true);
+//		QThread::sleep(5);
+
+		qDebug() << out;
+
+		if ( out.contains("error: operation failed: Active console session exists for this domain") ) {
+
+			 return QStringList() << "Update failed. Most likely there is an open session with the initvm." ;
+		}
+
+		//remove the file, only used temporarily
+		file.remove();
+
+		saveUpdateFiles(referenceProject);
+		execCommand("elbe control del_project "+referenceProject);
+
+		return QStringList();
+	}
+
+	QString checkForUpdates()
+	{
+		QString out;
+
+		Project *project = Project::getInstance();
+		QList<UpdateListItem> list = project->getUpdates()->getUpdateList();
+
+		if ( list.size() <= 1 ) {
+			out = execCommand("elbe check_updates "+sourceXMLPath(), -1);
+		} else {
+
+			QString updateNumber = QString().number(list.size());
+			QString updateXMLPath = project->projectDirectory()+"/updates/build"+updateNumber+"/source.xml";
+			out = execCommand("elbe check_updates "+updateXMLPath, -1);
+		}
+
+		QString str = out.section("\n", -2);
+
+
+		qDebug() << str;
+
+		return str;
+	}
+
+	QString prepareUpdateScript(QString referenceProject)
+	{
+		Project *projectmanager = Project::getInstance();
+		QFile file(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/updateScript.exp");
+
+		QString script = readUpdateScript();
+
+		script.replace("OLDPROJECTDIR", projectmanager->elbeID(), Qt::CaseInsensitive);
+		script.replace("NEWPROJECTDIR", referenceProject, Qt::CaseInsensitive);
+		script.replace("UPDATEDIR", "/root/update"+projectmanager->projectName()+".upd", Qt::CaseInsensitive);
+
+
+		if (!file.open(QIODevice::ReadWrite) ) {
+			qDebug() << "Could not open or create file in .elbefrontend";
+		}
+
+		file.write(script.toUtf8());
+
+		QFileDevice::Permissions permissions = file.permissions();
+		file.setPermissions(QFileDevice::ExeUser | permissions);
+
+		file.close();
+
+		return file.fileName();
+	}
+
+	QString readUpdateScript()
+	{
+		QFile file(":/updateScript.exp");
+		if (!file.open(QIODevice::ReadOnly)) {
+			qDebug() << "Could not open ressource";
+		}
+
+		QString content = QString::fromUtf8(file.readAll());
+		file.close();
+		return content;
+	}
+
+	QString sourceXMLPath()
+	{
+		Project *projectmanager = Project::getInstance();
+		QString outP = projectmanager->outPath();
+		QFileInfo file(outP+"/source.xml");
+		if ( !file.exists() ) {
+			getFile("source.xml");
+		}
+
+		return file.absoluteFilePath();
+	}
+
+
+	QString buildReferenceProject()
+	{
+		Project *projectmanager = Project::getInstance();
+		QString projectPath = createProjectElbeInstance();
+		setXmlFile(projectmanager->buildXmlPath(), projectPath);
+		qDebug() << execCommand("elbe control build "+projectPath);
+		execCommand("elbe control wait_busy "+projectPath, -1);
+		return projectPath;
+	}
+
+	void saveUpdateFiles(QString newProject)
+	{
+		Project *projectmanager = Project::getInstance();
+
+		QString updateNumber = QString().number(projectmanager->getUpdates()->nextUpdateNumber());
+		QDir dir(projectmanager->projectDirectory());
+		QString updateDir = QString("/updates")+QString("/build")+updateNumber;
+		dir.mkdir(updateDir);
+
+
+		//save source.xml of new version
+		getFile_p("source.xml", dir.absolutePath()+"/updates/build"+updateNumber+"/", newProject);
+
+		//save archive.upd
+		getFile_p(projectmanager->projectName()+".upd", dir.absolutePath()+"/updates/build"+updateNumber+"/", newProject);
 
 	}
 }
-
 
 
 

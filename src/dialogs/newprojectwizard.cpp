@@ -7,6 +7,8 @@
 #include "src/projects/projecthandler.h"
 #include "src/app/helpers.h"
 
+#include <src/app/applicationconfig.h>
+
 NewProjectWizard::NewProjectWizard(QWidget *parent) :
 	QWizard(parent),
 	ui(new Ui::NewProjectWizard)
@@ -41,13 +43,11 @@ NewProjectWizard::~NewProjectWizard()
 void NewProjectWizard::displayDefaultPath()
 {
 	//defaultpath should only be altered here
-	QString homeDirectory = helpers::getHomeDirectoryFromSystem();
-	const_cast <QString&> (defaultPath) = homeDirectory.append("/elbeProjects/");
-	ui->ProjectPathEntry->setText(defaultPath);
+//	QString homeDirectory = helpers::getHomeDirectoryFromSystem();
+	ApplicationConfig *appConf = new ApplicationConfig();
 
-	//this is the default path for testing only. The correct default path for this application is handled above
-//	const_cast <QString&> (defaultPath) = "/home/hico/elbefrontFilehandlingTestFolder/";
-//	ui->ProjectPathEntry->setText(defaultPath);
+	const_cast <QString&> (defaultPath) = appConf->workspace();
+	ui->ProjectPathEntry->setText(defaultPath);
 }
 
 void NewProjectWizard::on_DefaultPathButton_toggled(bool checked)

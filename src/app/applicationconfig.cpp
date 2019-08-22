@@ -66,6 +66,11 @@ void ApplicationConfig::saveSchemaFile(const QString &filename)
 	writeToFile("schemaFile", filename);
 }
 
+void ApplicationConfig::saveWorkspace(const QString &directory)
+{
+	writeToFile("workspace", directory);
+}
+
 QString ApplicationConfig::schemaFile() const
 {
 	return m_schemaFile;
@@ -96,6 +101,10 @@ void ApplicationConfig::parseFile()
 	if (config["schemaFile"] ){
 		m_schemaFile = QString().fromStdString(config["schemaFile"].as<std::string>());
 	}
+
+	if ( config["workspace"] ) {
+		m_workspace = QString().fromStdString(config["workspace"].as<std::string>());
+	}
 }
 
 QString ApplicationConfig::elbeExe() const
@@ -106,4 +115,9 @@ QString ApplicationConfig::elbeExe() const
 QString ApplicationConfig::initVM() const
 {
 	return m_initVM;
+}
+
+QString ApplicationConfig::workspace() const
+{
+	return m_workspace;
 }

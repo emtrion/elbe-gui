@@ -9,6 +9,7 @@
 #include "buildprocessstatusbarupdate.h"
 #include "src/mainwindow/mainwindow.h"
 #include "src/app/helpers.h"
+#include "src/projects/projecthandler.h"
 
 BuildProcess::BuildProcess(QObject *parent) : QObject(parent)
 {
@@ -81,6 +82,11 @@ void BuildProcess::cleanup()
 	mw->setWindowTitle("elbeFrontend");
 	buildThread->quit();
 	buildThread->wait();
+
+	Project *project = Project::getInstance();
+	Updates *updates = project->getUpdates();
+	updates->makeInitialEntry();
+	mw->getUpdatetab()->enableButtons();
 }
 
 

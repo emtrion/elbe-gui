@@ -3,6 +3,7 @@
 
 class QStringList;
 class QString;
+class QFile;
 
 namespace ElbeHandler {
 
@@ -27,19 +28,27 @@ namespace ElbeHandler {
 	bool checkIfBusy(QString id);
 	bool restartInitVM(const QString &initVM);
 
+	QStringList buildUpdate();
+	QString checkForUpdates();
+	QString sourceXMLPath();
+
+	QString prepareUpdateScript(QString);
+	QString readUpdateScript();
+	QString buildReferenceProject();
+	void saveUpdateFiles(QString);
 
 
-	/*------- these are defined in an unnamed namespace --------------------------*
-	 *																			  *
-	 *  QStringList makeProjectList();											  *
-	 * 	QString execCommand(QString command, int timeout);						  *
-	 * 	bool getFiles_p(QStringList filenames, QString outPath, QString elbeID);  *
-	 * 	bool getFile_p(QString filename, QString outPath, QString elbeID);		  *
-	 * 	bool getImages_p(QString buildXmlPath, QString outPath, QString elbeID);  *
-	 * 	void removeFalseLoadedFiles(QString outPath, QString filename);			  *
-	 *	  void forwardOutputToMessageLog(QString output);						  *
-	 *																			  *
-	 *----------------------------------------------------------------------------*/
+	/*------- these are defined in an unnamed namespace ---------------------------------------*
+	 *																						   *
+	 *  QStringList makeProjectList();											               *
+	 * 	QString execCommand(QString command, int timeout, bool forceWithoutPrefix = false);	   *
+	 * 	bool getFiles_p(QStringList filenames, QString outPath, QString elbeID);               *
+	 * 	bool getFile_p(QString filename, QString outPath, QString elbeID);		               *
+	 * 	bool getImages_p(QString buildXmlPath, QString outPath, QString elbeID);               *
+	 * 	void removeFalseLoadedFiles(QString outPath, QString filename);			               *
+	 *	  void forwardOutputToMessageLog(QString output);						               *
+	 *																			               *
+	 *-----------------------------------------------------------------------------------------*/
 
 }
 

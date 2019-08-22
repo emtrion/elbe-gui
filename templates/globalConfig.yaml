@@ -7,4 +7,5 @@ elbe: "default"
 initVM: ""
 #schemaFile
 schema: ""
-
+#Projectdirectory
+workspace: ""

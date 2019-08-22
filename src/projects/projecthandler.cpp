@@ -47,6 +47,13 @@ namespace ProjectHandler {
 			return;
 		}
 
+
+		//create update_history file
+		QFile updateFile(newProjectPath+"/.update_history");
+		updateFile.open(QIODevice::ReadWrite);
+		updateFile.close();
+
+
 		QFileInfo fi(confFile);
 		ExistingProjects().addNewProjectToListFile(fi.absoluteFilePath());
 		projectmanager->setProjectHasFile(false);
@@ -67,7 +74,6 @@ namespace ProjectHandler {
 		MainWindow *mw = helpers::getMainWindow();
 		mw->updateProjectStructure();
 		projectmanager->setProjectOpened(true);
-
 		mw->enableActionsOnProjectOpen(true);
 		filesystemWatcher::addPath(projectmanager->srcPath());
 		filesystemWatcher::addPath(projectmanager->outPath());
@@ -75,8 +81,17 @@ namespace ProjectHandler {
 		if ( checkIfProjectHasXML(path) ) {
 			projectmanager->setProjectHasFile(true);
 			mw->changeNewXmlButtonEnabledStatus(false);
-			mw->changeImportButtonEnabledStatus(false);
+			mw->changeImportButtonEnabledStatus(false);		
 		}
+
+		//show updates
+		Updates *updates = new Updates(projectmanager->projectDirectory());
+		projectmanager->setUpdates(updates);
+		UpdateTab *utab = new UpdateTab();
+		utab->updateView(updates);
+		mw->showUpdateTab(utab);
+
+		updates->initUpdateList();
 	}
 
 	bool checkIfProjectHasXML(QString path)
@@ -110,7 +125,7 @@ namespace ProjectHandler {
 	{
 		Project *projectmanager = Project::getInstance();
 		XmlFile *filemanager = XmlFile::getInstance();
-		MainWindow *mainwindow = helpers::getMainWindow();
+		MainWindow *mw = helpers::getMainWindow();
 
 		if ( !projectmanager->isProjectOpened() ) {
 			//no project to close...
@@ -122,14 +137,16 @@ namespace ProjectHandler {
 
 		//call update() with a null-string -> all properties of ProjectManager are reset
 		projectmanager->update(QString());
-		mainwindow->updateProjectStructure();
+		mw->updateProjectStructure();
 
 		if ( filemanager->isOpen() ) {
 			XmlFileHandler::closeFile();
 		}
 
 		projectmanager->setProjectOpened(false);
-		mainwindow->enableActionsOnProjectOpen(false);
+		mw->enableActionsOnProjectOpen(false);
+
+		mw->hideUpdateTab();
 	}
 
 	void deleteProject(QString path)
@@ -152,5 +169,14 @@ namespace ProjectHandler {
 			qDebug() << "ERROR from "<<__func__<<" could not remove project from filesystem";
 			return;
 		}
+	}
+
+	void reopenProject()
+	{
+		Project *project = Project::getInstance();
+		QString path = project->projectPath();
+
+		closeProject();
+		openProject(path);
 	}
 }

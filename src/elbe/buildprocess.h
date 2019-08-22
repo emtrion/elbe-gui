@@ -8,6 +8,7 @@ class QThread;
 class BuildManager;
 class BuildProcessWorker;
 
+
 class BuildProcess : public QObject
 {
 		Q_OBJECT

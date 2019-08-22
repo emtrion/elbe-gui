@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include <src/update/updatetab.h>
+
 #include "src/projects/project.h"
 #include "src/xml/xmlfile.h"
 
@@ -46,6 +48,10 @@ class MainWindow : public QMainWindow
 		void changeElbeActionsEnabledStatus(bool status);
 		void changeElbeVersion(const QString &value);
 		void closeEditorWindow();
+		void showUpdateTab(UpdateTab *utab);
+		void hideUpdateTab();
+		UpdateTab *getUpdatetab() const;
+
 	public slots:
 		void updateCurrentFile(QString path);
 		void updateItemModel(QString dir);
@@ -71,12 +77,15 @@ class MainWindow : public QMainWindow
 		void on_actionOpen_in_Explorer_triggered();
 		void on_actionSettings_triggered();
 
+		void on_actionChange_workspace_triggered();
+
 	private:
 		Ui::MainWindow *ui;
 		ProjectItemModel *model;
 		QString elbeVersion;
 		QMessageBox *aboutElbeMessageBox;
 		QLabel *permStatus;
+		UpdateTab *updatetab;
 
 	private:
 		Project *projectmanager = Project::getInstance();

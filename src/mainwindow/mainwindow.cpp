@@ -20,16 +20,20 @@
 #include "src/projects/projectitemmodel.h"
 #include "src/elbe/elbehandler.h"
 #include "src/dialogs/elbesettingsdialog.h"
+#include "src/update/updatetab.h"
 
 #include <QDebug>
+
+#include <src/update/updates.h>
+
+#include <src/dialogs/changeworkspacedialog.h>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-	ui->Terminal_Tab->hide();
-	ui->DisplaView->removeTab(1);
+	ui->Updates_Tab->hide();
 
     //set starting size for upperSection
 	ui->central_Splitter->setSizes(QList<int>()<<500<<50);
@@ -111,6 +115,19 @@ void MainWindow::on_actionDelete_triggered()
 void MainWindow::on_actionOpen_in_Explorer_triggered()
 {
 	QDesktopServices::openUrl(QUrl(projectmanager->projectDirectory()));
+}
+
+
+
+void MainWindow::on_actionChange_workspace_triggered()
+{
+	ChangeWorkspaceDialog *dialog = new ChangeWorkspaceDialog();
+	dialog->show();
+}
+
+UpdateTab *MainWindow::getUpdatetab() const
+{
+	return updatetab;
 }
 
 /******************************************************/
@@ -335,6 +352,20 @@ void MainWindow::showPermStatusOnStatusBar(QString status)
 }
 
 /************************************************************************************/
+
+void MainWindow::showUpdateTab(UpdateTab *utab)
+{
+	updatetab = utab;
+	ui->Updates_Tab->layout()->addWidget(utab);
+	ui->Updates_Tab->show();
+}
+
+void MainWindow::hideUpdateTab()
+{
+	ui->Updates_Tab->layout()->removeWidget(updatetab);
+	ui->Updates_Tab->hide();
+}
+
 
 /********************************* misc *********************************************/
 
@@ -561,6 +592,7 @@ void MainWindow::rememberOpenedProject(QString project)
 }
 
 /************************************************************************************/
+
 
 
 

@@ -22,12 +22,15 @@ class ApplicationConfig
 
 		QString schemaFile() const;
 
+		QString workspace() const;
+		void saveWorkspace(const QString &directory);
 	private:
 		const QDir *dir; //.elbefrontend
 		 QFile *file; //.elbefrontend/config.yaml
 		 QString m_elbeExe;
 		 QString m_initVM;
 		 QString m_schemaFile;
+		 QString m_workspace;
 
 	private:
 		 YAML::Node loadFile();

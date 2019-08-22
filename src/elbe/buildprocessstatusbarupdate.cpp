@@ -50,3 +50,16 @@ void BuildProcessStatusBarUpdate::statusBarLoadingFile()
 	list = {QStringList()<<"loading files"<< "loading files."<< "loading files.."<< "loading files..." };
 	changeStatusBar();
 }
+
+
+void BuildProcessStatusBarUpdate::statusBarUpdateProject()
+{
+	list = {QStringList()<<"building update-package"<< "building update-package."<< "building update-package.."<< "building update-package..." };
+	changeStatusBar();
+}
+
+void BuildProcessStatusBarUpdate::statusBarCheckUpdate()
+{
+	list = {QStringList()<<"check for updates"<< "check for updates."<< "check for updates.."<< "check for updates..." };
+	changeStatusBar();
+}

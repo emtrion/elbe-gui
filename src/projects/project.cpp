@@ -13,6 +13,16 @@ Project* Project::instance = NULL;
 Project::Project()
 {}
 
+Updates *Project::getUpdates() const
+{
+	return updates;
+}
+
+void Project::setUpdates(Updates *value)
+{
+	updates = value;
+}
+
 Project* Project::getInstance()
 {
 	if (instance == NULL)

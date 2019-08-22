@@ -264,25 +264,25 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="Terminal_Tab">
+          <widget class="QWidget" name="Updates_Tab">
            <attribute name="title">
-            <string>Terminal</string>
+            <string>Updates</string>
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <property name="spacing">
-             <number>0</number>
+             <number>2</number>
             </property>
             <property name="leftMargin">
-             <number>2</number>
+             <number>0</number>
             </property>
             <property name="topMargin">
-             <number>2</number>
+             <number>0</number>
             </property>
             <property name="rightMargin">
-             <number>2</number>
+             <number>0</number>
             </property>
             <property name="bottomMargin">
-             <number>2</number>
+             <number>0</number>
             </property>
            </layout>
           </widget>
@@ -303,6 +303,23 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuElbe">
+    <property name="title">
+     <string>E&amp;lbe</string>
+    </property>
+    <addaction name="actionBuild"/>
+    <addaction name="actionValidate"/>
+    <addaction name="actionDownload_files"/>
+    <addaction name="actionSettings"/>
+   </widget>
+   <widget class="QMenu" name="menuHilfe">
+    <property name="title">
+     <string>Hel&amp;p</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_elbe"/>
+   </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>Fi&amp;le</string>
@@ -326,24 +343,8 @@
     <addaction name="actionDelete"/>
     <addaction name="separator"/>
     <addaction name="actionOpen_in_Explorer"/>
+    <addaction name="actionChange_workspace"/>
     <addaction name="actionExit_2"/>
-   </widget>
-   <widget class="QMenu" name="menuElbe">
-    <property name="title">
-     <string>Elbe</string>
-    </property>
-    <addaction name="actionBuild"/>
-    <addaction name="actionValidate"/>
-    <addaction name="actionDownload_files"/>
-    <addaction name="actionSettings"/>
-   </widget>
-   <widget class="QMenu" name="menuHilfe">
-    <property name="title">
-     <string>Hel&amp;p</string>
-    </property>
-    <addaction name="separator"/>
-    <addaction name="actionAbout"/>
-    <addaction name="actionAbout_elbe"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuElbe"/>
@@ -533,6 +534,11 @@
     <string>&amp;Settings</string>
    </property>
   </action>
+  <action name="actionChange_workspace">
+   <property name="text">
+    <string>Change workspace</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -545,7 +551,6 @@
  <tabstops>
   <tabstop>ProjektStructure</tabstop>
   <tabstop>FileStructure</tabstop>
-  <tabstop>DisplaView</tabstop>
   <tabstop>MessageLog</tabstop>
  </tabstops>
  <resources>

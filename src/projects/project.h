@@ -3,6 +3,8 @@
 
 #include <QString>
 
+#include <src/update/updates.h>
+
 #include "projectproperties.h"
 
 class QFileSystemWatcher;
@@ -34,6 +36,9 @@ class Project
 		void setBuildXmlPath(const QString &value);
 		QFileSystemWatcher *watcher;
 
+		Updates *getUpdates() const;
+		void setUpdates(Updates *value);
+
 	private:
 		static Project* instance;
 		// Private constructor to prevent instancing from outside
@@ -50,6 +55,8 @@ class Project
 		bool m_projectOpened = false;
 		bool m_projectModified = false;
 		bool m_projectHasFile = false;
+
+		Updates *updates;
 };
 
 

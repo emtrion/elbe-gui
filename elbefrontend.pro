@@ -57,7 +57,13 @@ SOURCES += src/main.cpp\
 	src/projects/project.cpp \
 	src/projects/projectproperties.cpp \
 	src/xml/xmlutilities.cpp \
-	src/app/filesystemwatcher.cpp
+	src/app/filesystemwatcher.cpp \
+    src/update/updates.cpp \
+    src/update/updatetab.cpp \
+    src/update/updatelistitem.cpp \
+    src/update/updatethread.cpp \
+    src/update/checkupdatethread.cpp \
+    src/dialogs/changeworkspacedialog.cpp
 
 HEADERS  += src/mainwindow/mainwindow.h \
 	src/editor/codeeditor.h \
@@ -90,7 +96,13 @@ HEADERS  += src/mainwindow/mainwindow.h \
 	src/projects/project.h \
 	src/projects/projectproperties.h \
 	src/xml/xmlutilities.h \
-	src/app/filesystemwatcher.h
+	src/app/filesystemwatcher.h \
+    src/update/updates.h \
+    src/update/updatetab.h \
+    src/update/updatelistitem.h \
+    src/update/updatethread.h \
+    src/update/checkupdatethread.h \
+    src/dialogs/changeworkspacedialog.h
 
 FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/newprojectwizard.ui \
@@ -99,7 +111,9 @@ FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/buildprocessstartdialog.ui \
 	src/dialogs/filedownloaddialog.ui \
 	src/dialogs/elbesettingsdialog.ui \
-	src/dialogs/deletedialog.ui
+	src/dialogs/deletedialog.ui \
+    src/update/updatetab.ui \
+    src/dialogs/changeworkspacedialog.ui
 
 RESOURCES += style/style.qrc \
 	templates/filetemplates.qrc \

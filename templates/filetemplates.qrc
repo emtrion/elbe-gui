@@ -6,5 +6,6 @@
         <file>schemaV8.xsd</file>
         <file>working(v2.4 modified).xsd</file>
         <file>schemaSnippet.xml</file>
+        <file>updateScript.exp</file>
     </qresource>
 </RCC>

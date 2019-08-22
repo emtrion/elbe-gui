@@ -54,9 +54,10 @@ int main(int argc, char *argv[])
 							   "There is no initVM selected. Please set the initVM you would like to use.",
 							   QMessageBox::StandardButtons(QMessageBox::Ok),
 							   QMessageBox::Ok);
-		auto elbeSettingsDialog = new ElbeSettingsDialog();
+		ElbeSettingsDialog *elbeSettingsDialog = new ElbeSettingsDialog();
 		elbeSettingsDialog->show();
 	}
+
 
 	if ( applicationConfig->elbeExe().compare("default") == 0 ) {
 		//setElbeWorkingDirectory changes "default" to system home directory
@@ -66,6 +67,10 @@ int main(int argc, char *argv[])
 		buildmanager->setElbeWorkingDir(applicationConfig->elbeExe());
 		buildmanager->setElbeCommandPrefix("./");
 	}
+
+
+	//set default project directory
+	applicationConfig->saveWorkspace(helpers::getHomeDirectoryFromSystem()+"/elbeProjects/");
 
 	//open the project which was still open when prior session was closed
 	if ( !existing->exists() ) {

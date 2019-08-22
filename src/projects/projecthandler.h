@@ -13,6 +13,7 @@ namespace ProjectHandler {
 	void openProject(QString path);
 	void deleteProject(QString path);
 	bool checkIfProjectHasXML(QString path);
+	void reopenProject();
 }
 
 #endif // PROJECTHANDLER_H
