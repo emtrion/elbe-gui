@@ -15,6 +15,8 @@
 
 #include <src/dialogs/elbesettingsdialog.h>
 
+#include <src/app/applicationconfig.h>
+
 
 namespace ElbeHandler {
 	namespace { //unnamed namespace
@@ -179,7 +181,7 @@ namespace ElbeHandler {
 			informativeText =  "Version below v2 might work but is neither supported nor recommended";
 			informationIsNeeded = true;
 
-		} else if ( QString(numbers.first()).toInt() > 2 ) {
+		} /*else if ( QString(numbers.first()).toInt() > 2 ) {
 			informativeText = "Version v3 or higher might work but is not yet supported";
 			informationIsNeeded = true;
 		} else {
@@ -187,7 +189,7 @@ namespace ElbeHandler {
 				informativeText = "Version higher v2.4 might work but is not supported";
 				informationIsNeeded = true;
 			}
-		}
+		}*/
 
 		if ( informationIsNeeded ) {
 			helpers::showMessageBox("Elbeversion not supported", informativeText,
@@ -364,7 +366,9 @@ namespace ElbeHandler {
 		QString out;
 
 		execCommand("elbe initvm stop");
-		out = execCommand("elbe initvm --directory "+initVM+" start");
+		execCommand("virsh --connect qemu:///system undefine initvm", 30000, true);
+		execCommand("virsh --connect qemu:///system define "+initVM+"/libvirt.xml", 30000, true);
+		out = execCommand("elbe initvm start");
 
 		//initvm start prints "*****" on success
 		if ( !out.compare("*****") ) {
@@ -373,6 +377,23 @@ namespace ElbeHandler {
 		} else {
 			return true;
 		}
+	}
+
+	void createNewInitVM(QString dir)
+	{
+		QString out;
+
+		out = execCommand("elbe initvm stop");
+		qDebug() << out;
+
+		out = execCommand("virsh --connect qemu:///system undefine initvm", 30000, truel);
+		qDebug() << out;
+		out = execCommand("elbe initvm --directory "+dir+" create", -1);
+
+		qDebug() << out;
+
+		ApplicationConfig *appConfig = new ApplicationConfig();
+		appConfig->saveInitVM(dir);
 	}
 
 	QStringList buildUpdate()
@@ -390,7 +411,7 @@ namespace ElbeHandler {
 		out = execCommand(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/updateScript.exp", -1, true);
 //		QThread::sleep(5);
 
-		qDebug() << out;
+//		qDebug() << out;
 
 		if ( out.contains("error: operation failed: Active console session exists for this domain") ) {
 
@@ -425,7 +446,7 @@ namespace ElbeHandler {
 		QString str = out.section("\n", -2);
 
 
-		qDebug() << str;
+//		qDebug() << str;
 
 		return str;
 	}
@@ -508,6 +529,7 @@ namespace ElbeHandler {
 		getFile_p(projectmanager->projectName()+".upd", dir.absolutePath()+"/updates/build"+updateNumber+"/", newProject);
 
 	}
+
 }
 
 

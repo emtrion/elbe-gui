@@ -71,7 +71,6 @@ void BuildProcess::buildThreadInit()
 
 	buildWorker->moveToThread(buildThread);
 	buildThread->start();
-
 }
 
 

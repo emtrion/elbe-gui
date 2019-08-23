@@ -3,6 +3,7 @@
 
 #include <QDesktopServices>
 #include <QMessageBox>
+#include <QTableWidget>
 
 #include "src/dialogs/newxmldialog.h"
 #include "src/dialogs/newprojectwizard.h"
@@ -27,6 +28,7 @@
 #include <src/update/updates.h>
 
 #include <src/dialogs/changeworkspacedialog.h>
+#include <src/dialogs/createinitvmdialog.h>
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -149,6 +151,12 @@ void MainWindow::on_actionValidate_triggered()
 void MainWindow::on_actionDownload_files_triggered()
 {
 	FileDownloadDialog *dialog = new FileDownloadDialog();
+	dialog->show();
+}
+
+void MainWindow::on_actionCreate_InitVM_triggered()
+{
+	CreateInitvmDialog *dialog = new CreateInitvmDialog();
 	dialog->show();
 }
 
@@ -358,12 +366,14 @@ void MainWindow::showUpdateTab(UpdateTab *utab)
 	updatetab = utab;
 	ui->Updates_Tab->layout()->addWidget(utab);
 	ui->Updates_Tab->show();
+	ui->DisplaView->setTabEnabled(1, true);
 }
 
 void MainWindow::hideUpdateTab()
 {
 	ui->Updates_Tab->layout()->removeWidget(updatetab);
 	ui->Updates_Tab->hide();
+	ui->DisplaView->setTabEnabled(1, false);
 }
 
 
@@ -592,6 +602,8 @@ void MainWindow::rememberOpenedProject(QString project)
 }
 
 /************************************************************************************/
+
+
 
 
 

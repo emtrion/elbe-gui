@@ -209,7 +209,7 @@
            <enum>QTabWidget::Rounded</enum>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="usesScrollButtons">
            <bool>false</bool>
@@ -310,6 +310,7 @@
     <addaction name="actionBuild"/>
     <addaction name="actionValidate"/>
     <addaction name="actionDownload_files"/>
+    <addaction name="actionCreate_InitVM"/>
     <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuHilfe">
@@ -536,7 +537,12 @@
   </action>
   <action name="actionChange_workspace">
    <property name="text">
-    <string>Change workspace</string>
+    <string>Change &amp;workspace</string>
+   </property>
+  </action>
+  <action name="actionCreate_InitVM">
+   <property name="text">
+    <string>Create InitVM</string>
    </property>
   </action>
  </widget>

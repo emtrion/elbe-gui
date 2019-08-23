@@ -63,7 +63,8 @@ SOURCES += src/main.cpp\
     src/update/updatelistitem.cpp \
     src/update/updatethread.cpp \
     src/update/checkupdatethread.cpp \
-    src/dialogs/changeworkspacedialog.cpp
+    src/dialogs/changeworkspacedialog.cpp \
+    src/dialogs/createinitvmdialog.cpp
 
 HEADERS  += src/mainwindow/mainwindow.h \
 	src/editor/codeeditor.h \
@@ -102,7 +103,8 @@ HEADERS  += src/mainwindow/mainwindow.h \
     src/update/updatelistitem.h \
     src/update/updatethread.h \
     src/update/checkupdatethread.h \
-    src/dialogs/changeworkspacedialog.h
+    src/dialogs/changeworkspacedialog.h \
+    src/dialogs/createinitvmdialog.h
 
 FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/newprojectwizard.ui \
@@ -113,7 +115,8 @@ FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/elbesettingsdialog.ui \
 	src/dialogs/deletedialog.ui \
     src/update/updatetab.ui \
-    src/dialogs/changeworkspacedialog.ui
+    src/dialogs/changeworkspacedialog.ui \
+    src/dialogs/createinitvmdialog.ui
 
 RESOURCES += style/style.qrc \
 	templates/filetemplates.qrc \

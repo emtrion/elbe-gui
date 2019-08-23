@@ -36,6 +36,7 @@ namespace ElbeHandler {
 	QString readUpdateScript();
 	QString buildReferenceProject();
 	void saveUpdateFiles(QString);
+	void createNewInitVM(QString);
 
 
 	/*------- these are defined in an unnamed namespace ---------------------------------------*

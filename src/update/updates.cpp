@@ -18,7 +18,7 @@ Updates::Updates(QString projectPath)
 void Updates::initUpdateList()
 {
 
-	qDebug() << "initializing update list";
+
 	if ( !updateHistoryFile->open(QIODevice::ReadWrite) ) {
 		qDebug() << "ERROR from "<<__func__<<" could not open or create update-history-file";
 		return;
@@ -29,7 +29,6 @@ void Updates::initUpdateList()
 
 	foreach (auto str, list) {
 		QStringList entry = str.split("\t\t");
-		qDebug() << __func__<<" : "<< str;
 		emit(notifyViewAfterBuildUpdates(makeListEntry(entry)));
 	}
 }
@@ -39,7 +38,6 @@ void Updates::saveListEntryToHistory()
 	QString complete;
 	foreach (auto item, updateList) {
 		complete.append(item.toString()+"\n");
-		qDebug() << __func__<<" : "<<complete;
 	}
 
 	if ( !updateHistoryFile->open(QIODevice::ReadWrite) ) {
@@ -78,7 +76,6 @@ void Updates::makeUpdate()
 
 void Updates::makeInitialEntry()
 {
-	qDebug() << "doing this";
 	Project *p = Project::getInstance();
 	QString version = "Version "+p->newProjectProperties()->version();
 	QStringList list = QStringList() << "Build 1" << version << QDate::currentDate().toString("dd.MM.yyyy") << "";

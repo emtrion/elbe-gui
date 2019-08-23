@@ -79,6 +79,8 @@ class MainWindow : public QMainWindow
 
 		void on_actionChange_workspace_triggered();
 
+		void on_actionCreate_InitVM_triggered();
+
 	private:
 		Ui::MainWindow *ui;
 		ProjectItemModel *model;
