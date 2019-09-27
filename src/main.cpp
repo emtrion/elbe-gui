@@ -31,8 +31,8 @@ int main(int argc, char *argv[])
 	auto buildmanager = BuildManager::getInstance();
 
 
-	//load stylesheet
-	QFile stylesheet(":qdarkstyle/style.qss");
+//	load stylesheet
+	QFile stylesheet(":/qdarkstyle/style.qss");
 	if ( !stylesheet.exists() )
 	{
 		printf("Unable to set stylesheet, file not found\n");

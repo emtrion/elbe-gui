@@ -447,6 +447,7 @@ void MainWindow::changeElbeActionsEnabledStatus(bool status)
 {
 	ui->actionBuild->setEnabled(status);
 	ui->actionDownload_files->setEnabled(status);
+	ui->actionCreate_InitVM->setEnabled(status);
 }
 
 void MainWindow::closeEditorWindow() {

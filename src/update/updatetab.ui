@@ -75,10 +75,10 @@
               </sizepolicy>
              </property>
              <property name="editable">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <property name="currentText">
-              <string>Base Version</string>
+              <string/>
              </property>
             </widget>
            </item>

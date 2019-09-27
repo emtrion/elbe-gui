@@ -47,7 +47,7 @@ namespace ElbeHandler {
 	 * 	bool getFile_p(QString filename, QString outPath, QString elbeID);		               *
 	 * 	bool getImages_p(QString buildXmlPath, QString outPath, QString elbeID);               *
 	 * 	void removeFalseLoadedFiles(QString outPath, QString filename);			               *
-	 *	  void forwardOutputToMessageLog(QString output);						               *
+	 *	void forwardOutputToMessageLog(QString output);						                   *
 	 *																			               *
 	 *-----------------------------------------------------------------------------------------*/
 

@@ -12,7 +12,7 @@
 			<element name="extended" type="rfs:extended" minOccurs="1">
 				<annotation>
 					<documentation>
-						Extended Partition Entries of this harddisk (max: 1)
+						Extended Partition Entries of this harddisk (exactly: 1)
 					</documentation>
 				</annotation>
 			</element>

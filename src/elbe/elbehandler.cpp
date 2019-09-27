@@ -58,7 +58,6 @@ namespace ElbeHandler {
 				commandPrefix = buildmanager->elbeCommandPrefix();
 			}
 
-			qDebug() << commandPrefix+command;
 			process.start(commandPrefix+command);
 			if ( process.waitForFinished(timeout) ) {
 				outputByteArray = process.readAll();
@@ -386,7 +385,7 @@ namespace ElbeHandler {
 		out = execCommand("elbe initvm stop");
 		qDebug() << out;
 
-		out = execCommand("virsh --connect qemu:///system undefine initvm", 30000, truel);
+		out = execCommand("virsh --connect qemu:///system undefine initvm", 30000, true);
 		qDebug() << out;
 		out = execCommand("elbe initvm --directory "+dir+" create", -1);
 
@@ -396,36 +395,6 @@ namespace ElbeHandler {
 		appConfig->saveInitVM(dir);
 	}
 
-	QStringList buildUpdate()
-	{ //called from updateThread. All actions invoked here are outside the main thread
-
-
-		QString referenceProject = buildReferenceProject();
-
-		//take the updateScript from ressources, adapt parameters to system and project, put the script on system for execution
-		//returns updateScriptFile
-		QFile file(prepareUpdateScript(referenceProject));
-
-		QString out;
-
-		out = execCommand(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/updateScript.exp", -1, true);
-//		QThread::sleep(5);
-
-//		qDebug() << out;
-
-		if ( out.contains("error: operation failed: Active console session exists for this domain") ) {
-
-			 return QStringList() << "Update failed. Most likely there is an open session with the initvm." ;
-		}
-
-		//remove the file, only used temporarily
-		file.remove();
-
-		saveUpdateFiles(referenceProject);
-		execCommand("elbe control del_project "+referenceProject);
-
-		return QStringList();
-	}
 
 	QString checkForUpdates()
 	{
@@ -450,6 +419,35 @@ namespace ElbeHandler {
 
 		return str;
 	}
+
+	QStringList buildUpdate()
+	{ //called from updateThread. All actions invoked here are outside the main thread
+
+		QString out;
+
+
+		QString referenceProject = buildReferenceProject();
+		//take the updateScript from ressources, adapt parameters to system and project, put the script on system for execution
+		//returns updateScriptFile
+		QFile file(prepareUpdateScript(referenceProject));
+
+		out = execCommand(helpers::getHomeDirectoryFromSystem()+"/.elbefrontend/updateScript.exp", -1, true);
+
+		if ( out.contains("error: operation failed: Active console session exists for this domain") ) {
+			 return QStringList() << "Update failed. Most likely there is an open session with the initvm." ;
+		}
+
+		//remove updatescript, can't be reused since paramete can change every time
+		file.remove();
+
+		saveUpdateFiles(referenceProject);
+		//delete refenceProject
+		execCommand("elbe control del_project "+referenceProject);
+
+		return QStringList();
+	}
+
+
 
 	QString prepareUpdateScript(QString referenceProject)
 	{

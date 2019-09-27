@@ -64,7 +64,8 @@ void Highlighter::setRegexes()
 void Highlighter::setFormats()
 {
 	QColor color;
-	color.setNamedColor("#45c6d6"); //blue
+	color.setNamedColor("#45c6d6"); //blue for dark
+//	color.setNamedColor();
 	m_xmlKeywordFormat.setForeground(color);//blue
 //	m_xmlKeywordFormat.setFontWeight(QFont::Bold);
 

@@ -64,7 +64,9 @@ SOURCES += src/main.cpp\
     src/update/updatethread.cpp \
     src/update/checkupdatethread.cpp \
     src/dialogs/changeworkspacedialog.cpp \
-    src/dialogs/createinitvmdialog.cpp
+    src/dialogs/createinitvmdialog.cpp \
+    src/elbe/initvmcreatethread.cpp \
+    src/elbe/createinitvmhandler.cpp
 
 HEADERS  += src/mainwindow/mainwindow.h \
 	src/editor/codeeditor.h \
@@ -104,7 +106,9 @@ HEADERS  += src/mainwindow/mainwindow.h \
     src/update/updatethread.h \
     src/update/checkupdatethread.h \
     src/dialogs/changeworkspacedialog.h \
-    src/dialogs/createinitvmdialog.h
+    src/dialogs/createinitvmdialog.h \
+    src/elbe/initvmcreatethread.h \
+    src/elbe/createinitvmhandler.h
 
 FORMS    += src/mainwindow/mainwindow.ui \
 	src/dialogs/newprojectwizard.ui \
@@ -118,8 +122,8 @@ FORMS    += src/mainwindow/mainwindow.ui \
     src/dialogs/changeworkspacedialog.ui \
     src/dialogs/createinitvmdialog.ui
 
-RESOURCES += style/style.qrc \
-	templates/filetemplates.qrc \
+RESOURCES += templates/filetemplates.qrc \
+				style/style.qrc
 
 #unix|win32: LIBS += -lqtermwidget5
 

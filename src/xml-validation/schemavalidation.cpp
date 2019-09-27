@@ -37,7 +37,6 @@ bool SchemaValidation::loadSchema()
 
 	schema.setMessageHandler(&messageHandler);
 	schema.load(data);
-
 	if ( schema.isValid() ) {
 		return true;
 	} else {
@@ -135,6 +134,7 @@ QByteArray SchemaValidation::modifySchema(QFile *file)
 	file->close();
 	QString text(fileData);
 
+	//with elbe v3 or higher <all>-Tags cause deadlock. Therefor has to be replaced
 	text.replace(QString("<all>"), QString("<sequence>"));
 	text.replace(QString("</all>"), QString("</sequence>"));
 
@@ -152,6 +152,9 @@ QByteArray SchemaValidation::modifySchema(QFile *file)
 	text.replace(rx, QString::fromUtf8(snippetData));
 
 	return text.toUtf8();
+
 }
+
+
 
 

@@ -5,6 +5,8 @@
 #include <QPushButton>
 #include <QRegExpValidator>
 #include "src/elbe/elbehandler.h"
+#include <src/elbe/createinitvmhandler.h>
+#include <src/elbe/initvmcreatethread.h>
 
 CreateInitvmDialog::CreateInitvmDialog(QWidget *parent) :
 	QDialog(parent),
@@ -30,7 +32,8 @@ CreateInitvmDialog::~CreateInitvmDialog()
 
 void CreateInitvmDialog::on_buttonBox_accepted()
 {
-	ElbeHandler::createNewInitVM(ui->initVMEntry->text());
+	CreateInitvmHandler *handler = new CreateInitvmHandler();
+	handler->createNewInitvm(ui->initVMEntry->text());
 }
 
 void CreateInitvmDialog::on_initVMEntry_textChanged(const QString &arg1)

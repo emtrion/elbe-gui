@@ -10,6 +10,8 @@ UpdateTab::UpdateTab(QWidget *parent) :
 	ui(new Ui::UpdateTab)
 {
 	ui->setupUi(this);
+
+	ui->versionSelectBox->addItem("Base-Version");
 }
 
 UpdateTab::~UpdateTab()
