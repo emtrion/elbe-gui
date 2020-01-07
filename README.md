@@ -9,6 +9,8 @@ Features:
 * build projects (using elbe as outside process)
 * download files from initVM
 * delete projects (from initVM and filesystem)
+* create a new initVM
+* view and create update-packages
 
 
 First Steps:
@@ -25,10 +27,7 @@ First Steps:
 Currently, only the versions 2.0 - 2.4 are fully supported. It might work with other versions but functionality is not guaranteed.  
 	
 Todo:
-* create an initVM  from frontend
-* right-click context menu
 * multi-selection in delete dialog
-* creation of update-packages for elbe-updated
 
 **Note:**
 
