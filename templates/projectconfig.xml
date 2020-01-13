@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>                                                                                                                                                                                             
+<projectDescription>                                                                                                                                                                                                               
+    
+	<projectname></projectname>
+    <elbe_id></elbe_id>  
+    <source_directory></source_directory>
+	<output_directory></output_directory>
+
+	<project>
+		<name></name>
+		<version></version>
+		<description></description>
+		<buildtype></buildtype>
+		<mirror>
+			   <primary_host></primary_host>
+			   <primary_path></primary_path>
+			   <primary_proto></primary_proto>
+		</mirror>
+		<suite></suite>
+	</project>
+                                                                                                                                                                                                                    
+</projectDescription>
+    

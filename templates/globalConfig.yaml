@@ -1,0 +1,11 @@
+#global configfile for elbefrontend
+#elbeSettings
+
+#elbe version
+elbe: "default"
+#initVM
+initVM: ""
+#schemaFile
+schema: ""
+#Projectdirectory
+workspace: ""
